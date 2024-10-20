@@ -1,0 +1,20 @@
+[
+  {
+    "id": 0,
+    "name": "Mandelbrot",
+    "centerX": -0.7,
+    "centerY": 0.0,
+    "radius": 2.0,
+    "limit": 2.0,
+    "kernel": "Mandelbrot.cu"
+  },
+  {
+    "id": 1,
+    "name": "SinPow2",
+    "centerX": -0.0,
+    "centerY": 0.0,
+    "radius":  2.5,
+    "limit":  5.0,
+    "kernel": "SinPow2.cu"
+  }
+]

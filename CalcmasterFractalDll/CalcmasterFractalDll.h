@@ -1,3 +1,5 @@
+#include <comutil.h>
+
 // Forward declaration of the class that is exported from the dll
 class FractalGenerator {
 public:
@@ -11,9 +13,7 @@ public:
 	// and resizes the m_iterations vector
 	void setDimensions(int height, int width);
 
-	// Gets the m_iterations vector data as an array and returns a pointer to the iterations array
-	void getIterations(int** ppInt, int* pCount);
-
+	int getIterationsAtIndex(size_t index);
 private:
 
 	// m_height:		fractal image height in pixels
@@ -23,13 +23,13 @@ private:
 	int m_width{ 1920 };
 
 	// m_iterations:	container for contiguous rows of iterations per pixel
-	std::vector<int> m_iterations{std::vector<int>(size_t(m_height) * size_t(m_width))};
+	std::vector<int> m_iterations{};
 
 	// m_re:			container for real values of points in the fractal plane
-	std::vector<double> m_re{ std::vector<double>(size_t(m_height) * size_t(m_width)) };
+	std::vector<double> m_re{};
 
 	// m_im:			container for imaginary values of points in the fractal plane
-	std::vector<double> m_im{ std::vector<double>(size_t(m_height) * size_t(m_width)) };
+	std::vector<double> m_im{};
 };
 
 // *****************************************************************
@@ -61,7 +61,29 @@ extern "C" _declspec(dllexport) void SetDimensions(FractalGenerator* t, int heig
 	t->setDimensions(height, width);
 }
 
-extern "C" _declspec(dllexport) void GetIterations(FractalGenerator* t, int** ppInt, int* pCount)
+extern "C" _declspec(dllexport) int GetIterationsAt(FractalGenerator* t, size_t index)
 {
-	t->getIterations(ppInt, pCount);
+	return t->getIterationsAtIndex(index);
 }
+
+// *****************************************************************
+// DLL Exports Array Wrappers
+// *****************************************************************
+
+// Wrapper class for accessing std::vector<int> m_iterations elements from C#
+/*
+class IntIterationsWrapper
+{
+public:
+	IntIterationsWrapper(FractalGenerator* t) : m_fractalGenerator(t) { }
+	int operator[](size_t index) { return m_fractalGenerator->getIterationsAtIndex(index); }
+	~IntIterationsWrapper() { }
+private:
+	FractalGenerator* m_fractalGenerator;
+};
+
+extern "C" _declspec(dllexport) void* GetIterationsWrapper(FractalGenerator* t)
+{
+	return (void*) new IntIterationsWrapper(t);
+}
+*/

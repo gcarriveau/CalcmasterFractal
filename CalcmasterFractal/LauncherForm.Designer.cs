@@ -32,6 +32,7 @@
             cbFormulas = new ComboBox();
             label5 = new Label();
             btnGo = new Button();
+            btnFractalInterfaceTests = new Button();
             SuspendLayout();
             // 
             // lblError
@@ -69,12 +70,24 @@
             btnGo.TabIndex = 12;
             btnGo.Text = "Go";
             btnGo.UseVisualStyleBackColor = true;
+            btnGo.Click += btnGo_Click;
+            // 
+            // btnFractalInterfaceTests
+            // 
+            btnFractalInterfaceTests.Location = new Point(84, 164);
+            btnFractalInterfaceTests.Name = "btnFractalInterfaceTests";
+            btnFractalInterfaceTests.Size = new Size(274, 23);
+            btnFractalInterfaceTests.TabIndex = 13;
+            btnFractalInterfaceTests.Text = "Open Interface Tests Window";
+            btnFractalInterfaceTests.UseVisualStyleBackColor = true;
+            btnFractalInterfaceTests.Click += btnFractalInterfaceTests_Click;
             // 
             // LauncherForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(584, 270);
+            ClientSize = new Size(447, 270);
+            Controls.Add(btnFractalInterfaceTests);
             Controls.Add(btnGo);
             Controls.Add(label5);
             Controls.Add(cbFormulas);
@@ -92,5 +105,6 @@
         private ComboBox cbFormulas;
         private Label label5;
         private Button btnGo;
+        private Button btnFractalInterfaceTests;
     }
 }

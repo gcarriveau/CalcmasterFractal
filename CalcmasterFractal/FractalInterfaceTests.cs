@@ -16,6 +16,8 @@ namespace CalcmasterFractal
         /// Stores a pointer to the FractalGenerator class defined in libs\CalcmasterFractalDll.dll
         /// </summary>
         IntPtr fracMap = IntPtr.Zero;
+        // Our local copy of the iterations array
+        int[] iterations = new int[(1920 * 1080)];
 
         public FractalInterfaceTests()
         {
@@ -43,6 +45,7 @@ namespace CalcmasterFractal
             // DEBUG: Generate an instance of the FractalGenerator class from the Dll for test purposes
             fracMap = FractalInterface.InstantiateFractalGenerator();
             lbPtrStatus.Text = "fracMap pointer initialized successfully.";
+            Array.Fill<int>(iterations, 0);
         }
 
 
@@ -74,6 +77,25 @@ namespace CalcmasterFractal
         {
             if (isNullptr(fracMap)) return;
             bool res = FractalInterface.DestroyFractalGenerator(fracMap);
+        }
+
+        private void btnArrayTest_Click(object sender, EventArgs e)
+        {
+            for (int i = 0; i < iterations.Length; i++)
+            {
+                iterations[i] = FractalInterface.GetIterationsAt(fracMap, (UInt64)i);
+            }
+            tbArrayTest.Text = $"iterations[0]: {iterations[0]}\r\n";
+            /*
+            iterations = FractalInterface.GetIterations(fracMap);
+            // Native.PassOutArrayDouble(out double[] array, out int count);
+            //FractalInterface.GetIterations(out int[] iterations, out UInt64 count, fracMap);
+            //tbArrayTest.Text = $"count: {count}\n";
+            Span<int> span_start = new Span<int>(iterations).Slice(0,20);
+            Span<int> span_end = new Span<int>(iterations).Slice(2073579, 20);
+            tbArrayTest.Text = string.Join(", ", span_start.ToArray()) + "\n";
+            tbArrayTest.AppendText(string.Join(", ", span_end.ToArray()) + "\n");
+            */
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.Json;
@@ -83,13 +84,7 @@ namespace CalcmasterFractal
         [DllImport(dllName: fracDll, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
         public static extern int Add(IntPtr t, int x, int y);
 
-        /// <summary>
-        /// Gets the iterations vector from an instance of FractalGenerator as an array.
-        /// </summary>
-        /// <param name="t">Pointer to an instance of FractalGenerator</param>
-        /// <param name="array">Array of the number of iterations per pixel</param>
-        /// <param name="count">Number of elements in the array (image height * width)</param>
-        [DllImport(dllName: fracDll, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-        public static extern void CalculateIterations(IntPtr t, [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 1)] out int[] array, out int count);
+        [DllImport(dllName: fracDll, CallingConvention = CallingConvention.Cdecl)]
+        public static extern int GetIterationsAt(IntPtr t, UInt64 index);
     }
 }

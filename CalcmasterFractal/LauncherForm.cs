@@ -64,5 +64,45 @@ namespace CalcmasterFractal
         }
         #endregion Form Control Event Handlers
 
+        // *****************************************************************
+        // FractalDisplayForm open/close
+        // *****************************************************************
+        private FractalDisplayForm? m_FractalDisplayForm = null;
+        private void btnGo_Click(object sender, EventArgs e)
+        {
+            if (m_FractalDisplayForm != null)
+            {
+                m_FractalDisplayForm.Focus();
+                return;
+            }
+            m_FractalDisplayForm = new();
+            m_FractalDisplayForm.Show();
+            m_FractalDisplayForm.FormClosed += m_FractalDisplayForm_FormClosed;
+            // To do: Create FractalStart function in FractalDisplayForm
+        }
+        private void m_FractalDisplayForm_FormClosed(object? sender, FormClosedEventArgs e)
+        {
+            m_FractalDisplayForm = null;
+        }
+
+        // *****************************************************************
+        // FractalInterfaceTests open/close
+        // *****************************************************************
+        private FractalInterfaceTests? m_FractalInterfaceTests = null;
+        private void btnFractalInterfaceTests_Click(object sender, EventArgs e)
+        {
+            if (m_FractalInterfaceTests != null)
+            {
+                m_FractalInterfaceTests.Focus();
+                return;
+            }
+            m_FractalInterfaceTests = new();
+            m_FractalInterfaceTests.Show();
+            m_FractalInterfaceTests.FormClosed += m_FractalInterfaeTests_FormClosed;
+        }
+        private void m_FractalInterfaeTests_FormClosed(object? sender, FormClosedEventArgs e)
+        {
+            m_FractalInterfaceTests = null;
+        }
     }
 }

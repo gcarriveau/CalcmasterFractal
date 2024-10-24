@@ -38,7 +38,8 @@
             tbX = new TextBox();
             label1 = new Label();
             label4 = new Label();
-            button1 = new Button();
+            btnArrayTest = new Button();
+            tbArrayTest = new TextBox();
             SuspendLayout();
             // 
             // lbPtrStatus
@@ -127,21 +128,31 @@
             label4.TabIndex = 18;
             label4.Text = "Tests for CalcmasterFractalDll Interface, FractalInterface.cs";
             // 
-            // button1
+            // btnArrayTest
             // 
-            button1.Location = new Point(368, 44);
-            button1.Name = "button1";
-            button1.Size = new Size(75, 23);
-            button1.TabIndex = 19;
-            button1.Text = "button1";
-            button1.UseVisualStyleBackColor = true;
+            btnArrayTest.Location = new Point(373, 40);
+            btnArrayTest.Name = "btnArrayTest";
+            btnArrayTest.Size = new Size(75, 23);
+            btnArrayTest.TabIndex = 19;
+            btnArrayTest.Text = "Array Test";
+            btnArrayTest.UseVisualStyleBackColor = true;
+            btnArrayTest.Click += btnArrayTest_Click;
+            // 
+            // tbArrayTest
+            // 
+            tbArrayTest.Location = new Point(373, 73);
+            tbArrayTest.Multiline = true;
+            tbArrayTest.Name = "tbArrayTest";
+            tbArrayTest.Size = new Size(357, 129);
+            tbArrayTest.TabIndex = 20;
             // 
             // FractalInterfaceTests
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
-            Controls.Add(button1);
+            Controls.Add(tbArrayTest);
+            Controls.Add(btnArrayTest);
             Controls.Add(label4);
             Controls.Add(lbPtrStatus);
             Controls.Add(btnDestroyMap);
@@ -172,6 +183,7 @@
         private TextBox tbX;
         private Label label1;
         private Label label4;
-        private Button button1;
+        private Button btnArrayTest;
+        private TextBox tbArrayTest;
     }
 }

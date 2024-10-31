@@ -6,15 +6,87 @@
     "centerY": 0.0,
     "radius": 2.0,
     "limit": 2.0,
-    "kernel": "Mandelbrot.cu"
+    "kernel": "algMandelbrot"
   },
   {
     "id": 1,
     "name": "SinPow2",
-    "centerX": -0.0,
+    "centerX": 0.0,
     "centerY": 0.0,
-    "radius":  2.5,
-    "limit":  5.0,
-    "kernel": "SinPow2.cu"
+    "radius": 2.5,
+    "limit": 5.0,
+    "kernel": "algSinPow2"
+  },
+  {
+    "id": 2,
+    "name": "SinPow3",
+    "centerX": 0.0,
+    "centerY": 0.0,
+    "radius": 2.5,
+    "limit": 5.0,
+    "kernel": "algSinPow3"
+  },
+  {
+    "id": 3,
+    "name": "SinPow4",
+    "centerX": 0.0,
+    "centerY": 0.0,
+    "radius": 5.0,
+    "limit": 5.0,
+    "kernel": "algSinPow4"
+  },
+  {
+    "id": 4,
+    "name": "SinPow2Div1",
+    "centerX": 0.0,
+    "centerY": 0.0,
+    "radius": 3.0,
+    "limit": 5.0,
+    "kernel": "algSinPow2Div1"
+  },
+  {
+    "id": 5,
+    "name": "CosPow2",
+    "centerX": 0.0,
+    "centerY": 0.0,
+    "radius": 5.0,
+    "limit": 5.0,
+    "kernel": "algCosPow2"
+  },
+  {
+    "id": 6,
+    "name": "CosPow2MandelbrotHybrid",
+    "centerX": 0.0,
+    "centerY": 0.0,
+    "radius": 5.0,
+    "limit": 5.0,
+    "kernel": "algCosPow2MandelbrotHybrid"
+  },
+  {
+    "id": 7,
+    "name": "CosPow2AbsRIMandelbrotHybrid",
+    "centerX": 0.0,
+    "centerY": 0.0,
+    "radius": 5.0,
+    "limit": 5.0,
+    "kernel": "algCosPow2AbsRIMandelbrotHybrid"
+  },
+  {
+    "id": 8,
+    "name": "CosPow2AbsRI",
+    "centerX": 0.0,
+    "centerY": 0.0,
+    "radius": 5.0,
+    "limit": 5.0,
+    "kernel": "algCosPow2AbsRI"
+  },
+  {
+    "id": 9,
+    "name": "Experiment1",
+    "centerX": -0.5,
+    "centerY": 0.0,
+    "radius": 2.0,
+    "limit": 3.0,
+    "kernel": "algExperiment1"
   }
 ]

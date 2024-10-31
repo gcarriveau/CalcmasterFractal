@@ -14,7 +14,6 @@ namespace CalcmasterFractal
     /// </summary>
     internal class FractalInterface
     {
-
         // *****************************************************************
         // Utility Functions
         // *****************************************************************
@@ -73,6 +72,34 @@ namespace CalcmasterFractal
         // *****************************************************************
         // FractalGenerator Instance API
         // *****************************************************************
+        [DllImport(dllName: fracDll, CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetDimensions(IntPtr generator, int height, int width);
+
+        [DllImport(dllName: fracDll, CallingConvention = CallingConvention.Cdecl)]
+        public static extern int GetLastErrorCode(IntPtr generator);
+
+        [DllImport(dllName: fracDll, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+        public static extern void SelectFractalFormula(IntPtr generator, int fractalFormulaID);
+
+
+        [DllImport(dllName: fracDll, CallingConvention = CallingConvention.Cdecl)]
+        public static extern int GetIterationsAt(IntPtr generator, UInt64 index);
+
+
+        [DllImport(dllName: fracDll, CallingConvention = CallingConvention.Cdecl)]
+        public static extern int CalculateMap(IntPtr generator);
+
+
+        [DllImport(dllName: fracDll, CallingConvention = CallingConvention.Cdecl)]
+        public static extern int ZoomInAtPoint(IntPtr generator, int col, int row);
+
+
+        [DllImport(dllName: fracDll, CallingConvention = CallingConvention.Cdecl)]
+        public static extern double GetRealAt(IntPtr generator, UInt64 x);
+
+        
+        [DllImport(dllName: fracDll, CallingConvention = CallingConvention.Cdecl)]
+        public static extern double GetImaginaryAt(IntPtr generator, UInt64 index);
 
         /// <summary>
         /// Test function that adds two integers and returns an int result
@@ -82,9 +109,6 @@ namespace CalcmasterFractal
         /// <param name="y">second integer value</param>
         /// <returns></returns>
         [DllImport(dllName: fracDll, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
-        public static extern int Add(IntPtr t, int x, int y);
-
-        [DllImport(dllName: fracDll, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int GetIterationsAt(IntPtr t, UInt64 index);
+        public static extern int Add(IntPtr generator, int x, int y);
     }
 }

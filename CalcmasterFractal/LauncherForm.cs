@@ -70,6 +70,9 @@ namespace CalcmasterFractal
         private FractalDisplayForm? m_FractalDisplayForm = null;
         private void btnGo_Click(object sender, EventArgs e)
         {
+            FractalFormula? ff = (FractalFormula)cbFormulas.SelectedValue;
+            if (ff == null) return;
+
             if (m_FractalDisplayForm != null)
             {
                 m_FractalDisplayForm.Focus();
@@ -77,11 +80,14 @@ namespace CalcmasterFractal
             }
             m_FractalDisplayForm = new();
             m_FractalDisplayForm.Show();
+            // Send the selected fractal formula to the FractalDisplayForm
+            m_FractalDisplayForm.FractalStart(ff.id, this);
             m_FractalDisplayForm.FormClosed += m_FractalDisplayForm_FormClosed;
             // To do: Create FractalStart function in FractalDisplayForm
         }
         private void m_FractalDisplayForm_FormClosed(object? sender, FormClosedEventArgs e)
         {
+            // Get rid of the reference so we can open a new FractalDisplayForm
             m_FractalDisplayForm = null;
         }
 

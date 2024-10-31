@@ -10,5 +10,16 @@
 // add headers that you want to pre-compile here
 #include "framework.h"
 #include <vector>
+#include <comutil.h>
+#include <string>
+#include <string_view>
+#include <fstream>
+#include <sstream>
+
+
+// Header-only json serializer/deserializer DOM
+// Docs: https://json.nlohmann.me/integration/
+// An alternative header-only, but much older: https://rapidjson.org/md_doc_tutorial.html
+#include "nlohmann/json.hpp"
 
 #endif //PCH_H

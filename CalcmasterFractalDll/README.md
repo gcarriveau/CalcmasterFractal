@@ -11,7 +11,7 @@ Check out some of my fractal animation videos on YouTube: [@fractalsnakes840](ht
 
 *Hmmm... fractals, and the need for speed...*
 
-It's a Visual Studio 2022 C++ project that creates a dynamic link library file, *CalcmasterFractalDll.dll*, that is used to accelerate the computation of iterations for the pixels of a fractal or its julia sets using NVIDIA Compute level 7.5 (Turing architecture, e.g. GeForce GTX 1650) or higher, video card GPUs.  The DLL compiles NVIDIA CUDA fractal algorithm kernel *(.cu)* files at runtime.
+It's a Visual Studio 2022 C++ project that creates a dynamic link library file, *CalcmasterFractalDll.dll*, that is used to accelerate the computation of iterations for the pixels of a fractal or its julia sets using NVIDIA Compute level 7.5 (Turing architecture, e.g. GeForce GTX 1650) or higher, video card GPUs.
 
 The C# CalcmasterFractal project uses this DLL to produce a series of julia *(or modified julia)* set bitmap image files that can be put together to form an animated video using, for example, [ffmpeg](https://ffmpeg.org/).
 

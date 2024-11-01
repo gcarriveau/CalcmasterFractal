@@ -270,8 +270,8 @@ int TheCalcmaster(double* host_re, double* host_im, int* host_its, double limit,
     int threadsPerBlock{ 512 };
     int blocksPerGrid = (static_cast<int>(numElements) + threadsPerBlock - 1) / threadsPerBlock;
     // Global vars
-    //setTheDeviceGlobals<<<1,1>>>(double juliaCenterX, double juliaCenterY, int maxIts, double limit, int N)
-    setTheDeviceGlobals<<<1, 1>>>(juliaCenterX, juliaCenterY, maxIts, limit, 0, static_cast<int>(numElements));
+    //setTheDeviceGlobals(double juliaCenterX, double juliaCenterY, int maxIts, double limit, int fractalFormulaID, int N)
+    setTheDeviceGlobals<<<1, 1>>>(juliaCenterX, juliaCenterY, maxIts, limit, fractalID, static_cast<int>(numElements));
     //RUN THE KERNEL (const double* __restrict__ realCoords, const double* __restrict__ imagCoords, int* __restrict__ iterations)
     switch (mode)
     {

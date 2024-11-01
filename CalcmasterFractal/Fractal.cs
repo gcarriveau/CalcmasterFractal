@@ -3,10 +3,14 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.DirectoryServices;
+using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace CalcmasterFractal
 {
@@ -33,6 +37,7 @@ namespace CalcmasterFractal
             // color stuff
             m_palette = ColorPalette.Random;
             UpdateRandomColorList();
+            ResetStartEndColors();
         }
 
         // Implement IDisposable.
@@ -175,6 +180,12 @@ namespace CalcmasterFractal
             FractalInterface.SelectFractalFormula(m_ptrFractalGenerator, fractalFormulaID);
         }
 
+        public void SetMode(int mode, int mouseX, int mouseY)
+        {
+            FractalInterface.SetMode(m_ptrFractalGenerator, mode, mouseX, mouseY);
+
+        }
+
         /// <summary>
         /// Calculates the iterations for the main fractal
         /// </summary>
@@ -244,11 +255,11 @@ namespace CalcmasterFractal
         private int m_height = 1080;
 
         /// <summary>
-        /// Not used yet... we could control the m_maxIts in the CUDA from here
-        /// by passing it to CalculateMap().  At the moment, the DLL has
-        /// max iteration limit = 255.
+        /// To do:
+        /// m_maxIts is essential for selecting BLACK as the pixel color when maxIts is reached.
+        /// it needs to correspond with the DLL's m_maxIts
         /// </summary>
-        private int m_maxIts = 255;
+        private int m_maxIts = 1000;
 
         // Our local copy of the iterations array
         private int[] m_iterations;
@@ -264,33 +275,74 @@ namespace CalcmasterFractal
         private Int32 m_maxRandomColors = 1024;
         // holds a smoothly distributed list of colors for the bitmap image generator
         private List<Color> m_randomColors { get; set; } = new List<Color>(5000); // Holds a randomly generated list of colors which grows according to increases in _maxIts (See UpdateRandomColorList())
+        private Color[] m_arrColors = new Color[1];
 
+        private Color m_startColor;
+        private Color m_endColor;
+        private void ResetStartEndColors()
+        {
+            DateTime now = DateTime.Now;
+            Random r = new Random(now.Second + now.Minute + now.Hour);
+            SuperColor sc = new SuperColor();
+            sc.V = 0.9d;
+            sc.S = 1.0d;
+            sc.H = (double)r.Next(0, 359);
+            m_startColor = sc.Color;
+            sc.H = sc.H + 180;
+            m_endColor = sc.Color;
+            /*
+            double radius = 80.0;
+            // R G B are at 120 degree angles from one another.
+            // R at 0 = 127 + radius; at 180 = 127 - radius.. R = 127 + sin(angle) * radius
+            // G at angle + 2PI/3
+            // B at angle - 2PI/3
+            // Pick a color that is k distance away from the center of the color wheel
+            double rAngle = r.NextDouble() * 2.0 * Math.PI;
+            double gAngle = rAngle + 2.0 * Math.PI / 3.0;
+            double bAngle = rAngle - 2.0 * Math.PI / 3.0;
+            int nextR = 127 + (Int32)(Math.Sin(rAngle) * radius);
+            int nextG = 127 + (Int32)(Math.Sin(gAngle) * radius);
+            int nextB = 127 + (Int32)(Math.Sin(bAngle) * radius);
+            m_startColor = Color.FromArgb(nextR, nextG, nextB);
+            m_endColor = Color.FromArgb(255 - nextR, 255 - nextG, 255 - nextB);
+            */
+        }
 
         /// <summary>
-        /// Updates the local iterations[] array with the values of the FractalGenerator's m_iterations vector one element
-        /// at a time.  Need to investigate whether there is a way to more efficiently Marshal copy the vector's underlying data()
-        /// array to the local iterations[] array of the same size.
-        /// Maybe we can return a copy of the m_iterations vector's data() array by value and use some sort of Marshal memcopy method?
-        /// Look into Marshal's memory allocation functions.
+        /// Updates the local m_iterations[] array with the values of the FractalGenerator's m_iterations vector.
         /// </summary>
         private void UpdateIterations()
         {
-            for (int i = 0; i < m_iterations.Length; i++)
-            {
-                m_iterations[i] = FractalInterface.GetIterationsAt(m_ptrFractalGenerator, (UInt64)i);
-            }
+            IntPtr ptr = FractalInterface.GetIterations(m_ptrFractalGenerator);
+            Marshal.Copy(ptr, m_iterations, 0, m_height * m_width);
+            // Reset m_maxIts to the max number of iterations found in m_iterations
+            // This makes sure that pixels with the highest number of iterations are black
+            // and gives us pretty fine lines and borders at those points.
+            m_maxIts = 0;
+            foreach(int numIts in m_iterations)
+                if (m_maxIts < numIts) m_maxIts = numIts;
+            UpdateRandomColors();
+            //if (m_maxIts > m_maxRandomColors)
+            //{
+            //    m_maxRandomColors = m_maxIts;
+            //    UpdateRandomColorList();
+            //}
         }
 
+        /// <summary>
+        /// Updates the local m_re and m_im real and imaginary fractal plane coordinate
+        /// arrays with the values of the FractalGenerator's m_re and m_im vectors.
+        /// </summary>
         private void UpdatePoints()
         {
-            for (int i = 0; i < m_iterations.Length; i++)
-            {
-                m_re[i] = FractalInterface.GetRealAt(m_ptrFractalGenerator, (UInt64)i);
-                m_im[i] = FractalInterface.GetImaginaryAt(m_ptrFractalGenerator, (UInt64)i);
-            }
+            IntPtr ptr = FractalInterface.GetReals(m_ptrFractalGenerator);
+            Marshal.Copy(ptr, m_re, 0, m_height * m_width);
+            ptr = FractalInterface.GetImaginaries(m_ptrFractalGenerator);
+            Marshal.Copy(ptr, m_im, 0, m_height * m_width);
         }
 
-        // Tinted Complimentary Grays (earthy)
+
+        // Tinted Complimentary Colors (earthy)
         private void UpdateRandomColorList(bool clear = false)
         {
             List<Color> newColors;
@@ -305,7 +357,8 @@ namespace CalcmasterFractal
             Color targetColor, targetComplement, tetradColor, tetradComplement;
             if (newColors.Count < numColors)
             {
-                Random r = new Random();
+                DateTime now = DateTime.Now;
+                Random r = new Random(now.Second + now.Minute + now.Hour);
                 Int32 nextR, nextG, nextB;
 
                 if (newColors.Count == 0)
@@ -411,17 +464,108 @@ namespace CalcmasterFractal
             m_randomColors = newColors;
         }
 
+        private void UpdateRandomColors()
+        {
+            if (m_arrColors.Length == m_maxIts) return;
+            SuperColor sc = new SuperColor(m_startColor);
+            m_arrColors = new Color[m_maxIts];
+            int halfCycle = 50;
+            double incSat = sc.S / (double)halfCycle;
+            double incVal = sc.V / (double)halfCycle;
+            int it = 0;
+            while (it < m_maxIts)
+            {
+                int cycle = 0;
+                while (cycle < halfCycle && it < m_maxIts)
+                {
+                    sc.S -= incSat;
+                    sc.V -= incVal;
+                    m_arrColors[it] = sc.Color;
+                    cycle++;
+                    it++;
+                }
+                cycle = 0;
+                sc.H += 180;
+                while (cycle < halfCycle && it < m_maxIts)
+                {
+                    sc.S += incSat;
+                    sc.V += incVal;
+                    m_arrColors[it] = sc.Color;
+                    cycle++;
+                    it++;
+                }
+                cycle = 0;
+                while (cycle < halfCycle && it < m_maxIts)
+                {
+                    sc.S -= incSat;
+                    sc.V -= incVal;
+                    m_arrColors[it] = sc.Color;
+                    cycle++;
+                    it++;
+                }
+                cycle = 0;
+                sc.H += 180;
+                while (cycle < halfCycle && it < m_maxIts)
+                {
+                    sc.S += incSat;
+                    sc.V += incVal;
+                    m_arrColors[it] = sc.Color;
+                    cycle++;
+                    it++;
+                }
+            }
+
+            /*
+            for (int numIts = 0; numIts < m_maxIts; numIts++)
+            {
+                sc.S -= incSat;
+                m_arrColors[numIts] = sc.Color;
+                //sc.H = sc.H + numIts;
+                //double percent = (double)numIts / (double)m_maxIts;
+                //int r = (int)((double)m_startColor.R + ((double)(m_endColor.R - m_startColor.R) * percent));
+                //int g = (int)((double)m_startColor.G + ((double)(m_endColor.G - m_startColor.G) * percent));
+                //int b = (int)((double)m_startColor.B + ((double)(m_endColor.B - m_startColor.B) * percent));
+                //m_arrColors[numIts] = Color.FromArgb(r, g, b);
+                ////int level = 255 - (int)(255.0 * Math.Sin(Math.PI * percent));
+                //int levelR = (int)(r * (1 + Math.Cos(2 * Math.PI * percent)) / 2);
+                //int levelG = (int)(g * (1 + Math.Cos(2 * Math.PI * percent)) / 2);
+                //int levelB = (int)(g * (1 + Math.Cos(2 * Math.PI * percent)) / 2);
+                //m_arrColors[numIts] = Color.FromArgb(levelR, levelG, levelB);
+            }
+            */
+
+        }
+
         public Color GetColor(Int32 numIts)
         {
+            if (numIts < 2 || numIts >= m_maxIts) return Color.Black;
+            return m_arrColors[numIts];
+            /*
+            if (numIts == 0 || numIts >= m_maxIts) return Color.Black;
+            double percent = 1 - Math.Pow((double)numIts / (double)m_maxIts, 2);
+            double brightnessPercent = 2 * Math.Abs(percent - 0.5);
+            return Color.FromArgb(
+                (int)(brightnessPercent * ((double)m_startColor.R + ((double)(m_endColor.R - m_startColor.R) * percent))), // Red
+                (int)(brightnessPercent * ((double)m_startColor.B + ((double)(m_endColor.B - m_startColor.B) * percent))), // Blue
+                (int)(brightnessPercent * ((double)m_startColor.G + ((double)(m_endColor.G - m_startColor.G) * percent)))  // Green
+            );
+            */
+        }
+        public Color GetColor_backup(Int32 numIts)
+        {
             if (numIts >= m_maxIts) return Color.Black;
-            if (numIts < 0) numIts *= -1;
+            int colorIndex = numIts * m_maxRandomColors / m_maxIts;
+            //if (numIts < 0) numIts *= -1;
             /*
             // Set first few its to black
             if (!julia && numIts < 8) return Color.Black;
             if (julia && numIts < 4) return Color.Black;
             */
             // Random
-            if (m_palette == ColorPalette.Random) return m_randomColors[numIts % m_maxRandomColors];
+            return m_randomColors[numIts];
+            /*
+            //if (m_palette == ColorPalette.Random) return m_randomColors[numIts % m_maxRandomColors];
+            //if (m_palette == ColorPalette.Random) return m_randomColors[colorIndex];
             // Monochrome
             if (m_palette == ColorPalette.Monochrome) return numIts % 2 == 0 ? Color.Black : Color.White;
 
@@ -474,6 +618,7 @@ namespace CalcmasterFractal
                 //return Color.FromArgb(255, 255 - b, 255 - b, 0); // yellows
                 //return Color.FromArgb(255, 255-b, b, b);
             }
+            */
         }
 
         // Creates a new bitmap calculating pixel colors based on current palette and contents of the _iterations array.

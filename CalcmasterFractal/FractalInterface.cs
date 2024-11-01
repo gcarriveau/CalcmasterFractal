@@ -75,8 +75,14 @@ namespace CalcmasterFractal
         [DllImport(dllName: fracDll, CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetDimensions(IntPtr generator, int height, int width);
 
+
+        [DllImport(dllName: fracDll, CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetMode(IntPtr generator, int mode, int mouseX, int mouseY);
+
+
         [DllImport(dllName: fracDll, CallingConvention = CallingConvention.Cdecl)]
         public static extern int GetLastErrorCode(IntPtr generator);
+
 
         [DllImport(dllName: fracDll, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
         public static extern void SelectFractalFormula(IntPtr generator, int fractalFormulaID);
@@ -84,6 +90,10 @@ namespace CalcmasterFractal
 
         [DllImport(dllName: fracDll, CallingConvention = CallingConvention.Cdecl)]
         public static extern int GetIterationsAt(IntPtr generator, UInt64 index);
+
+        
+        [DllImport(dllName: fracDll, CallingConvention = CallingConvention.Cdecl)]
+        public static extern IntPtr GetIterations(IntPtr generator);
 
 
         [DllImport(dllName: fracDll, CallingConvention = CallingConvention.Cdecl)]
@@ -97,9 +107,18 @@ namespace CalcmasterFractal
         [DllImport(dllName: fracDll, CallingConvention = CallingConvention.Cdecl)]
         public static extern double GetRealAt(IntPtr generator, UInt64 x);
 
-        
+
+        [DllImport(dllName: fracDll, CallingConvention = CallingConvention.Cdecl)]
+        public static extern IntPtr GetReals(IntPtr generator);
+
+
         [DllImport(dllName: fracDll, CallingConvention = CallingConvention.Cdecl)]
         public static extern double GetImaginaryAt(IntPtr generator, UInt64 index);
+
+
+        [DllImport(dllName: fracDll, CallingConvention = CallingConvention.Cdecl)]
+        public static extern IntPtr GetImaginaries(IntPtr generator);
+
 
         /// <summary>
         /// Test function that adds two integers and returns an int result
@@ -108,7 +127,8 @@ namespace CalcmasterFractal
         /// <param name="x">first integer value</param>
         /// <param name="y">second integer value</param>
         /// <returns></returns>
-        [DllImport(dllName: fracDll, CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+        [DllImport(dllName: fracDll, CallingConvention = CallingConvention.Cdecl)]
         public static extern int Add(IntPtr generator, int x, int y);
+
     }
 }

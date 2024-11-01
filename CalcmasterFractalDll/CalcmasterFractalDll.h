@@ -56,13 +56,23 @@ public:
 	// Note: For the index parameter, the size_t (unsigned long long) data type in C# is UInt64.
 	int getIterationsAtIndex(size_t index);
 
+	// Returns the address of the iterations int array data, m_iterations.data()
+	int* getIterations();
+
 	// Updates m_re and m_im based on current fractal viewbox center and radius, and image height and width
 	void generatePoints();
 
 	// returns value of real coordinate at position x of m_re
 	double getRealAt(size_t x);
+
+	// returns the address of the fractal plane's real coordinates double array data, m_re.data()
+	double* getReals();
+
 	// returns value of imaginary coordinate at position x of m_im
 	double getImaginaryAt(size_t y);
+
+	// returns the address of the fractal plane's imaginary coordinates double array data, m_im.data()
+	double* getImaginaries();
 
 	// Calculates m_iterations vector values for the a selected main fractal type
 	int calculateMap();
@@ -75,7 +85,7 @@ public:
 
 	// Switch between the "Map" of all julia sets and a Julia mode
 	// mode 0 Map, 1 Julia, 2 TheCalcmasterTwist, 3 AirOnAJuliaString (reserved)
-	void setMode(int mode, double juliaCenterX = 0.0, double juliaCenterY = 0.0);
+	void setMode(int mode, int mouseClickX, int mouseClickY);
 
 	// fractals.json item structure
 	struct fracparams
@@ -89,13 +99,30 @@ public:
 		std::string kernel;
 	};
 
+	// used to save/retrieve the main (map) fractal params when switching
+	// back and forth between mode 0 and a julia set mode.
+	struct mapBackup
+	{
+		int maxIts;
+		double centerX;
+		double centerY;
+		double radius;
+		double inc;
+		double top;
+		double left;
+	};
+
 private:
 	// ***************************************************************
 	// Private variables
 	// ***************************************************************
 
+	// m_backup: stores a backup of the main fractal's parameters
+	// when switching from m_mode == 0 to m_mode != 0
+	mapBackup m_mapBackup{}; // initialize with defaults
+
 	// m_maxIts
-	int m_maxIts{ 600 };
+	int m_maxIts{ 1000 };
 
 	// m_mode 0 Map, 1 Julia, 2 TheCalcmasterTwist, 3 AirOnAJuliaString (reserved)
 	int m_mode{ 0 };
@@ -128,6 +155,8 @@ private:
 
 	// total elements in the points and iterations vectors
 	size_t m_vector_length{ 1080 * 1920 };
+
+
 
 	// m_iterations:	container for contiguous rows of iterations per pixel
 	std::vector<int> m_iterations{};
@@ -195,9 +224,19 @@ extern "C" _declspec(dllexport) void SetDimensions(FractalGenerator* t, int heig
 	t->setDimensions(height, width);
 }
 
+extern "C" _declspec(dllexport) void SetMode(FractalGenerator* t, int mode, int mouseClickX = 0, int mouseClickY = 0)
+{
+	t->setMode(mode, mouseClickX, mouseClickY);
+}
+
 extern "C" _declspec(dllexport) int GetIterationsAt(FractalGenerator* t, size_t index)
 {
 	return t->getIterationsAtIndex(index);
+}
+
+extern "C" _declspec(dllexport) int* GetIterations(FractalGenerator* t)
+{
+	return t->getIterations();
 }
 
 extern "C" _declspec(dllexport) int CalculateMap(FractalGenerator* t)
@@ -215,7 +254,17 @@ extern "C" _declspec(dllexport) double GetRealAt(FractalGenerator* t, size_t x)
 	return t->getRealAt(x);
 }
 
+extern "C" _declspec(dllexport) double* GetReals(FractalGenerator* t)
+{
+	return t->getReals();
+}
+
 extern "C" _declspec(dllexport) double GetImaginaryAt(FractalGenerator* t, size_t y)
 {
 	return t->getImaginaryAt(y);
+}
+
+extern "C" _declspec(dllexport) double* GetImaginaries(FractalGenerator* t)
+{
+	return t->getImaginaries();
 }

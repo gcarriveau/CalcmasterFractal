@@ -6,9 +6,11 @@
 
 CalcmasterFractal is a CUDA GPU-accelerated fractal and julia set generator.
 
+The IDE used to create the project is Visual Studio Community 2022.
+
 The Windows user interface project, located in the the CalcmasterFractal folder, is written in C# using .NET 8 LTS.
 
-The other project in the CalcmasterFractalDll folder is the engine which calculates the iterations array.  It's written in C++20 and requires installation of CUDA Toolkit 12.6.  It compiles to a dll file which is loaded by the C# Windows UI at runtime.
+The other project in the CalcmasterFractalDll folder is the engine which calculates the iterations array.  It's written in C++20 and requires installation of CUDA Toolkit 12.6.  It compiles (using nvcc) to a dll file which is loaded by the C# Windows UI at runtime.  New fractal formulas can be added easily by creating a new __device__ frmXxxx function in TheCalcmaster.cu and adding the parameters for the formula to the fractals.json file.
 
 My original project which was used to generate a bitmap file series was written completely in C# and parallel processing was performed using CPU cores.
 

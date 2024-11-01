@@ -18,6 +18,8 @@ namespace CalcmasterFractal
         private Fractal currentFractal;
         private Bitmap? background = null;
         private LauncherForm? parent;
+        //
+        private int mode;
         Rectangle bounds;
 
         public FractalDisplayForm()

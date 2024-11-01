@@ -84,6 +84,12 @@ int FractalGenerator::getIterationsAtIndex(size_t index)
     return m_iterations.at(index);
 }
 
+int* FractalGenerator::getIterations()
+{
+    return m_iterations.data();
+}
+
+
 void FractalGenerator::selectFractalFormula(int fractalFormulaID)
 {
     fracparams fp = getFracParams(fractalFormulaID);
@@ -102,16 +108,25 @@ double FractalGenerator::getRealAt(size_t x)
     return m_re.at(x);
 }
 
+double* FractalGenerator::getReals()
+{
+    return m_re.data();
+}
+
 double FractalGenerator::getImaginaryAt(size_t x)
 {
     return m_re.at(x);
 }
 
+double* FractalGenerator::getImaginaries()
+{
+    return m_im.data();
+}
+
 int FractalGenerator::calculateMap()
 {
-    //Mandelbrot(double* host_re, double* host_im, int* host_its, double limit, int fractalID, size_t numElements)
-    //m_lastError = MapCalc(m_re.data(), m_im.data(), m_iterations.data(), m_limit, m_maxIts, m_id, m_vector_length);
-    m_lastError = TheCalcmaster(m_re.data(), m_im.data(), m_iterations.data(), m_limit, m_maxIts, m_id, m_vector_length);
+    // TheCalcmaster(double* host_re, double* host_im, int* host_its, double limit, int maxIts, int fractalID, size_t numElements, int mode = 0, double juliaCenterX = 0.0, double juliaCenterY = 0.0)
+    m_lastError = TheCalcmaster(m_re.data(), m_im.data(), m_iterations.data(), m_limit, m_maxIts, m_id, m_vector_length, m_mode, m_juliaCenterX, m_juliaCenterY);
     return m_lastError;
 }
 
@@ -127,11 +142,51 @@ int FractalGenerator::zoomInAtPoint(int col, int row)
     return m_lastError;
 }
 
-void FractalGenerator::setMode(int mode, double juliaCenterX = 0.0, double juliaCenterY = 0.0)
+void FractalGenerator::setMode(int mode, int mouseClickX, int mouseClickY)
 {
+    // if mode hasn't changed, don't do anything.
+    if (mode == m_mode) return;
+
+    if (m_mode == 0)
+    {
+        // switching from main fractal to a julia flavor mode
+        // make a backup of the main fractal state
+        m_mapBackup.centerX = m_centerX;
+        m_mapBackup.centerY = m_centerY;
+        m_mapBackup.inc = m_inc;
+        m_mapBackup.left = m_left;
+        m_mapBackup.top = m_top;
+        m_mapBackup.maxIts = m_maxIts;
+        m_mapBackup.radius = m_radius;
+
+        // set the julia set center according to the pixel that was clicked upon
+        m_juliaCenterX = m_left + m_inc * mouseClickX;
+        m_juliaCenterY = m_top - m_inc * mouseClickY;
+
+        // initialize the julia mode parameters, including coordinate arrays
+        selectFractalFormula(m_id);
+    }
+    else
+    {
+        // switching from julia flavor mode back to main fractal
+        // restore the main fractal state from the backup
+        m_centerX = m_mapBackup.centerX;
+        m_centerY = m_mapBackup.centerY;
+        m_inc = m_mapBackup.inc;
+        m_left = m_mapBackup.left;
+        m_top = m_mapBackup.top;
+        m_maxIts = m_mapBackup.maxIts;
+        m_radius = m_mapBackup.radius;
+
+        // set the julia set center back to zeros
+        m_juliaCenterX = 0.0;
+        m_juliaCenterY = 0.0;
+
+        // reset the points
+        generatePoints();
+    }
+    // update the mode
     m_mode = mode;
-    m_juliaCenterX = juliaCenterX;
-    m_juliaCenterY = juliaCenterY;
 }
 
 // ***************************************************************

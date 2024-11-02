@@ -95,7 +95,8 @@ void FractalGenerator::selectFractalFormula(int fractalFormulaID)
     fracparams fp = getFracParams(fractalFormulaID);
     m_id = fp.id;
     m_name = fp.name;
-    m_centerX = fp.centerX;
+    m_centerX = m_mode == 0 ? fp.centerX : 0.0;
+    m_centerY = m_mode == 0 ? fp.centerY : 0.0;
     m_radius = fp.radius;
     m_limit = fp.limit;
     m_kernel = fp.kernel;
@@ -142,6 +143,43 @@ int FractalGenerator::zoomInAtPoint(int col, int row)
     return m_lastError;
 }
 
+int FractalGenerator::zoomOut()
+{
+    if (m_lastError) return m_lastError;
+    m_radius *= 1.5;
+    // update the points
+    generatePoints();
+    return m_lastError;
+}
+
+int FractalGenerator::move(int d)
+{
+    if (m_lastError) return m_lastError;
+    double p2move = m_inc * 10.0;
+    switch (d)
+    {
+    case Direction::UP:
+        m_centerY += p2move;
+        generatePoints();
+        return m_lastError;
+    case Direction::DOWN:
+        m_centerY -= p2move;
+        generatePoints();
+        return m_lastError;
+    case Direction::LEFT:
+        m_centerX -= p2move;
+        generatePoints();
+        return m_lastError;
+    case Direction::RIGHT:
+        m_centerX += p2move;
+        generatePoints();
+        return m_lastError;
+    default:
+        m_lastError = 9;
+        return 9;
+    }
+}
+
 void FractalGenerator::setMode(int mode, int mouseClickX, int mouseClickY)
 {
     // if mode hasn't changed, don't do anything.
@@ -163,7 +201,9 @@ void FractalGenerator::setMode(int mode, int mouseClickX, int mouseClickY)
         m_juliaCenterX = m_left + m_inc * mouseClickX;
         m_juliaCenterY = m_top - m_inc * mouseClickY;
 
-        // initialize the julia mode parameters, including coordinate arrays
+        // Update the mode and initialize the julia mode parameters, including coordinate arrays
+        // Center of the viewport (m_centerX,m_centerY) is set to (0.0,0.0)
+        m_mode = mode;
         selectFractalFormula(m_id);
     }
     else
@@ -182,11 +222,11 @@ void FractalGenerator::setMode(int mode, int mouseClickX, int mouseClickY)
         m_juliaCenterX = 0.0;
         m_juliaCenterY = 0.0;
 
-        // reset the points
+        // update the mode and reset the points
+        m_mode = mode;
         generatePoints();
     }
     // update the mode
-    m_mode = mode;
 }
 
 // ***************************************************************

@@ -48,6 +48,9 @@ namespace CalcmasterFractal
             return [new() { id = -1, name = "Error" }];
         }
 
+        // Valid values for the Move method
+        public enum Direction { UP, DOWN, LEFT, RIGHT }
+
         private const string fracDll = @"lib\CalcmasterFractalDll.dll";
 
         // *****************************************************************
@@ -102,6 +105,14 @@ namespace CalcmasterFractal
 
         [DllImport(dllName: fracDll, CallingConvention = CallingConvention.Cdecl)]
         public static extern int ZoomInAtPoint(IntPtr generator, int col, int row);
+
+
+        [DllImport(dllName: fracDll, CallingConvention = CallingConvention.Cdecl)]
+        public static extern int ZoomOut(IntPtr generator);
+
+        
+        [DllImport(dllName: fracDll, CallingConvention = CallingConvention.Cdecl)]
+        public static extern int Move(IntPtr generator, int direction);
 
 
         [DllImport(dllName: fracDll, CallingConvention = CallingConvention.Cdecl)]

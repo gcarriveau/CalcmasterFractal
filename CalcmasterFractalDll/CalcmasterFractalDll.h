@@ -45,6 +45,8 @@ public:
 	// Test function - Adds two integers and returns the result.
 	int add(int x, int y);
 
+	// Direction parameter for the Move(int direction) method
+	enum Direction { UP, DOWN, LEFT, RIGHT };
 
 	void selectFractalFormula(int fractalFormulaID);
 
@@ -82,6 +84,10 @@ public:
 	// Recalculates m_inc, m_top, m_left
 	// Recalculates the fractal plane points
 	int zoomInAtPoint(int col, int row);
+
+	int zoomOut();
+
+	int move(int direction);
 
 	// Switch between the "Map" of all julia sets and a Julia mode
 	// mode 0 Map, 1 Julia, 2 TheCalcmasterTwist, 3 AirOnAJuliaString (reserved)
@@ -247,6 +253,16 @@ extern "C" _declspec(dllexport) int CalculateMap(FractalGenerator* t)
 extern "C" _declspec(dllexport) int ZoomInAtPoint(FractalGenerator* t, int col, int row)
 {
 	return t->zoomInAtPoint(col, row);
+}
+
+extern "C" _declspec(dllexport) int ZoomOut(FractalGenerator* t)
+{
+	return t->zoomOut();
+}
+
+extern "C" _declspec(dllexport) int Move(FractalGenerator* t, int direction)
+{
+	return t->move(direction);
 }
 
 extern "C" _declspec(dllexport) double GetRealAt(FractalGenerator* t, size_t x)

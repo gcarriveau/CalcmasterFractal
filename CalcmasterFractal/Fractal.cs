@@ -35,9 +35,10 @@ namespace CalcmasterFractal
             m_re = new double[(m_height * m_width)];
             m_im = new double[(m_height * m_width)];
             // color stuff
-            m_palette = ColorPalette.Random;
-            UpdateRandomColorList();
+            m_palette = ColorPalette.RandomTriad;
+            //UpdateRandomColorList();
             ResetStartEndColors();
+            UpdateRandomColors();
         }
 
         // Implement IDisposable.
@@ -83,7 +84,9 @@ namespace CalcmasterFractal
 
         public enum ColorPalette
         {
-            Random,
+            RandomCompliment,
+            RandomTriad,
+            RandomTetrad,
             Random2,
             Random3,
             Monochrome,
@@ -202,7 +205,7 @@ namespace CalcmasterFractal
         }
 
         /// <summary>
-        /// Zoom in 2x with new center where the mouse was clicked.
+        /// Zoom in 1.5x with new center where the mouse was clicked.
         /// </summary>
         /// <param name="x">column</param>
         /// <param name="y"></param>
@@ -210,6 +213,24 @@ namespace CalcmasterFractal
         public int ZoomInAtPoint(int col, int row)
         {
             int err = FractalInterface.ZoomInAtPoint(m_ptrFractalGenerator, col, row);
+            if (err == 0) return CalculateMap();
+            return err;
+        }
+
+        /// <summary>
+        /// Zoom out 1.5x keeping same center
+        /// </summary>
+        /// <returns></returns>
+        public int ZoomOut()
+        {
+            int err = FractalInterface.ZoomOut(m_ptrFractalGenerator);
+            if (err == 0) return CalculateMap();
+            return err;
+        }
+
+        public int Move(FractalInterface.Direction d)
+        {
+            int err = FractalInterface.Move(m_ptrFractalGenerator, ((int)d));
             if (err == 0) return CalculateMap();
             return err;
         }
@@ -279,10 +300,10 @@ namespace CalcmasterFractal
 
         private Color m_startColor;
         private Color m_endColor;
-        private void ResetStartEndColors()
+        public void ResetStartEndColors()
         {
             DateTime now = DateTime.Now;
-            Random r = new Random(now.Second + now.Minute + now.Hour);
+            Random r = new Random(now.Millisecond + now.Second + now.Minute + now.Hour);
             SuperColor sc = new SuperColor();
             sc.V = 0.9d;
             sc.S = 1.0d;
@@ -321,7 +342,7 @@ namespace CalcmasterFractal
             m_maxIts = 0;
             foreach(int numIts in m_iterations)
                 if (m_maxIts < numIts) m_maxIts = numIts;
-            UpdateRandomColors();
+            //UpdateRandomColors();
             //if (m_maxIts > m_maxRandomColors)
             //{
             //    m_maxRandomColors = m_maxIts;
@@ -464,19 +485,34 @@ namespace CalcmasterFractal
             m_randomColors = newColors;
         }
 
-        private void UpdateRandomColors()
+        /// <summary>
+        /// Recalculates 5000 colors in a cycle starting from m_startColor;
+        /// </summary>
+        public void UpdateRandomColors()
         {
-            if (m_arrColors.Length == m_maxIts) return;
             SuperColor sc = new SuperColor(m_startColor);
-            m_arrColors = new Color[m_maxIts];
-            int halfCycle = 50;
+            m_arrColors = new Color[5000];
+            int halfCycle = 10;  // was 50
             double incSat = sc.S / (double)halfCycle;
             double incVal = sc.V / (double)halfCycle;
+            double incHue = 180;
+            switch(m_palette)
+            {
+                case ColorPalette.RandomCompliment:
+                    incHue = 180;
+                    break;
+                case ColorPalette.RandomTriad:
+                    incHue = 120;
+                    break;
+                case ColorPalette.RandomTetrad:
+                    incHue = 90;
+                    break;
+            }
             int it = 0;
-            while (it < m_maxIts)
+            while (it < m_arrColors.Length)
             {
                 int cycle = 0;
-                while (cycle < halfCycle && it < m_maxIts)
+                while (cycle < halfCycle && it < m_arrColors.Length)
                 {
                     sc.S -= incSat;
                     sc.V -= incVal;
@@ -485,8 +521,8 @@ namespace CalcmasterFractal
                     it++;
                 }
                 cycle = 0;
-                sc.H += 180;
-                while (cycle < halfCycle && it < m_maxIts)
+                sc.H += incHue;
+                while (cycle < halfCycle && it < m_arrColors.Length)
                 {
                     sc.S += incSat;
                     sc.V += incVal;
@@ -495,7 +531,7 @@ namespace CalcmasterFractal
                     it++;
                 }
                 cycle = 0;
-                while (cycle < halfCycle && it < m_maxIts)
+                while (cycle < halfCycle && it < m_arrColors.Length)
                 {
                     sc.S -= incSat;
                     sc.V -= incVal;
@@ -504,8 +540,8 @@ namespace CalcmasterFractal
                     it++;
                 }
                 cycle = 0;
-                sc.H += 180;
-                while (cycle < halfCycle && it < m_maxIts)
+                sc.H += incHue;
+                while (cycle < halfCycle && it < m_arrColors.Length)
                 {
                     sc.S += incSat;
                     sc.V += incVal;
@@ -513,6 +549,27 @@ namespace CalcmasterFractal
                     cycle++;
                     it++;
                 }
+                if (m_palette == ColorPalette.RandomCompliment) continue;
+                cycle = 0;
+                while (cycle < halfCycle && it < m_arrColors.Length)
+                {
+                    sc.S -= incSat;
+                    sc.V -= incVal;
+                    m_arrColors[it] = sc.Color;
+                    cycle++;
+                    it++;
+                }
+                cycle = 0;
+                sc.H += incHue;
+                while (cycle < halfCycle && it < m_arrColors.Length)
+                {
+                    sc.S += incSat;
+                    sc.V += incVal;
+                    m_arrColors[it] = sc.Color;
+                    cycle++;
+                    it++;
+                }
+                if (m_palette == ColorPalette.RandomTriad) continue;
             }
 
             /*

@@ -24,7 +24,7 @@
 #include <thrust/complex.h>             // numerics for double precision complex numbers
 
 // Global device variables
-__device__ const int g_colorsInPalette{ 1024 };
+__device__ const int g_colorsInPalette{ 1000 };
 __device__ double g_juliaCenterX;
 __device__ double g_juliaCenterY;
 __device__ int    g_maxIts;
@@ -202,18 +202,44 @@ __global__ void algTheCalcmasterTwist(const double* __restrict__ realCoords, con
     {
         thrust::complex<double> z{ realCoords[tid], imagCoords[tid] };
         const thrust::complex<double> p{ g_juliaCenterX, g_juliaCenterY };
+        thrust::complex<double> temp{ 0.0, 0.0 };
         int i{ 0 };
         while (i < g_maxIts)
         {
-            thrust::complex<double> temp{ g_alg(z, p) };
+            temp = { g_alg(z, p) };
             if (thrust::abs(temp) > g_limit * g_limit) break;   // magnitude escapes the limit?
             z = temp;
             ++i;
         }
-        //return (Int32)(Complex.Tanh(Complex.Subtract(Math.Min(res.Real, res.Imaginary), p)).Magnitude * its) % numColorsInPalette;
-        thrust::complex<double> minReImLessP{ z.real() > z.imag() ? z.imag() - p : z.real() - p };
-        double tanHMagnitude{ tanh(thrust::abs(minReImLessP)) };
-        iterations[tid] = static_cast<int>(tanHMagnitude) * i % g_colorsInPalette; // for now, g_colorsInPalette is a constant (1024)
+        // iterations[tid] = i;
+        
+        // C#
+        // return (Int32)
+        // (
+        //   Complex.Tanh(
+        //     Complex.Subtract(
+        //       Math.Min(res.Real, res.Imaginary), p
+        //     )
+        //   )
+        //   .Magnitude * its
+        // ) % numColorsInPalette;
+        if (temp.real() > temp.imag())
+            temp = thrust::complex<double>{ temp.real() - p.real(), p.imag() * -1 };
+        else
+            temp = thrust::complex<double>{ temp.imag() - p.real(), p.imag() * -1 };
+        
+        //temp = thrust::tanh(temp);
+        thrust::complex<double> sinhTemp{ thrust::sinh(temp) };
+        thrust::complex<double> coshTemp{ thrust::cosh(temp) };
+        temp = sinhTemp / coshTemp;
+        double tanHMagnitude{ thrust::abs(temp) };
+        //if (tanHMagnitude > 5000.0) tanHMagnitude = 200.0;
+        if (tanHMagnitude < 1) tanHMagnitude *= 100;
+        int tanHMagnitudeNarrow{__double2int_rz(tanHMagnitude) * i};
+        if (tanHMagnitudeNarrow < 0) tanHMagnitudeNarrow *= -1;
+        //if (tanHMagnitude < 2147483647.0 * i) tanHMagnitudeNarrow = int(tanHMagnitude);
+        //tanHMagnitudeNarrow /= 2;
+        iterations[tid] = tanHMagnitudeNarrow % 200;//tanHMagnitudeNarrow % 200; // for now, g_colorsInPalette is a constant (1024)
     }
 }
 

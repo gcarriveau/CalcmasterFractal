@@ -30,6 +30,13 @@
         {
             components = new System.ComponentModel.Container();
             contextMenuStrip1 = new ContextMenuStrip(components);
+            toolStripMenuItem1 = new ToolStripMenuItem();
+            palRandomMono = new ToolStripMenuItem();
+            palRandomCompliment = new ToolStripMenuItem();
+            palRandomTriad = new ToolStripMenuItem();
+            palRandomTetrad = new ToolStripMenuItem();
+            halfCycleMenuItem = new ToolStripMenuItem();
+            cbHalfCycleValue = new ToolStripComboBox();
             generateNewRandomColorsToolStripMenuItem = new ToolStripMenuItem();
             saveAsSpiralSeriesToolStripMenuItem = new ToolStripMenuItem();
             saveAsCIrcleSeriesToolStripMenuItem = new ToolStripMenuItem();
@@ -41,9 +48,58 @@
             // 
             // contextMenuStrip1
             // 
-            contextMenuStrip1.Items.AddRange(new ToolStripItem[] { generateNewRandomColorsToolStripMenuItem, saveAsSpiralSeriesToolStripMenuItem, saveAsCIrcleSeriesToolStripMenuItem, saveAs4CircleSeriesToolStripMenuItem, saveAsGoldenRatioToolStripMenuItem, exitToolStripMenuItem });
+            contextMenuStrip1.Items.AddRange(new ToolStripItem[] { toolStripMenuItem1, halfCycleMenuItem, generateNewRandomColorsToolStripMenuItem, saveAsSpiralSeriesToolStripMenuItem, saveAsCIrcleSeriesToolStripMenuItem, saveAs4CircleSeriesToolStripMenuItem, saveAsGoldenRatioToolStripMenuItem, exitToolStripMenuItem });
             contextMenuStrip1.Name = "contextMenuStrip1";
-            contextMenuStrip1.Size = new Size(234, 136);
+            contextMenuStrip1.Size = new Size(234, 202);
+            // 
+            // toolStripMenuItem1
+            // 
+            toolStripMenuItem1.DropDownItems.AddRange(new ToolStripItem[] { palRandomMono, palRandomCompliment, palRandomTriad, palRandomTetrad });
+            toolStripMenuItem1.Name = "toolStripMenuItem1";
+            toolStripMenuItem1.Size = new Size(233, 22);
+            toolStripMenuItem1.Text = "Color Algorithm";
+            // 
+            // palRandomMono
+            // 
+            palRandomMono.Name = "palRandomMono";
+            palRandomMono.Size = new Size(146, 22);
+            palRandomMono.Text = "Monocolor";
+            palRandomMono.Click += palRandomMono_Click;
+            // 
+            // palRandomCompliment
+            // 
+            palRandomCompliment.Name = "palRandomCompliment";
+            palRandomCompliment.Size = new Size(146, 22);
+            palRandomCompliment.Text = "Compliments";
+            palRandomCompliment.Click += palRandomCompliment_Click;
+            // 
+            // palRandomTriad
+            // 
+            palRandomTriad.Name = "palRandomTriad";
+            palRandomTriad.Size = new Size(146, 22);
+            palRandomTriad.Text = "Triad";
+            palRandomTriad.Click += palRandomTriad_Click;
+            // 
+            // palRandomTetrad
+            // 
+            palRandomTetrad.Name = "palRandomTetrad";
+            palRandomTetrad.Size = new Size(146, 22);
+            palRandomTetrad.Text = "Tetrad";
+            palRandomTetrad.Click += palRandomTetrad_Click;
+            // 
+            // halfCycleMenuItem
+            // 
+            halfCycleMenuItem.DropDownItems.AddRange(new ToolStripItem[] { cbHalfCycleValue });
+            halfCycleMenuItem.Name = "halfCycleMenuItem";
+            halfCycleMenuItem.Size = new Size(233, 22);
+            halfCycleMenuItem.Text = "Palette Half Cycle Value";
+            // 
+            // cbHalfCycleValue
+            // 
+            cbHalfCycleValue.DropDownStyle = ComboBoxStyle.DropDownList;
+            cbHalfCycleValue.Items.AddRange(new object[] { "10", "20", "30", "40", "50", "60", "70", "80", "90", "100", "125", "150", "175", "200", "300", "400", "500", "600", "700", "800", "900", "1000" });
+            cbHalfCycleValue.Name = "cbHalfCycleValue";
+            cbHalfCycleValue.Size = new Size(121, 23);
             // 
             // generateNewRandomColorsToolStripMenuItem
             // 
@@ -93,6 +149,7 @@
             Text = "FractalDisplayForm";
             WindowState = FormWindowState.Maximized;
             FormClosing += FractalDisplayForm_FormClosing;
+            Load += FractalDisplayForm_Load;
             Paint += FractalDisplayForm_Paint;
             KeyDown += FractalDisplayForm_KeyDown;
             MouseClick += FractalDisplayForm_MouseClick;
@@ -109,5 +166,12 @@
         private ToolStripMenuItem saveAs4CircleSeriesToolStripMenuItem;
         private ToolStripMenuItem saveAsGoldenRatioToolStripMenuItem;
         private ToolStripMenuItem exitToolStripMenuItem;
+        private ToolStripMenuItem toolStripMenuItem1;
+        private ToolStripMenuItem palRandomMono;
+        private ToolStripMenuItem palRandomCompliment;
+        private ToolStripMenuItem palRandomTriad;
+        private ToolStripMenuItem palRandomTetrad;
+        private ToolStripMenuItem halfCycleMenuItem;
+        private ToolStripComboBox cbHalfCycleValue;
     }
 }

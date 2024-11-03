@@ -12,24 +12,65 @@ namespace CalcmasterFractal
 {
     public partial class FractalDisplayForm : Form
     {
+
+        // ******************************************************************
+        // Private properties
+        // ******************************************************************
+        #region Private properties
+
+        // Instance of the Fractal class
         private Fractal gen = new Fractal();
-        //private Fractal julia = new Fractal();
-        //private Fractal carriveau = new Fractal();
+
+        // Fractal bitmaps
         private Bitmap? background = null;
         private Bitmap? backgroundBackup = null;
+
+        // LauncherForm handle
         private LauncherForm? parent;
+
         // dirtyIterations set to true if we come back to main
         // fractal mode 0 from a julia variety.
         private bool dirtyIterations = false;
-        // mode: 0 = main fractal, 1 = julia set, 2 = TheCalcmasterTwist, 3 = AirOnAJuliaString
-        private int mode = 0;
-        Rectangle bounds;
 
+        // Calculation mode:
+        // 0 = main fractal, 1 = julia set, 2 = TheCalcmasterTwist, 3 = AirOnAJuliaString
+        private int mode = 0;
+
+        // FractalDisplayForm client area height and width
+        private Rectangle bounds;
+
+        #endregion Private properties
+
+        // ******************************************************************
+        // Initialization - runs once
+        // ******************************************************************
+        #region Initialization - runs once
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public FractalDisplayForm()
         {
             InitializeComponent();
         }
 
+        /// <summary>
+        /// UI setup
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void FractalDisplayForm_Load(object sender, EventArgs e)
+        {
+            // Palette half cycle value - initial value
+            cbHalfCycleValue.SelectedIndex = 1; // 20
+            cbHalfCycleValue.SelectedIndexChanged += cbHalfCycleValue_SelectedIndexChanged;
+        }
+
+        /// <summary>
+        /// Called by the LauncherForm
+        /// </summary>
+        /// <param name="fractalFormulaID">fractals.json algorithm id</param>
+        /// <param name="f">pointer to the LauncherForm instance</param>
         public void FractalStart(int fractalFormulaID, LauncherForm f)
         {
             parent = f;
@@ -40,6 +81,26 @@ namespace CalcmasterFractal
             if (err == 0) background = gen.LastBitmap;
         }
 
+        #endregion Initialization - runs once
+
+        // ******************************************************************
+        // WinForm event handling
+        // ******************************************************************
+        #region WinForm event handling
+
+        // ***************************************
+        // ********** KEYBOARD *******************
+        // ***************************************
+
+        /// <summary>
+        /// Handles key-down events (not to be confused with KeyPress).<br />
+        /// ESC:    Exits julia mode, otherwise closes the form.<br />
+        /// R:      Recalculate random color array.<br />
+        /// -:      Zoom out from the center of the fractal.<br />
+        /// Arrows: Used to move viewport UP, DOWN, LEFT, or RIGHT
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e">e.KeyCode holds the key that went down</param>
         private void FractalDisplayForm_KeyDown(object sender, KeyEventArgs e)
         {
             int err = 0;
@@ -89,6 +150,7 @@ namespace CalcmasterFractal
                 this.Refresh();
             }
 
+            // -    Zoom Out
             if (e.KeyCode == Keys.Subtract)
             {
                 e.Handled = true;
@@ -97,6 +159,7 @@ namespace CalcmasterFractal
                 this.Refresh();
             }
 
+            // Arw  Move
             if (e.KeyCode == Keys.Up || e.KeyCode == Keys.Down || e.KeyCode == Keys.Left || e.KeyCode == Keys.Right)
             {
                 switch (e.KeyCode)
@@ -124,6 +187,14 @@ namespace CalcmasterFractal
                     MessageBox.Show($"err = {err}");
                 }
             }
+
+            // I    Toggles bitmap color inversion
+            if (e.KeyCode == Keys.I)
+            {
+                gen.InverseToggle = !gen.InverseToggle;
+                background = gen.BitmapFromIterations();
+                this.Refresh();
+            }
         }
 
         private void FractalDisplayForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -131,6 +202,15 @@ namespace CalcmasterFractal
             if (gen != null) gen.Dispose();
         }
 
+        // ***************************************
+        // ********** PAINT **********************
+        // ***************************************
+
+        /// <summary>
+        /// Fills the form's client area surface with the fractal bitmap
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void FractalDisplayForm_Paint(object sender, PaintEventArgs e)
         {
             if (background != null)
@@ -139,6 +219,18 @@ namespace CalcmasterFractal
             }
         }
 
+        // ***************************************
+        // ********** MOUSE **********************
+        // ***************************************
+
+        /// <summary>
+        /// Handles mouse-click events in combination with ModifierKeys.<br />
+        /// Click:          Zoom in, centering on the pixel that was clicked.<br />
+        /// Shift-Click:    Julia Set mode -> 1<br />
+        /// Ctrl-Click:     TheCalcmasterTwist -> 2<br />
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e">e.X and e.Y hold the coordinates of the pixel that was clicked upon</param>
         private void FractalDisplayForm_MouseClick(object sender, MouseEventArgs e)
         {
             int err = 0;
@@ -176,6 +268,61 @@ namespace CalcmasterFractal
             err = gen.ZoomInAtPoint(e.X, e.Y);
             if (err == 0) background = gen.LastBitmap;
             this.Refresh();
+        }
+        #endregion WinForm event handling
+
+        private void UpdateBitmap()
+        {
+            int err = 0;
+            if (dirtyIterations)
+            {
+                err = gen.CalculateMap();
+                if (err == 0)
+                {
+                    dirtyIterations = false;
+                    background = gen.LastBitmap;
+                    this.Refresh();
+                }
+                return;
+            }
+            background = gen.BitmapFromIterations();
+            this.Refresh();
+
+        }
+        private void UpdateRandomPalette(Fractal.ColorPalette pal)
+        {
+            if (pal.Equals(gen.GetPalette())) return;
+
+            gen.SetPalette(pal);
+            UpdateBitmap();
+        }
+        private void palRandomMono_Click(object sender, EventArgs e)
+        {
+            UpdateRandomPalette(Fractal.ColorPalette.RandomMono);
+        }
+
+        private void palRandomCompliment_Click(object sender, EventArgs e)
+        {
+            UpdateRandomPalette(Fractal.ColorPalette.RandomCompliment);
+        }
+
+        private void palRandomTriad_Click(object sender, EventArgs e)
+        {
+            UpdateRandomPalette(Fractal.ColorPalette.RandomTriad);
+        }
+
+        private void palRandomTetrad_Click(object sender, EventArgs e)
+        {
+            UpdateRandomPalette(Fractal.ColorPalette.RandomTetrad);
+        }
+
+        private void cbHalfCycleValue_SelectedIndexChanged(object? sender, EventArgs e)
+        {
+            int halfCycleValue = Int32.Parse(cbHalfCycleValue.SelectedItem == null ? "20" : cbHalfCycleValue.SelectedItem.ToString() ?? "20");
+            // Update the pallete
+            gen.SetHalfCycleValue(halfCycleValue);
+            // Show the updated bitmap
+            UpdateBitmap();
         }
     }
 }

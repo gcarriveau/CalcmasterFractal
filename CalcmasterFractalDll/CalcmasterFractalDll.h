@@ -40,6 +40,7 @@ public:
 	// 6: Error in calculateMap() launching the kernel.
 	// 7: Error in calculateMap() copying iterations back to m_iterations.
 	// 8: Error in calculateMap() freeing device global memory.
+	// 9: Error in move(). Invalid direction parameter value.
 	int getLastErrorCode();
 
 	// Test function - Adds two integers and returns the result.

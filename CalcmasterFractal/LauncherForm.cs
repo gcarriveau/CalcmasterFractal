@@ -81,7 +81,7 @@ namespace CalcmasterFractal
             m_FractalDisplayForm = new();
             m_FractalDisplayForm.Show();
             // Send the selected fractal formula to the FractalDisplayForm
-            m_FractalDisplayForm.FractalStart(ff.id, this);
+            m_FractalDisplayForm.FractalStart(ff, this);
             m_FractalDisplayForm.FormClosed += m_FractalDisplayForm_FormClosed;
             // To do: Create FractalStart function in FractalDisplayForm
         }

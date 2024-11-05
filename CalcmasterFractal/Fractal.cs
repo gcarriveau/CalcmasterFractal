@@ -237,6 +237,13 @@ namespace CalcmasterFractal
 
         }
 
+        
+        public FractalState GetFractalState()
+        {
+            FractalState fs = Marshal.PtrToStructure<FractalState>(FractalInterface.GetState(m_ptrFractalGenerator));
+            return fs;
+        }
+
         /// <summary>
         /// Calculates the iterations for the main fractal and updates LastBitmap
         /// </summary>
@@ -455,11 +462,21 @@ namespace CalcmasterFractal
             m_endColor = Color.FromArgb(255 - nextR, 255 - nextG, 255 - nextB);
             */
         }
- 
+
+        /// <summary>
+        /// The half cycle value controls the number of colors between the lightest and darkest shade of a color in the palette.
+        /// Higher values sharpen small areas of pixels that have a high numbers of iterations of which vary considerably from pixel to pixel.
+        /// Lower values add constrast to large areas of pixels that have similar numbers of iterations.
+        /// </summary>
+        /// <param name="value"></param>
         public void SetHalfCycleValue(int value)
         {
             halfCycle = value;
             UpdateRandomColors();
+        }
+        public int GetHalfCycleValue()
+        {
+            return halfCycle;
         }
 
         /// <summary>

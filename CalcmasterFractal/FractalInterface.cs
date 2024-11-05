@@ -84,6 +84,10 @@ namespace CalcmasterFractal
 
 
         [DllImport(dllName: fracDll, CallingConvention = CallingConvention.Cdecl)]
+        public static extern IntPtr GetState(IntPtr generator);
+
+
+        [DllImport(dllName: fracDll, CallingConvention = CallingConvention.Cdecl)]
         public static extern int GetLastErrorCode(IntPtr generator);
 
 

@@ -229,6 +229,23 @@ void FractalGenerator::setMode(int mode, int mouseClickX, int mouseClickY)
     // update the mode
 }
 
+FractalGenerator::FractalState* FractalGenerator::getState()
+{
+    m_fractalState =
+    {
+        m_centerX,
+        m_centerY,
+        m_radius,
+        m_limit,
+        m_juliaCenterX,
+        m_juliaCenterY,
+        m_inc,
+        m_left,
+        m_top,
+        m_mode
+    };
+    return &m_fractalState;
+}
 // ***************************************************************
 // Private function definitions
 // ***************************************************************

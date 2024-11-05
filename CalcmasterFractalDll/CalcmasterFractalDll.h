@@ -119,6 +119,22 @@ public:
 		double left;
 	};
 
+	struct FractalState
+	{
+		double centerX;
+		double centerY;
+		double radius;
+		double limit;
+		double juliaCenterX;
+		double juliaCenterY;
+		double inc;
+		double left;
+		double top;
+		int mode;
+	};
+
+	FractalState* getState();
+
 private:
 	// ***************************************************************
 	// Private variables
@@ -142,6 +158,8 @@ private:
 
 	// m_width:			fractal image width in pixels
 	int m_width{ 1920 };
+
+	FractalState m_fractalState{};
 
 	// Fractal computation variable defaults.
 	// These can be changed to a different kind of fractal at runtime using exported SelectFractalFormula(int)
@@ -234,6 +252,12 @@ extern "C" _declspec(dllexport) void SetDimensions(FractalGenerator* t, int heig
 extern "C" _declspec(dllexport) void SetMode(FractalGenerator* t, int mode, int mouseClickX = 0, int mouseClickY = 0)
 {
 	t->setMode(mode, mouseClickX, mouseClickY);
+}
+
+extern "C" _declspec(dllexport) FractalGenerator::FractalState* GetState(FractalGenerator* t)
+{
+	FractalGenerator::FractalState* ptr = t->getState();
+	return ptr;
 }
 
 extern "C" _declspec(dllexport) int GetIterationsAt(FractalGenerator* t, size_t index)

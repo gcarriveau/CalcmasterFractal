@@ -1,6 +1,8 @@
 # CalcmasterFractal
 
-![fractalsnakes](fractal_mouse.jpg) Hi!
+![fractalsnakes](fractal_mouse.jpg)
+
+I observe that humans and many other creatures of the earth have evolved to seek out patterns in nature, because patterns are indicators of life.  It seems that for all creatures, either life or what was once life, is food.  Everything that we recognize as life, including flora, has some sort of pattern or symmetry.  Gastropods, although not completely symmetric, have a shell whose growth follows a mathematical pattern.  A flounder is symmetric when it hatches, but over time as it lays on the sea bed, its face moves to the upper side.  The living that have either learned or evolved to hide their symmetry by means of camouflage from other creatures, are those that evade being detected as food.  For me, fractals are food for thought, because in fractals I see patterns of symmetry and self-similarity.  I see math creating images that look like life, and that math feeds my hunger.
 
 CalcmasterFractal is a CUDA GPU-accelerated *(very fast!)* fractal and julia set generator with a Windows User Interface.
 

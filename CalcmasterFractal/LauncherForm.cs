@@ -70,7 +70,7 @@ namespace CalcmasterFractal
         private FractalDisplayForm? m_FractalDisplayForm = null;
         private void btnGo_Click(object sender, EventArgs e)
         {
-            FractalFormula? ff = (FractalFormula)cbFormulas.SelectedValue;
+            FractalFormula? ff = (FractalFormula?)cbFormulas.SelectedValue;
             if (ff == null) return;
 
             if (m_FractalDisplayForm != null)

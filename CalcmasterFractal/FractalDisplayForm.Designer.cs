@@ -44,9 +44,15 @@
             saveAsGoldenRatioToolStripMenuItem = new ToolStripMenuItem();
             exitToolStripMenuItem = new ToolStripMenuItem();
             infoPanel = new DoubleBufferedPanel();
+            lbFiColorPalette = new Label();
+            label17 = new Label();
+            lbFiJuliaCenter = new Label();
+            label16 = new Label();
+            lbFiHalfCycleValue = new Label();
+            label11 = new Label();
+            btnResetFractal = new DoubleBufferedLabel();
+            btnResetFilter = new DoubleBufferedLabel();
             pnlMainFractal = new DoubleBufferedPanel();
-            btnResetFractal = new Label();
-            btnResetFilter = new Label();
             lbFiFilterWidth = new Label();
             lbFiFilterStart = new Label();
             label13 = new Label();
@@ -55,8 +61,6 @@
             label15 = new Label();
             lbFiIncMain = new Label();
             label14 = new Label();
-            lbFiAvgSetMaxMagnitude = new Label();
-            label11 = new Label();
             lbFiZoomRatioJuliaMain = new Label();
             label9 = new Label();
             lbFiSequencePercent = new Label();
@@ -70,7 +74,6 @@
             label5 = new Label();
             lbFiSequenceImageNo = new Label();
             label4 = new Label();
-            lbFiJuliaCenter = new Label();
             label3 = new Label();
             lbFiJuliaZoom = new Label();
             label2 = new Label();
@@ -175,9 +178,15 @@
             // infoPanel
             // 
             infoPanel.BackColor = SystemColors.ControlDarkDark;
-            infoPanel.Controls.Add(pnlMainFractal);
+            infoPanel.Controls.Add(lbFiColorPalette);
+            infoPanel.Controls.Add(label17);
+            infoPanel.Controls.Add(lbFiJuliaCenter);
+            infoPanel.Controls.Add(label16);
+            infoPanel.Controls.Add(lbFiHalfCycleValue);
+            infoPanel.Controls.Add(label11);
             infoPanel.Controls.Add(btnResetFractal);
             infoPanel.Controls.Add(btnResetFilter);
+            infoPanel.Controls.Add(pnlMainFractal);
             infoPanel.Controls.Add(lbFiFilterWidth);
             infoPanel.Controls.Add(lbFiFilterStart);
             infoPanel.Controls.Add(label13);
@@ -186,8 +195,6 @@
             infoPanel.Controls.Add(label15);
             infoPanel.Controls.Add(lbFiIncMain);
             infoPanel.Controls.Add(label14);
-            infoPanel.Controls.Add(lbFiAvgSetMaxMagnitude);
-            infoPanel.Controls.Add(label11);
             infoPanel.Controls.Add(lbFiZoomRatioJuliaMain);
             infoPanel.Controls.Add(label9);
             infoPanel.Controls.Add(lbFiSequencePercent);
@@ -201,7 +208,6 @@
             infoPanel.Controls.Add(label5);
             infoPanel.Controls.Add(lbFiSequenceImageNo);
             infoPanel.Controls.Add(label4);
-            infoPanel.Controls.Add(lbFiJuliaCenter);
             infoPanel.Controls.Add(label3);
             infoPanel.Controls.Add(lbFiJuliaZoom);
             infoPanel.Controls.Add(label2);
@@ -211,17 +217,63 @@
             infoPanel.ForeColor = SystemColors.HighlightText;
             infoPanel.Location = new Point(12, 12);
             infoPanel.Name = "infoPanel";
-            infoPanel.Size = new Size(422, 507);
+            infoPanel.Size = new Size(422, 546);
             infoPanel.TabIndex = 1;
+            infoPanel.Visible = false;
             // 
-            // pnlMainFractal
+            // lbFiColorPalette
             // 
-            pnlMainFractal.BackgroundImageLayout = ImageLayout.Stretch;
-            pnlMainFractal.Enabled = false;
-            pnlMainFractal.Location = new Point(3, 270);
-            pnlMainFractal.Name = "pnlMainFractal";
-            pnlMainFractal.Size = new Size(416, 234);
-            pnlMainFractal.TabIndex = 65;
+            lbFiColorPalette.AutoSize = true;
+            lbFiColorPalette.Location = new Point(142, 76);
+            lbFiColorPalette.Name = "lbFiColorPalette";
+            lbFiColorPalette.Size = new Size(91, 15);
+            lbFiColorPalette.TabIndex = 71;
+            lbFiColorPalette.Text = "lbFiColorPalette";
+            // 
+            // label17
+            // 
+            label17.AutoSize = true;
+            label17.Location = new Point(0, 76);
+            label17.Name = "label17";
+            label17.Size = new Size(135, 15);
+            label17.TabIndex = 70;
+            label17.Text = "Color Palette Algorithm:";
+            // 
+            // lbFiJuliaCenter
+            // 
+            lbFiJuliaCenter.AutoSize = true;
+            lbFiJuliaCenter.Location = new Point(141, 93);
+            lbFiJuliaCenter.Name = "lbFiJuliaCenter";
+            lbFiJuliaCenter.Size = new Size(84, 15);
+            lbFiJuliaCenter.TabIndex = 39;
+            lbFiJuliaCenter.Text = "lbFiJuliaCenter";
+            // 
+            // label16
+            // 
+            label16.AutoSize = true;
+            label16.Location = new Point(252, 61);
+            label16.Name = "label16";
+            label16.Size = new Size(138, 15);
+            label16.TabIndex = 69;
+            label16.Text = "(+/- using mouse wheel)";
+            // 
+            // lbFiHalfCycleValue
+            // 
+            lbFiHalfCycleValue.AutoSize = true;
+            lbFiHalfCycleValue.Location = new Point(142, 61);
+            lbFiHalfCycleValue.Name = "lbFiHalfCycleValue";
+            lbFiHalfCycleValue.Size = new Size(105, 15);
+            lbFiHalfCycleValue.TabIndex = 68;
+            lbFiHalfCycleValue.Text = "lbFiHalfCycleValue";
+            // 
+            // label11
+            // 
+            label11.AutoSize = true;
+            label11.Location = new Point(14, 61);
+            label11.Name = "label11";
+            label11.Size = new Size(121, 15);
+            label11.TabIndex = 67;
+            label11.Text = "Palette Half Cycle Val:";
             // 
             // btnResetFractal
             // 
@@ -231,9 +283,10 @@
             btnResetFractal.Location = new Point(314, 239);
             btnResetFractal.Name = "btnResetFractal";
             btnResetFractal.Size = new Size(79, 23);
-            btnResetFractal.TabIndex = 64;
+            btnResetFractal.TabIndex = 66;
             btnResetFractal.Text = "reset fractal";
             btnResetFractal.TextAlign = ContentAlignment.MiddleCenter;
+            btnResetFractal.Click += btnResetFractal_Click;
             // 
             // btnResetFilter
             // 
@@ -243,9 +296,20 @@
             btnResetFilter.Location = new Point(232, 239);
             btnResetFilter.Name = "btnResetFilter";
             btnResetFilter.Size = new Size(76, 23);
-            btnResetFilter.TabIndex = 63;
+            btnResetFilter.TabIndex = 2;
             btnResetFilter.Text = "reset filter";
             btnResetFilter.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // pnlMainFractal
+            // 
+            pnlMainFractal.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            pnlMainFractal.BackgroundImageLayout = ImageLayout.Stretch;
+            pnlMainFractal.Enabled = false;
+            pnlMainFractal.Location = new Point(3, 309);
+            pnlMainFractal.Name = "pnlMainFractal";
+            pnlMainFractal.Size = new Size(416, 234);
+            pnlMainFractal.TabIndex = 65;
+            pnlMainFractal.Paint += pnlMainFractal_Paint;
             // 
             // lbFiFilterWidth
             // 
@@ -286,7 +350,7 @@
             // lbFiIncJulia
             // 
             lbFiIncJulia.AutoSize = true;
-            lbFiIncJulia.Location = new Point(141, 121);
+            lbFiIncJulia.Location = new Point(141, 168);
             lbFiIncJulia.Name = "lbFiIncJulia";
             lbFiIncJulia.Size = new Size(65, 15);
             lbFiIncJulia.TabIndex = 58;
@@ -295,7 +359,7 @@
             // label15
             // 
             label15.AutoSize = true;
-            label15.Location = new Point(21, 121);
+            label15.Location = new Point(21, 168);
             label15.Name = "label15";
             label15.Size = new Size(114, 15);
             label15.TabIndex = 57;
@@ -304,7 +368,7 @@
             // lbFiIncMain
             // 
             lbFiIncMain.AutoSize = true;
-            lbFiIncMain.Location = new Point(141, 106);
+            lbFiIncMain.Location = new Point(141, 153);
             lbFiIncMain.Name = "lbFiIncMain";
             lbFiIncMain.Size = new Size(69, 15);
             lbFiIncMain.TabIndex = 56;
@@ -313,34 +377,16 @@
             // label14
             // 
             label14.AutoSize = true;
-            label14.Location = new Point(17, 106);
+            label14.Location = new Point(17, 153);
             label14.Name = "label14";
             label14.Size = new Size(118, 15);
             label14.TabIndex = 55;
             label14.Text = "Between Pixels Main:";
             // 
-            // lbFiAvgSetMaxMagnitude
-            // 
-            lbFiAvgSetMaxMagnitude.AutoSize = true;
-            lbFiAvgSetMaxMagnitude.Location = new Point(246, 208);
-            lbFiAvgSetMaxMagnitude.Name = "lbFiAvgSetMaxMagnitude";
-            lbFiAvgSetMaxMagnitude.Size = new Size(144, 15);
-            lbFiAvgSetMaxMagnitude.TabIndex = 54;
-            lbFiAvgSetMaxMagnitude.Text = "lbFiAvgSetMaxMagnitude";
-            // 
-            // label11
-            // 
-            label11.AutoSize = true;
-            label11.Location = new Point(52, 208);
-            label11.Name = "label11";
-            label11.Size = new Size(188, 15);
-            label11.TabIndex = 53;
-            label11.Text = "Average Member Max Magnitude:";
-            // 
             // lbFiZoomRatioJuliaMain
             // 
             lbFiZoomRatioJuliaMain.AutoSize = true;
-            lbFiZoomRatioJuliaMain.Location = new Point(141, 91);
+            lbFiZoomRatioJuliaMain.Location = new Point(141, 138);
             lbFiZoomRatioJuliaMain.Name = "lbFiZoomRatioJuliaMain";
             lbFiZoomRatioJuliaMain.Size = new Size(135, 15);
             lbFiZoomRatioJuliaMain.TabIndex = 52;
@@ -349,7 +395,7 @@
             // label9
             // 
             label9.AutoSize = true;
-            label9.Location = new Point(-1, 91);
+            label9.Location = new Point(-1, 138);
             label9.Name = "label9";
             label9.Size = new Size(136, 15);
             label9.TabIndex = 51;
@@ -358,7 +404,7 @@
             // lbFiSequencePercent
             // 
             lbFiSequencePercent.AutoSize = true;
-            lbFiSequencePercent.Location = new Point(273, 188);
+            lbFiSequencePercent.Location = new Point(273, 216);
             lbFiSequencePercent.Name = "lbFiSequencePercent";
             lbFiSequencePercent.Size = new Size(117, 15);
             lbFiSequencePercent.TabIndex = 50;
@@ -367,7 +413,7 @@
             // lbFiMainViewCenter
             // 
             lbFiMainViewCenter.AutoSize = true;
-            lbFiMainViewCenter.Location = new Point(141, 143);
+            lbFiMainViewCenter.Location = new Point(141, 183);
             lbFiMainViewCenter.Name = "lbFiMainViewCenter";
             lbFiMainViewCenter.Size = new Size(113, 15);
             lbFiMainViewCenter.TabIndex = 49;
@@ -376,7 +422,7 @@
             // label8
             // 
             label8.AutoSize = true;
-            label8.Location = new Point(32, 143);
+            label8.Location = new Point(32, 183);
             label8.Name = "label8";
             label8.Size = new Size(103, 15);
             label8.TabIndex = 48;
@@ -385,7 +431,7 @@
             // lbFiJuliaViewCenter
             // 
             lbFiJuliaViewCenter.AutoSize = true;
-            lbFiJuliaViewCenter.Location = new Point(141, 158);
+            lbFiJuliaViewCenter.Location = new Point(141, 198);
             lbFiJuliaViewCenter.Name = "lbFiJuliaViewCenter";
             lbFiJuliaViewCenter.Size = new Size(109, 15);
             lbFiJuliaViewCenter.TabIndex = 47;
@@ -394,7 +440,7 @@
             // label7
             // 
             label7.AutoSize = true;
-            label7.Location = new Point(36, 158);
+            label7.Location = new Point(36, 198);
             label7.Name = "label7";
             label7.Size = new Size(99, 15);
             label7.TabIndex = 46;
@@ -439,7 +485,7 @@
             // lbFiSequenceImageNo
             // 
             lbFiSequenceImageNo.AutoSize = true;
-            lbFiSequenceImageNo.Location = new Point(141, 188);
+            lbFiSequenceImageNo.Location = new Point(141, 216);
             lbFiSequenceImageNo.Name = "lbFiSequenceImageNo";
             lbFiSequenceImageNo.Size = new Size(126, 15);
             lbFiSequenceImageNo.TabIndex = 41;
@@ -448,35 +494,25 @@
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(16, 188);
+            label4.Location = new Point(16, 216);
             label4.Name = "label4";
             label4.Size = new Size(119, 15);
             label4.TabIndex = 40;
             label4.Text = "Sequence Image No.:";
             // 
-            // lbFiJuliaCenter
-            // 
-            lbFiJuliaCenter.AutoSize = true;
-            lbFiJuliaCenter.Location = new Point(141, 173);
-            lbFiJuliaCenter.Name = "lbFiJuliaCenter";
-            lbFiJuliaCenter.Size = new Size(84, 15);
-            lbFiJuliaCenter.TabIndex = 39;
-            lbFiJuliaCenter.Text = "lbFiJuliaCenter";
-            lbFiJuliaCenter.Visible = false;
-            // 
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(29, 173);
+            label3.Location = new Point(51, 93);
             label3.Name = "label3";
-            label3.Size = new Size(106, 15);
+            label3.Size = new Size(84, 15);
             label3.TabIndex = 38;
-            label3.Text = "Julia Calculation P:";
+            label3.Text = "Julia Constant:";
             // 
             // lbFiJuliaZoom
             // 
             lbFiJuliaZoom.AutoSize = true;
-            lbFiJuliaZoom.Location = new Point(141, 76);
+            lbFiJuliaZoom.Location = new Point(141, 123);
             lbFiJuliaZoom.Name = "lbFiJuliaZoom";
             lbFiJuliaZoom.Size = new Size(81, 15);
             lbFiJuliaZoom.TabIndex = 37;
@@ -485,7 +521,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(67, 76);
+            label2.Location = new Point(67, 123);
             label2.Name = "label2";
             label2.Size = new Size(68, 15);
             label2.TabIndex = 36;
@@ -494,7 +530,7 @@
             // lbFiMainFractalZoom
             // 
             lbFiMainFractalZoom.AutoSize = true;
-            lbFiMainFractalZoom.Location = new Point(141, 61);
+            lbFiMainFractalZoom.Location = new Point(141, 108);
             lbFiMainFractalZoom.Name = "lbFiMainFractalZoom";
             lbFiMainFractalZoom.Size = new Size(120, 15);
             lbFiMainFractalZoom.TabIndex = 35;
@@ -503,7 +539,7 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(25, 61);
+            label1.Location = new Point(25, 108);
             label1.Name = "label1";
             label1.Size = new Size(110, 15);
             label1.TabIndex = 34;
@@ -514,9 +550,9 @@
             label10.AutoSize = true;
             label10.Location = new Point(3, 0);
             label10.Name = "label10";
-            label10.Size = new Size(325, 15);
+            label10.Size = new Size(390, 15);
             label10.TabIndex = 20;
-            label10.Text = "Press the [i] key to hide/show this information display panel.";
+            label10.Text = "Press the [i] key to hide/show this information display panel, [h] for help.";
             // 
             // FractalDisplayForm
             // 
@@ -558,8 +594,6 @@
         private ToolStripMenuItem halfCycleMenuItem;
         private ToolStripComboBox cbHalfCycleValue;
         private DoubleBufferedPanel infoPanel;
-        private Label btnResetFractal;
-        private Label btnResetFilter;
         private Label lbFiFilterWidth;
         private Label lbFiFilterStart;
         private Label label13;
@@ -568,8 +602,6 @@
         private Label label15;
         private Label lbFiIncMain;
         private Label label14;
-        private Label lbFiAvgSetMaxMagnitude;
-        private Label label11;
         private Label lbFiZoomRatioJuliaMain;
         private Label label9;
         private Label lbFiSequencePercent;
@@ -591,5 +623,12 @@
         private Label label1;
         private Label label10;
         private DoubleBufferedPanel pnlMainFractal;
+        private DoubleBufferedLabel btnResetFilter;
+        private DoubleBufferedLabel btnResetFractal;
+        private Label lbFiHalfCycleValue;
+        private Label label11;
+        private Label label16;
+        private Label label17;
+        private Label lbFiColorPalette;
     }
 }

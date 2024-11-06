@@ -426,7 +426,7 @@ namespace CalcmasterFractal
         #region Coloring variables and functions
 
         // The current color chooser algorithm
-        private ColorPalette m_palette = ColorPalette.RandomMono;
+        private ColorPalette m_palette = ColorPalette.RandomCompliment;
 
         // palette generationi variables
         private int halfCycle = 20;

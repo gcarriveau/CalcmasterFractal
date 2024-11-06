@@ -26,8 +26,18 @@ namespace CalcmasterFractal
         // Fractal bitmaps
         private Bitmap? background = null;
         private Bitmap? backgroundBackup = null;
+        // This bitmap is used to draw a small version of the main fractal onto
+        // pnlMainFractal inside the paint algorithm.
+        private Bitmap? backgroundMini;
+
         // Storage for main fractal state when switching to Julia
         private FractalState fractalStateBackup = new FractalState();
+        // These store the client area coordinates where the mouse was clicked
+        // when switching from main fractal mode 0 to a julia mode.
+        // A yellow circle is drawn at these points in the main fractal mini-view
+        // while in julia mode, showing where the julia set came from.
+        private int juliaClickX = 0;
+        private int juliaClickY = 0;
 
         // LauncherForm handle
         private LauncherForm? parent;
@@ -82,18 +92,19 @@ namespace CalcmasterFractal
             // Rectangle from which we can get the full screen width and height
             bounds = Screen.FromControl(this).Bounds;
             gen.SelectFractalFormula(fractalFormula.id);
-            int err = gen.CalculateMap();
-            if (err != 0)
+            UpdateBitmap(forceCalc: true);
+            if (background != null)
             {
-                MessageBox.Show(gen.GetLastErrorMessage());
-                return;
+                // Copy the main fractal to a smaller sized bitmap that fits just right on the pnlMainFractal panel.
+                backgroundMini = new Bitmap(416, 234);
+                Graphics.FromImage(backgroundMini).DrawImage(background, 0, 0, 416, 234);
+
             }
-            background = gen.LastBitmap;
             // Mouse wheel increments or decrements the halfCycle value
             // that is used in the UpdateRandomColors() function.
             // It's somewhat similar to changing the "contrast" of the image.
             this.MouseWheel += MouseWheelHandler;
-            UpdateInfoPanel();
+            infoPanel.Visible = true;
         }
 
         #endregion Initialization - runs once
@@ -132,21 +143,22 @@ namespace CalcmasterFractal
                 else
                 {
                     mode = 0;
+                    // set dirtyIterations to true so that any further operations on
+                    // the main fractal such as color palette modifications
+                    // will recalculate the iterations.
                     dirtyIterations = true;
                     gen.SetMode(0, 0, 0);
-                    //err = gen.CalculateMap();
-                    //if (err == 0) background = gen.LastBitmap;
                     if (backgroundBackup != null)
                     {
+                        // Don't recalculate main if we're coming back from a julia mode
                         background = backgroundBackup;
+                        UpdateInfoPanel();
+                        this.Refresh();
                     }
                     else
                     {
-                        err = gen.CalculateMap();
-                        if (err == 0) background = gen.LastBitmap;
+                        UpdateBitmap(forceCalc: true);
                     }
-                    UpdateInfoPanel();
-                    this.Refresh();
                     return;
                 }
             }
@@ -157,14 +169,7 @@ namespace CalcmasterFractal
                 e.Handled = true;
                 gen.ResetStartEndColors();
                 gen.UpdateRandomColors();
-                if (dirtyIterations)
-                {
-                    err = gen.CalculateMap();
-                    dirtyIterations = false;
-                }
-                if (err == 0) background = gen.BitmapFromIterations();
-                UpdateInfoPanel();
-                this.Refresh();
+                UpdateBitmap();
             }
 
             // -    Zoom Out
@@ -172,9 +177,7 @@ namespace CalcmasterFractal
             {
                 e.Handled = true;
                 err = gen.ZoomOut();
-                if (err == 0) background = gen.LastBitmap;
-                UpdateInfoPanel();
-                this.Refresh();
+                UpdateBitmap();
             }
 
             // Arw  Move
@@ -195,25 +198,14 @@ namespace CalcmasterFractal
                         err = gen.Move(FractalInterface.Direction.RIGHT);
                         break;
                 }
-                if (err == 0)
-                {
-                    background = gen.LastBitmap;
-                    UpdateInfoPanel();
-                    this.Refresh();
-                }
-                else
-                {
-                    MessageBox.Show($"err = {err}");
-                }
+                UpdateBitmap();
             }
 
             // V    Toggles bitmap color inVersion
             if (e.KeyCode == Keys.V)
             {
                 gen.InverseToggle = !gen.InverseToggle;
-                background = gen.BitmapFromIterations();
-                UpdateInfoPanel();
-                this.Refresh();
+                UpdateBitmap();
             }
 
             // I    Toggles the information panel
@@ -241,8 +233,8 @@ namespace CalcmasterFractal
         {
             if (background != null)
             {
+                /* Anti-alias the bitmap... (this is slow and blurs the image)
                 //e.Graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-                /*
                 Rectangle srcRect = new Rectangle(0, 0, bounds.Width, bounds.Height);
                 Rectangle destRect = new Rectangle(0, 0, bounds.Width * 4, bounds.Height * 4);
                 Bitmap tempB = new Bitmap(background.Width * 4, background.Height * 4);
@@ -251,9 +243,30 @@ namespace CalcmasterFractal
                 tempG.DrawImage(background, destRect);
                 e.Graphics.DrawImage(tempB, srcRect);
                 */
+
+                // FractalDisplayForm draw background image:
+                // No anti-alias .. fast, but curves can be grainy at certain angles
                 e.Graphics.DrawImageUnscaled(background, 0, 0);
+
             }
         }
+
+        // Draws the Mini-Map current location with a yellow circle
+        private void pnlMainFractal_Paint(object sender, PaintEventArgs e)
+        {
+            if (backgroundMini != null)
+            {
+                FractalState fstemp = gen.GetFractalState();
+                double inc = fractalFormula.radius * 2 / backgroundMini.Height;
+                int pixelX = Convert.ToInt32(backgroundMini.Width / 2 + ((mode == 0 ? fstemp.centerX : fstemp.juliaCenterX) - fractalFormula.centerX) / inc);
+                int pixelY = Convert.ToInt32(backgroundMini.Height / 2 + (fractalFormula.centerY - (mode == 0 ? fstemp.centerY : fstemp.juliaCenterY)) / inc);
+                e.Graphics.DrawImage(backgroundMini, 0, 0);
+                e.Graphics.DrawArc(new Pen(Color.Yellow, 1), new Rectangle(pixelX - 5, pixelY - 5, 10, 10), 0, 360);
+            }
+        }
+
+
+
 
         // ***************************************
         // ********** MOUSE **********************
@@ -269,6 +282,9 @@ namespace CalcmasterFractal
         /// <param name="e">e.X and e.Y hold the coordinates of the pixel that was clicked upon</param>
         private void FractalDisplayForm_MouseClick(object sender, MouseEventArgs e)
         {
+            juliaClickX = e.X;
+            juliaClickY = e.Y;
+
             int err = 0;
             if (mode == 0 && Control.ModifierKeys == Keys.Shift)
             {
@@ -282,14 +298,7 @@ namespace CalcmasterFractal
                 // generate the julia set
                 mode = 1;
                 gen.SetMode(1, e.X, e.Y);
-                err = gen.CalculateMap();
-                if (err == 0)
-                {
-                    dirtyIterations = false;
-                    background = gen.LastBitmap;
-                }
-                UpdateInfoPanel();
-                this.Refresh();
+                UpdateBitmap(forceCalc: true);
                 return;
             }
             if (mode == 0 && Control.ModifierKeys == Keys.Control)
@@ -304,20 +313,11 @@ namespace CalcmasterFractal
                 // generate TheCalcmasterTwist modified julia set
                 mode = 2;
                 gen.SetMode(2, e.X, e.Y);
-                err = gen.CalculateMap();
-                if (err == 0)
-                {
-                    dirtyIterations = false;
-                    background = gen.LastBitmap;
-                }
-                UpdateInfoPanel();
-                this.Refresh();
+                UpdateBitmap(forceCalc: true);
                 return;
             }
             err = gen.ZoomInAtPoint(e.X, e.Y);
-            if (err == 0) background = gen.LastBitmap;
-            UpdateInfoPanel();
-            this.Refresh();
+            UpdateBitmap();
         }
 
         /// <summary>
@@ -359,6 +359,8 @@ namespace CalcmasterFractal
         private void UpdateInfoPanel()
         {
             lbFiFormulaName.Text = fractalFormula.name;
+            lbFiHalfCycleValue.Text = (string)(cbHalfCycleValue.SelectedItem ?? "");
+            lbFiColorPalette.Text = gen.GetPalette().ToString();
             FractalState fs = gen.GetFractalState();
             switch (mode)
             {
@@ -380,7 +382,7 @@ namespace CalcmasterFractal
             if (mode == 0)
             {
                 // MaIn FrAcTaL ZoOm
-                Int64 mainZoom = Convert.ToInt64(fractalFormula.radius / fs.radius);
+                double mainZoom = fractalFormula.radius / fs.radius;
                 lbFiMainFractalZoom.Text = $"{mainZoom}X";
                 // JuLiA ZoOm
                 lbFiJuliaZoom.Text = "n/a";
@@ -402,13 +404,13 @@ namespace CalcmasterFractal
             else
             {
                 // MaIn FrAcTaL ZoOm (a constant in this state)
-                Int64 mainZoom = Convert.ToInt64(fractalFormula.radius / fractalStateBackup.radius);
+                double mainZoom = fractalFormula.radius / fractalStateBackup.radius;
                 lbFiMainFractalZoom.Text = $"{mainZoom}X";
                 // JuLiA ZoOm
-                Int64 juliaZoom = Convert.ToInt64(fractalFormula.radius / fs.radius);
-                lbFiJuliaZoom.Text = $"{juliaZoom}";
+                double juliaZoom = fractalFormula.radius / fs.radius;
+                lbFiJuliaZoom.Text = $"{juliaZoom}X";
                 // Julia Set : Main Fractal zoom ratio
-                Int64 julia2MainZoomRatio = Convert.ToInt64(fs.radius / fractalStateBackup.radius);
+                double julia2MainZoomRatio = fs.radius / fractalStateBackup.radius;
                 lbFiZoomRatioJuliaMain.Text = julia2MainZoomRatio.ToString();
                 // Distance Between Pixels Main
                 lbFiIncMain.Text = fractalStateBackup.inc.ToString();
@@ -423,10 +425,10 @@ namespace CalcmasterFractal
             }
         }
 
-        private void UpdateBitmap()
+        private void UpdateBitmap(bool forceCalc = false)
         {
             int err = 0;
-            if (dirtyIterations)
+            if (dirtyIterations || forceCalc)
             {
                 err = gen.CalculateMap();
                 if (err == 0)
@@ -441,8 +443,8 @@ namespace CalcmasterFractal
             background = gen.BitmapFromIterations();
             UpdateInfoPanel();
             this.Refresh();
-
         }
+
         private void UpdateRandomPalette(Fractal.ColorPalette pal)
         {
             if (pal.Equals(gen.GetPalette())) return;
@@ -478,5 +480,13 @@ namespace CalcmasterFractal
             // Show the updated bitmap
             UpdateBitmap();
         }
+
+        private void btnResetFractal_Click(object sender, EventArgs e)
+        {
+            gen.SelectFractalFormula(fractalFormula.id);
+            UpdateBitmap(forceCalc: true);
+        }
+
+
     }
 }

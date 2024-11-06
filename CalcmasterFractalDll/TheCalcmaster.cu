@@ -23,6 +23,9 @@
 #include <device_launch_parameters.h>	// not required.. I use it for getting rid of Intellisense squigglies under blockIdx, blockDim, threadIdx in Visual Studio 2022
 #include <thrust/complex.h>             // numerics for double precision complex numbers
 
+// Global device constants
+__device__ __constant__ double g_e{ 2.718281828459045 }; // euler's number
+
 // Global device variables
 __device__ const int g_colorsInPalette{ 1000 };
 __device__ double g_juliaCenterX;
@@ -104,6 +107,69 @@ __device__ thrust::complex<double> frmExperiment1(thrust::complex<double> z, thr
     temp /= temp2 * temp2;
     return temp + p;
 }
+// Fractal 10: CosPow2AbsRIPow4
+__device__ thrust::complex<double> frmCosPow2AbsRIPow4(thrust::complex<double> z, thrust::complex<double> p)
+{
+    // res = Complex.Pow(new Complex(Math.Abs(res.Real), -Math.Abs(res.Imaginary)), 4);
+    // return Complex.Pow(Complex.Multiply(Complex.Cos(res), res), 2.0) + p;
+    thrust::complex<double> temp{ thrust::pow(thrust::complex<double>{cuda::std::abs(z.real()), -cuda::std::abs(z.imag())}, 4)};
+    temp = thrust::pow(thrust::cos(temp) * temp, 2);
+    return temp + p;
+}
+// Fractal 11: CosPow2SinPow2Hybrid
+__device__ thrust::complex<double> frmCosPow2SinPow2Hybrid(thrust::complex<double> z, thrust::complex<double> p)
+{
+    // res = Complex.Pow(Complex.Multiply(Complex.Sin(res), res), 2.0) + p;
+    // return Complex.Pow(Complex.Multiply(Complex.Cos(res), res), 2.0) + p;
+    thrust::complex<double> temp{ (thrust::sin(z) * z) };
+    temp *= temp;
+    temp += p;
+    temp = thrust::cos(temp) * temp;
+    temp *= temp;
+    return temp + p;
+}
+// Fractal 12: CosPow3
+__device__ thrust::complex<double> frmCosPow3(thrust::complex<double> z, thrust::complex<double> p)
+{
+    // return return Complex.Pow(Complex.Multiply(Complex.Cos(res), res), 3.0) + p;
+    thrust::complex<double> temp{ (thrust::cos(z) * z) };
+    temp *= temp * temp;
+    return temp + p;
+}
+// Fractal 13: WeirdLim5
+__device__ thrust::complex<double> frmWeirdLim5(thrust::complex<double> z, thrust::complex<double> p)
+{
+    // return Complex.Pow(Complex.Multiply(Complex.Cos(res), Complex.Divide(res, Complex.Add(res, -1))), 3.0) + p;
+    thrust::complex<double> temp{ thrust::cos(z) * z / (z - 1.0) };
+    temp = temp * temp * temp;
+    return temp + p;
+}
+// Fractal 14: WeirdLim9 (same as above, but with a higher escape threshold)
+__device__ thrust::complex<double> frmWeirdLim9(thrust::complex<double> z, thrust::complex<double> p)
+{
+    // return Complex.Pow(Complex.Multiply(Complex.Cos(res), Complex.Divide(res, Complex.Add(res, -1))), 3.0) + p;
+    thrust::complex<double> temp{ thrust::cos(z) * z / (z - 1.0) };
+    temp = temp * temp * temp;
+    return temp + p;
+}
+// Fractal 15: Weird2
+__device__ thrust::complex<double> frmWeird2(thrust::complex<double> z, thrust::complex<double> p)
+{
+    // return Complex.Add(Complex.Add(Complex.Sin(res), Complex.Pow(Math.E, res)), p);
+    thrust::complex<double> temp{ thrust::sin(z) };
+    temp += thrust::pow(g_e, z);
+    return temp + p;
+}
+// Fractal 16: Weird3
+__device__ thrust::complex<double> frmWeird3(thrust::complex<double> z, thrust::complex<double> p)
+{
+    // return Complex.Pow(Complex.Multiply(Complex.Pow(Complex.Cos(Z), 3.0), Z), 2.0) + p;
+    thrust::complex<double> temp{ thrust::cos(z) };
+    temp *= temp;
+    temp *= temp;
+    temp *= z;
+    return temp + p;
+}
 
 __global__ void setTheDeviceGlobals(double juliaCenterX, double juliaCenterY, int maxIts, double limit, int fractalFormulaID, int N)
 {
@@ -140,6 +206,27 @@ __global__ void setTheDeviceGlobals(double juliaCenterX, double juliaCenterY, in
         break;
     case 9:
         g_alg = frmExperiment1;
+        break;
+    case 10:
+        g_alg = frmCosPow2AbsRIPow4;
+        break;
+    case 11:
+        g_alg = frmCosPow2SinPow2Hybrid;
+        break;
+    case 12:
+        g_alg = frmCosPow3;
+        break;
+    case 13:
+        g_alg = frmWeirdLim5;
+        break;
+    case 14:
+        g_alg = frmWeirdLim9;
+        break;
+    case 15:
+        g_alg = frmWeird2;
+        break;
+    case 16:
+        g_alg = frmWeird3;
         break;
     default:
         g_alg = frmMandelbrot;
@@ -239,7 +326,7 @@ __global__ void algTheCalcmasterTwist(const double* __restrict__ realCoords, con
         if (tanHMagnitudeNarrow < 0) tanHMagnitudeNarrow *= -1;
         //if (tanHMagnitude < 2147483647.0 * i) tanHMagnitudeNarrow = int(tanHMagnitude);
         //tanHMagnitudeNarrow /= 2;
-        iterations[tid] = tanHMagnitudeNarrow % 200;//tanHMagnitudeNarrow % 200; // for now, g_colorsInPalette is a constant (1024)
+        iterations[tid] = tanHMagnitudeNarrow % 5000;//tanHMagnitudeNarrow % 200; // for now, g_colorsInPalette is a constant (1024)
     }
 }
 

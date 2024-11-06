@@ -6,7 +6,7 @@
     "centerY": 0.0,
     "radius": 2.0,
     "limit": 2.0,
-    "kernel": "algMandelbrot"
+    "kernel": "frmMandelbrot"
   },
   {
     "id": 1,
@@ -15,7 +15,7 @@
     "centerY": 0.0,
     "radius": 2.5,
     "limit": 5.0,
-    "kernel": "algSinPow2"
+    "kernel": "frmSinPow2"
   },
   {
     "id": 2,
@@ -24,7 +24,7 @@
     "centerY": 0.0,
     "radius": 2.5,
     "limit": 5.0,
-    "kernel": "algSinPow3"
+    "kernel": "frmSinPow3"
   },
   {
     "id": 3,
@@ -33,7 +33,7 @@
     "centerY": 0.0,
     "radius": 5.0,
     "limit": 5.0,
-    "kernel": "algSinPow4"
+    "kernel": "frmSinPow4"
   },
   {
     "id": 4,
@@ -42,7 +42,7 @@
     "centerY": 0.0,
     "radius": 3.0,
     "limit": 5.0,
-    "kernel": "algSinPow2Div1"
+    "kernel": "frmSinPow2Div1"
   },
   {
     "id": 5,
@@ -51,7 +51,7 @@
     "centerY": 0.0,
     "radius": 5.0,
     "limit": 5.0,
-    "kernel": "algCosPow2"
+    "kernel": "frmCosPow2"
   },
   {
     "id": 6,
@@ -60,7 +60,7 @@
     "centerY": 0.0,
     "radius": 5.0,
     "limit": 5.0,
-    "kernel": "algCosPow2MandelbrotHybrid"
+    "kernel": "frmCosPow2MandelbrotHybrid"
   },
   {
     "id": 7,
@@ -69,7 +69,7 @@
     "centerY": 0.0,
     "radius": 5.0,
     "limit": 5.0,
-    "kernel": "algCosPow2AbsRIMandelbrotHybrid"
+    "kernel": "frmCosPow2AbsRIMandelbrotHybrid"
   },
   {
     "id": 8,
@@ -78,7 +78,7 @@
     "centerY": 0.0,
     "radius": 5.0,
     "limit": 5.0,
-    "kernel": "algCosPow2AbsRI"
+    "kernel": "frmCosPow2AbsRI"
   },
   {
     "id": 9,
@@ -87,6 +87,168 @@
     "centerY": 0.0,
     "radius": 2.0,
     "limit": 3.0,
-    "kernel": "algExperiment1"
+    "kernel": "frmExperiment1"
+  },
+  {
+    "id": 10,
+    "name": "CosPow2AbsRIPow4",
+    "centerX": 0.0,
+    "centerY": 0.0,
+    "radius": 5.0,
+    "limit": 5.0,
+    "kernel": "frmCosPow2AbsRIPow4"
+  },
+  {
+    "id": 11,
+    "name": "CosPow2SinPow2Hybrid",
+    "centerX": 0.0,
+    "centerY": 0.0,
+    "radius": 5.0,
+    "limit": 5.0,
+    "kernel": "frmCosPow2SinPow2Hybrid"
+  },
+  {
+    "id": 12,
+    "name": "CosPow3",
+    "centerX": 0.0,
+    "centerY": 0.0,
+    "radius": 5.0,
+    "limit": 5.0,
+    "kernel": "frmCosPow3"
+  },
+  {
+    "id": 13,
+    "name": "WeirdLim5",
+    "centerX": 0.0,
+    "centerY": 0.0,
+    "radius": 5.0,
+    "limit": 5.0,
+    "kernel": "frmWeirdLim5"
+  },
+  {
+    "id": 14,
+    "name": "WeirdLim9",
+    "centerX": 0.0,
+    "centerY": 0.0,
+    "radius": 7.0,
+    "limit": 9.0,
+    "kernel": "frmWeirdLim9"
+  },
+  {
+    "id": 15,
+    "name": "Weird2",
+    "centerX": -3.0,
+    "centerY": 0.0,
+    "radius": 5.0,
+    "limit": 7.5,
+    "kernel": "frmWeird2"
+  },
+  {
+    "id": 16,
+    "name": "Weird3",
+    "centerX": 0.0,
+    "centerY": 0.0,
+    "radius": 5.0,
+    "limit": 5.0,
+    "kernel": "frmWeird3"
+  },
+  {
+    "id": 17,
+    "name": "Weird4",
+    "centerX": 0.0,
+    "centerY": 0.0,
+    "radius": 5.0,
+    "limit": 5.0,
+    "kernel": "frmWeird4"
+  },
+  {
+    "id": 18,
+    "name": "Weird5",
+    "centerX": 0.0,
+    "centerY": 0.0,
+    "radius": 5.0,
+    "limit": 4.0,
+    "kernel": "frmWeird5"
+  },
+  {
+    "id": 19,
+    "name": "Weird6",
+    "centerX": 0.0,
+    "centerY": 0.0,
+    "radius": 5.0,
+    "limit": 4.0,
+    "kernel": "frmWeird6"
+  },
+  {
+    "id": 20,
+    "name": "Weird7",
+    "centerX": 0.0,
+    "centerY": 0.0,
+    "radius": 5.0,
+    "limit": 3.2,
+    "kernel": "frmWeird7"
+  },
+  {
+    "id": 21,
+    "name": "Weird8",
+    "centerX": 0.0,
+    "centerY": 0.0,
+    "radius": 2.0,
+    "limit": 4.0,
+    "kernel": "frmWeird8"
+  },
+  {
+    "id": 22,
+    "name": "Weird9",
+    "centerX": 0.0,
+    "centerY": 0.0,
+    "radius": 2.0,
+    "limit": 4.0,
+    "kernel": "frmWeird9"
+  },
+  {
+    "id": 23,
+    "name": "Weird10",
+    "centerX": 0.0,
+    "centerY": 0.0,
+    "radius": 2.0,
+    "limit": 4.0,
+    "kernel": "frmWeird10"
+  },
+  {
+    "id": 24,
+    "name": "Weird11",
+    "centerX": 0.0,
+    "centerY": 0.0,
+    "radius": 2.0,
+    "limit": 4.0,
+    "kernel": "frmWeird11"
+  },
+  {
+    "id": 25,
+    "name": "Mandelbrot4th",
+    "centerX": 0.0,
+    "centerY": 0.0,
+    "radius": 2.0,
+    "limit": 2.0,
+    "kernel": "frmMandelbrot4th"
+  },
+  {
+    "id": 26,
+    "name": "Mandelbrot8th",
+    "centerX": 0.0,
+    "centerY": 0.0,
+    "radius": 2.0,
+    "limit": 2.0,
+    "kernel": "frmMandelbrot8th"
+  },
+  {
+    "id": 27,
+    "name": "BurningShip",
+    "centerX": 0.0,
+    "centerY": 0.0,
+    "radius": 2.0,
+    "limit": 2.0,
+    "kernel": "frmBurningShip"
   }
 ]

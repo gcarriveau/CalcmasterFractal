@@ -13,37 +13,40 @@ namespace CalcmasterFractal
     public partial class FractalDisplayForm : Form
     {
 
-        // ******************************************************************
-        // Private properties
-        // ******************************************************************
+        // ***************************************
+        // ****** PRIVATE PROPERTIES *************
+        // ***************************************
+
         #region Private properties
 
         // Instance of the Fractal class
         private Fractal gen = new Fractal();
-        // Fractal formula parameters
+
+        // Fractal formula parameters sent to the Dll
         private FractalFormula fractalFormula = new FractalFormula();
 
         // Fractal bitmaps
+        // background is the bitmap that is painted onto the surface of the
+        // FractalDisplayForm after calculating iterations for pixels or
+        // updating the color palette in some way.
         private Bitmap? background = null;
+        // Saves the main fractal image while we are in a julia mode
+        // so that coming back to the main fractal does not require recalculation.
         private Bitmap? backgroundBackup = null;
-        // This bitmap is used to draw a small version of the main fractal onto
+        // backgroundMini is used to draw a small version of the main fractal onto
         // pnlMainFractal inside the paint algorithm.
         private Bitmap? backgroundMini;
 
-        // Storage for main fractal state when switching to Julia
+        // Stores all of the state data of the Dll for the main fractal
+        // while in a julia mode so that the state of the Dll can be reset when
+        // coming back to the main fractal.
         private FractalState fractalStateBackup = new FractalState();
-        // These store the client area coordinates where the mouse was clicked
-        // when switching from main fractal mode 0 to a julia mode.
-        // A yellow circle is drawn at these points in the main fractal mini-view
-        // while in julia mode, showing where the julia set came from.
-        private int juliaClickX = 0;
-        private int juliaClickY = 0;
 
         // LauncherForm handle
         private LauncherForm? parent;
 
-        // dirtyIterations set to true if we come back to main
-        // fractal mode 0 from a julia variety.
+        // dirtyIterations set to true when we come back to main
+        // fractal mode 0 from a julia variety !0.
         private bool dirtyIterations = false;
 
         // Calculation mode:
@@ -52,12 +55,16 @@ namespace CalcmasterFractal
 
         // FractalDisplayForm client area height and width
         private Rectangle bounds;
+        // Last mouse click x,y
+        int lastClickX = 0;
+        int lastClickY = 0;
 
         #endregion Private properties
 
-        // ******************************************************************
-        // Initialization - runs once
-        // ******************************************************************
+        // ***************************************
+        // ***** Initialization - runs once ******
+        // ***************************************
+
         #region Initialization - runs once
 
         /// <summary>
@@ -109,14 +116,122 @@ namespace CalcmasterFractal
 
         #endregion Initialization - runs once
 
-        // ******************************************************************
-        // WinForm event handling
-        // ******************************************************************
-        #region WinForm event handling
+        // ***************************************
+        // ********** Functions ******************
+        // ***************************************
+
+        #region Functions
+
+        // update the values shown on the infoForm pannel
+        private void UpdateInfoPanel()
+        {
+            lbFiFormulaName.Text = fractalFormula.name;
+            lbFiHalfCycleValue.Text = (string)(cbHalfCycleValue.SelectedItem ?? "");
+            lbFiColorPalette.Text = gen.GetPalette().ToString();
+            lbFiFilterStart.Text = gen.GetFilterStart().ToString();
+            lbFiFilterEnd.Text = gen.GetFilterEnd().ToString();
+            FractalState fs = gen.GetFractalState();
+            switch (mode)
+            {
+                case 0:
+                    lbFiCurrentMode.Text = "Map";
+                    break;
+                case 1:
+                    lbFiCurrentMode.Text = "Julia Set";
+                    break;
+                case 2:
+                    lbFiCurrentMode.Text = "The Calcmaster Twist";
+                    break;
+                case 3:
+                    lbFiCurrentMode.Text = "Air On A Julia String";
+                    break;
+            }
+
+            // viewing main fractal
+            if (mode == 0)
+            {
+                // MaIn FrAcTaL ZoOm
+                double mainZoom = fractalFormula.radius / fs.radius;
+                lbFiMainFractalZoom.Text = $"{mainZoom}X";
+                // JuLiA ZoOm
+                lbFiJuliaZoom.Text = "n/a";
+                // Julia Set : Main Fractal zoom ratio
+                lbFiZoomRatioJuliaMain.Text = "n/a";
+                // Distance Between Pixels Main
+                lbFiIncMain.Text = fs.inc.ToString();
+                // Distance Between Pixels Julia
+                lbFiIncJulia.Text = "n/a";
+                // Main Viewport Center Coordinates
+                lbFiMainViewCenter.Text = $"{fs.centerX},i{fs.centerY}";
+                // Julia Set Viewport Center Coordinates
+                lbFiJuliaViewCenter.Text = "n/a";
+                // Julia Calculation P (the point that was shift-clicked)
+                lbFiJuliaCenter.Text = "n/a";
+            }
+
+            // viewing a julia set type
+            else
+            {
+                // MaIn FrAcTaL ZoOm (a constant in this state)
+                double mainZoom = fractalFormula.radius / fractalStateBackup.radius;
+                lbFiMainFractalZoom.Text = $"{mainZoom}X";
+                // JuLiA ZoOm
+                double juliaZoom = fractalFormula.radius / fs.radius;
+                lbFiJuliaZoom.Text = $"{juliaZoom}X";
+                // Julia Set : Main Fractal zoom ratio
+                double julia2MainZoomRatio = fs.radius / fractalStateBackup.radius;
+                lbFiZoomRatioJuliaMain.Text = julia2MainZoomRatio.ToString();
+                // Distance Between Pixels Main
+                lbFiIncMain.Text = fractalStateBackup.inc.ToString();
+                // Distance Between Pixels Julia
+                lbFiIncJulia.Text = fs.inc.ToString();
+                // Main Viewport Center Coordinates
+                lbFiMainViewCenter.Text = $"{fractalStateBackup.centerX},i{fractalStateBackup.centerY}";
+                // Julia Set Viewport Center Coordinates
+                lbFiJuliaViewCenter.Text = $"({fs.centerX},i{fs.centerY})";
+                // Julia Calculation P (the point that was shift-clicked)
+                lbFiJuliaCenter.Text = $"({fs.juliaCenterX},i{fs.juliaCenterY})";
+            }
+        }
+
+        // Update and refresh the image that is painted on the form's surface.
+        private void UpdateBitmap(bool forceCalc = false)
+        {
+            int err = 0;
+            if (dirtyIterations || forceCalc)
+            {
+                err = gen.CalculateMap();
+                if (err == 0)
+                {
+                    dirtyIterations = false;
+                    background = gen.LastBitmap;
+                    UpdateInfoPanel();
+                    this.Refresh();
+                }
+                return;
+            }
+            background = gen.BitmapFromIterations();
+            UpdateInfoPanel();
+            this.Refresh();
+        }
+
+        // send the selected color palette algorithm to Fractal class
+        // and reclacluate the palette.  Then apply the new colors to the image.
+        private void UpdateRandomPalette(Fractal.ColorPalette pal)
+        {
+            if (pal.Equals(gen.GetPalette())) return;
+
+            gen.SetPalette(pal);
+            UpdateBitmap();
+        }
+
+        #endregion Functions
 
         // ***************************************
         // ********** KEYBOARD *******************
         // ***************************************
+
+        #region Keyboard events
 
         /// <summary>
         /// Handles key-down events (not to be confused with KeyPress).<br />
@@ -213,6 +328,13 @@ namespace CalcmasterFractal
             {
                 infoPanel.Visible = !infoPanel.Visible;
             }
+
+            // F    Sets filterEnd to whatever the current maximum number of iterations is for a pixel
+            if (e.KeyCode == Keys.F)
+            {
+                gen.SetFilterEndToCurrentMaxIts();
+                UpdateBitmap();
+            }
         }
 
         private void FractalDisplayForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -220,9 +342,13 @@ namespace CalcmasterFractal
             if (gen != null) gen.Dispose();
         }
 
+        #endregion Keyboard events
+
         // ***************************************
-        // ********** PAINT **********************
+        // ********** PAINT EVENTS ***************
         // ***************************************
+
+        #region Paint events
 
         /// <summary>
         /// Fills the form's client area surface with the fractal bitmap
@@ -265,12 +391,13 @@ namespace CalcmasterFractal
             }
         }
 
-
-
+        #endregion Paint events
 
         // ***************************************
-        // ********** MOUSE **********************
+        // ********** MOUSE EVENTS ***************
         // ***************************************
+
+        #region Mouse Events
 
         /// <summary>
         /// Handles mouse-click events in combination with ModifierKeys.<br />
@@ -282,8 +409,8 @@ namespace CalcmasterFractal
         /// <param name="e">e.X and e.Y hold the coordinates of the pixel that was clicked upon</param>
         private void FractalDisplayForm_MouseClick(object sender, MouseEventArgs e)
         {
-            juliaClickX = e.X;
-            juliaClickY = e.Y;
+            lastClickX = e.X;
+            lastClickY = e.Y;
 
             int err = 0;
             if (mode == 0 && Control.ModifierKeys == Keys.Shift)
@@ -327,9 +454,41 @@ namespace CalcmasterFractal
         /// <param name="e"></param>
         private void MouseWheelHandler(object? sender, MouseEventArgs e)
         {
+            // Palette Half Cycle Value Series
+            // (number of colors between darkest and lightest versions of a single color in the palette.)
             // 10 20 30 40 50 60 70 80 90 100 125 150 175 200 250 300 350 400 450 500 550 600 650 700 750 800 850 900 950 1000
+
             if (e.Delta > 0)
             {
+                // Alt+Shift+Wheel raise the start filter value by 10
+                if (Control.ModifierKeys == (Keys.Alt | Keys.Shift))
+                {
+                    gen.IncFilterStart(10);
+                    UpdateBitmap();
+                    return;
+                }
+                // Shift+Wheel rase the start filter value by 1
+                if (Control.ModifierKeys == Keys.Shift)
+                {
+                    gen.IncFilterStart(1);
+                    UpdateBitmap();
+                    return;
+                }
+                // Alt+Ctrl+Wheel raise the end filter value by 25
+                if (Control.ModifierKeys == (Keys.Alt | Keys.Control))
+                {
+                    gen.IncFilterEnd(25);
+                    UpdateBitmap();
+                    return;
+                }
+                // Ctrl+Wheel raise the end filter value by 1
+                if (Control.ModifierKeys == Keys.Control)
+                {
+                    gen.IncFilterEnd(1);
+                    UpdateBitmap();
+                    return;
+                }
+                // otherwise Raise the Palette Half Cycle Value
                 if (cbHalfCycleValue.SelectedIndex < cbHalfCycleValue.Items.Count - 1)
                 {
                     cbHalfCycleValue.SelectedIndex++;
@@ -337,141 +496,75 @@ namespace CalcmasterFractal
             }
             else
             {
+                // Alt+Shift+Wheel = lower the start filter value by 10
+                if (Control.ModifierKeys == (Keys.Alt | Keys.Shift))
+                {
+                    gen.DecFilterStart(10);
+                    UpdateBitmap();
+                    return;
+                }
+                // Shift+Wheel = lower the start filter value by 1
+                if (Control.ModifierKeys == Keys.Shift)
+                {
+                    gen.DecFilterStart(1);
+                    UpdateBitmap();
+                    return;
+                }
+                // Alt+Ctrl+Wheel lower the end filter value by 25
+                if (Control.ModifierKeys == (Keys.Alt | Keys.Control))
+                {
+                    gen.DecFilterEnd(25);
+                    UpdateBitmap();
+                    return;
+                }
+                // Ctrl+Wheel lower the end filter value by 1
+                if (Control.ModifierKeys == Keys.Control)
+                {
+                    gen.DecFilterEnd(1);
+                    UpdateBitmap();
+                    return;
+                }
+                // otherwise Lower the Palette Half Cycle Value
                 if (cbHalfCycleValue.SelectedIndex > 0)
                 {
                     cbHalfCycleValue.SelectedIndex--;
                 }
             }
-            /*
-            Array.IndexOf()
-            int d = e.Delta < 0 ? -1 : 1;
-            switch ()
-            gen.SetHalfCycleValue();
-            */
         }
 
-        #endregion WinForm event handling
+    #endregion Mouse Events
 
-        // ***************************************
-        // ********** Other Functions ************
-        // ***************************************
+    // ***************************************
+    // ******* CONTEXT MENU EVENTS ***********
+    // ***************************************
 
-        private void UpdateInfoPanel()
-        {
-            lbFiFormulaName.Text = fractalFormula.name;
-            lbFiHalfCycleValue.Text = (string)(cbHalfCycleValue.SelectedItem ?? "");
-            lbFiColorPalette.Text = gen.GetPalette().ToString();
-            FractalState fs = gen.GetFractalState();
-            switch (mode)
-            {
-                case 0:
-                    lbFiCurrentMode.Text = "Map";
-                    break;
-                case 1:
-                    lbFiCurrentMode.Text = "Julia Set";
-                    break;
-                case 2:
-                    lbFiCurrentMode.Text = "The Calcmaster Twist";
-                    break;
-                case 3:
-                    lbFiCurrentMode.Text = "Air On A Julia String";
-                    break;
-            }
+    #region Context menu events
 
-            // viewing main fractal
-            if (mode == 0)
-            {
-                // MaIn FrAcTaL ZoOm
-                double mainZoom = fractalFormula.radius / fs.radius;
-                lbFiMainFractalZoom.Text = $"{mainZoom}X";
-                // JuLiA ZoOm
-                lbFiJuliaZoom.Text = "n/a";
-                // Julia Set : Main Fractal zoom ratio
-                lbFiZoomRatioJuliaMain.Text = "n/a";
-                // Distance Between Pixels Main
-                lbFiIncMain.Text = fs.inc.ToString();
-                // Distance Between Pixels Julia
-                lbFiIncJulia.Text = "n/a";
-                // Main Viewport Center Coordinates
-                lbFiMainViewCenter.Text = $"{fs.centerX},i{fs.centerY}";
-                // Julia Set Viewport Center Coordinates
-                lbFiJuliaViewCenter.Text = "n/a";
-                // Julia Calculation P (the point that was shift-clicked)
-                lbFiJuliaCenter.Text = "n/a";
-            }
-
-            // viewing a julia set type
-            else
-            {
-                // MaIn FrAcTaL ZoOm (a constant in this state)
-                double mainZoom = fractalFormula.radius / fractalStateBackup.radius;
-                lbFiMainFractalZoom.Text = $"{mainZoom}X";
-                // JuLiA ZoOm
-                double juliaZoom = fractalFormula.radius / fs.radius;
-                lbFiJuliaZoom.Text = $"{juliaZoom}X";
-                // Julia Set : Main Fractal zoom ratio
-                double julia2MainZoomRatio = fs.radius / fractalStateBackup.radius;
-                lbFiZoomRatioJuliaMain.Text = julia2MainZoomRatio.ToString();
-                // Distance Between Pixels Main
-                lbFiIncMain.Text = fractalStateBackup.inc.ToString();
-                // Distance Between Pixels Julia
-                lbFiIncJulia.Text = fs.inc.ToString();
-                // Main Viewport Center Coordinates
-                lbFiMainViewCenter.Text = $"{fractalStateBackup.centerX},i{fractalStateBackup.centerY}";
-                // Julia Set Viewport Center Coordinates
-                lbFiJuliaViewCenter.Text = $"({fs.centerX},i{fs.centerY})";
-                // Julia Calculation P (the point that was shift-clicked)
-                lbFiJuliaCenter.Text = $"({fs.juliaCenterX},i{fs.juliaCenterY})";
-            }
-        }
-
-        private void UpdateBitmap(bool forceCalc = false)
-        {
-            int err = 0;
-            if (dirtyIterations || forceCalc)
-            {
-                err = gen.CalculateMap();
-                if (err == 0)
-                {
-                    dirtyIterations = false;
-                    background = gen.LastBitmap;
-                    UpdateInfoPanel();
-                    this.Refresh();
-                }
-                return;
-            }
-            background = gen.BitmapFromIterations();
-            UpdateInfoPanel();
-            this.Refresh();
-        }
-
-        private void UpdateRandomPalette(Fractal.ColorPalette pal)
-        {
-            if (pal.Equals(gen.GetPalette())) return;
-
-            gen.SetPalette(pal);
-            UpdateBitmap();
-        }
-        private void palRandomMono_Click(object sender, EventArgs e)
+    // recalculate palette using a single color
+    private void palRandomMono_Click(object sender, EventArgs e)
         {
             UpdateRandomPalette(Fractal.ColorPalette.RandomMono);
         }
 
+        // recalculate palette using 2 complimentary colors
         private void palRandomCompliment_Click(object sender, EventArgs e)
         {
             UpdateRandomPalette(Fractal.ColorPalette.RandomCompliment);
         }
 
+        // recalculate palette using 3 triad colors
         private void palRandomTriad_Click(object sender, EventArgs e)
         {
             UpdateRandomPalette(Fractal.ColorPalette.RandomTriad);
         }
 
+        // recalculate palette using 4 tetrad colors
         private void palRandomTetrad_Click(object sender, EventArgs e)
         {
             UpdateRandomPalette(Fractal.ColorPalette.RandomTetrad);
         }
 
+        // Context menu selection of palette half cycle value
         private void cbHalfCycleValue_SelectedIndexChanged(object? sender, EventArgs e)
         {
             int halfCycleValue = Int32.Parse(cbHalfCycleValue.SelectedItem == null ? "20" : cbHalfCycleValue.SelectedItem.ToString() ?? "20");
@@ -481,12 +574,25 @@ namespace CalcmasterFractal
             UpdateBitmap();
         }
 
+        // Reset the fractal to the original size and position as described in fractals.json parameters
         private void btnResetFractal_Click(object sender, EventArgs e)
         {
             gen.SelectFractalFormula(fractalFormula.id);
             UpdateBitmap(forceCalc: true);
         }
 
+        // Exit
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
 
+        #endregion Context menu events
+
+        private void btnResetFilter_Click(object sender, EventArgs e)
+        {
+            gen.ResetFilterRange();
+            UpdateBitmap();
+        }
     }
 }

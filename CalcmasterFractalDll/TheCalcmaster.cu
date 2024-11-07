@@ -170,6 +170,134 @@ __device__ thrust::complex<double> frmWeird3(thrust::complex<double> z, thrust::
     temp *= z;
     return temp + p;
 }
+// Fractal 17: Weird4
+__device__ thrust::complex<double> frmWeird4(thrust::complex<double> z, thrust::complex<double> p)
+{
+    // return Complex.Pow(Complex.Multiply(Complex.Pow(Complex.Cos(res), 4.0), res), 2.0) + p;
+    thrust::complex<double> temp{ thrust::pow(thrust::cos(z),4) };
+    temp *= z;
+    temp *= temp;
+    return temp + p;
+}
+// Fractal 18: Weird5
+__device__ thrust::complex<double> frmWeird5(thrust::complex<double> z, thrust::complex<double> p)
+{
+    // return Complex.Pow(Complex.Multiply(Complex.Pow(Complex.Sin(res), 4.0), res), 2.0) + p;
+    thrust::complex<double> temp{ thrust::pow(thrust::sin(z),4) * z };
+    temp *= temp;
+    return temp + p;
+}
+// Fractal 19: Weird6
+__device__ thrust::complex<double> frmWeird6(thrust::complex<double> z, thrust::complex<double> p)
+{
+    // This one is really cool.  This is art.
+    // Complex cosReal = new Complex(Math.Cos(res.Real), res.Imaginary);
+    // return Complex.Pow(Complex.Multiply(Complex.Pow(cosReal, 4.0), res), 2.0) + p;
+    thrust::complex<double> cosREAL{ cos(z.real()), z.imag() };
+    thrust::complex<double> temp{ thrust::pow(thrust::pow(cosREAL, 4) * z, 2) };
+    return temp + p;
+}
+// Fractal 20: Weird7
+__device__ thrust::complex<double> frmWeird7(thrust::complex<double> z, thrust::complex<double> p)
+{
+    // This one is really cool.  This is art.
+    // Complex cosReal = new Complex(Math.Cos(res.Real), Math.Sin(res.Imaginary));
+    // return Complex.Pow(Complex.Multiply(Complex.Pow(Complex.Cos(res), 4.0), cosReal), 2.0) + p;
+    thrust::complex<double> cosREALsinIMAG{ cos(z.real()), sin(z.imag()) };
+    thrust::complex<double> temp{thrust::cos(z)};
+    temp = thrust::pow(thrust::pow(temp,4) * cosREALsinIMAG,2);
+    return temp + p;
+}
+// Fractal 21: Weird8
+__device__ thrust::complex<double> frmWeird8(thrust::complex<double> z, thrust::complex<double> p)
+{
+    // return Complex.Add(Complex.Pow(Complex.Divide(res,Complex.Pow(new Complex(1, -0.5),res)), 2.0), p);
+    thrust::complex<double> temp{ 1, -0.5 };
+    temp = thrust::pow(temp, z);
+    temp = thrust::pow(z / temp, 2);
+    return temp + p;
+}
+// Fractal 22: Weird9
+__device__ thrust::complex<double> frmWeird9(thrust::complex<double> z, thrust::complex<double> p)
+{
+    /*
+    double oneThird = 1.0 / 3.0;
+    return Complex.Subtract(
+        Complex.Add(
+            Complex.Subtract(
+                Complex.Multiply(0.5,Complex.Pow(res,2)),
+                Complex.Multiply(oneThird, Complex.Pow(res, 3))
+            ),
+            res
+        ),
+    p);
+    */
+    const double oneThird{ 1.0 / 3.0 };
+    thrust::complex<double> temp{ z * z * 0.5 };
+    temp -= z * z * z * oneThird;
+    temp += z;
+    return temp - p;
+}
+// Fractal 23: Weird10
+__device__ thrust::complex<double> frmWeird10(thrust::complex<double> z, thrust::complex<double> p)
+{
+    /*
+    double oneThird = 1.0 / 3.0;
+    return Complex.Subtract(
+        Complex.Add(
+            Complex.Subtract(
+                Complex.Multiply(0.5, Complex.Pow(res, 2)),
+                Complex.Multiply(oneThird, Complex.Pow(Complex.Cos(res), 3))
+            ),
+            res
+        ),
+    p);
+    */
+    const double oneThird{ 1.0 / 3.0 };
+    thrust::complex<double> temp{ z * z * 0.5 };
+    temp -= thrust::pow(thrust::cos(z),3) * oneThird;
+    temp += z;
+    return temp - p;
+}
+// Fractal 24: Weird11
+__device__ thrust::complex<double> frmWeird11(thrust::complex<double> z, thrust::complex<double> p)
+{
+    /*
+    double oneThird = 1.0 / 3.0;
+    return Complex.Add(
+        Complex.Pow((1 / Complex.Tan(res)),Complex.Multiply(oneThird,res)),
+    p);
+    */
+    const double oneThird{ 1.0 / 3.0 };
+    thrust::complex<double> temp{ z * oneThird };
+    temp = thrust::pow((1 / thrust::tan(z)), temp);
+    return temp + p;
+}
+// Fractal 25: Mandelbrot4th
+__device__ thrust::complex<double> frmMandelbrot4th(thrust::complex<double> z, thrust::complex<double> p)
+{
+    // return Complex.Pow(Complex.Add(Complex.Pow(res, 2.0), p),4.0);
+    thrust::complex<double> temp{ z * z };
+    temp += p;
+    return thrust::pow(temp, 4);
+}
+// Fractal 26: Mandelbrot8th
+__device__ thrust::complex<double> frmMandelbrot8th(thrust::complex<double> z, thrust::complex<double> p)
+{
+    // return Complex.Pow(Complex.Add(Complex.Pow(res, 2.0), p),8.0);
+    thrust::complex<double> temp{ z * z };
+    temp += p;
+    return thrust::pow(temp,8);
+}
+// Fractal 27: BurningShip
+__device__ thrust::complex<double> frmBurningShip(thrust::complex<double> z, thrust::complex<double> p)
+{
+    // return Complex.Add(Complex.Pow(new Complex(Math.Abs(res.Real),-Math.Abs(res.Imaginary)) , 2.0), p);
+    thrust::complex<double> temp{ cuda::std::abs(z.real()), -cuda::std::abs(z.imag())};
+    temp *= temp;
+    temp *= z;
+    return temp + p;
+}
 
 __global__ void setTheDeviceGlobals(double juliaCenterX, double juliaCenterY, int maxIts, double limit, int fractalFormulaID, int N)
 {
@@ -227,6 +355,40 @@ __global__ void setTheDeviceGlobals(double juliaCenterX, double juliaCenterY, in
         break;
     case 16:
         g_alg = frmWeird3;
+        break;
+
+    case 17:
+        g_alg = frmWeird4;
+        break;
+    case 18:
+        g_alg = frmWeird5;
+        break;
+    case 19:
+        g_alg = frmWeird6;
+        break;
+    case 20:
+        g_alg = frmWeird7;
+        break;
+    case 21:
+        g_alg = frmWeird8;
+        break;
+    case 22:
+        g_alg = frmWeird9;
+        break;
+    case 23:
+        g_alg = frmWeird10;
+        break;
+    case 24:
+        g_alg = frmWeird11;
+        break;
+    case 25:
+        g_alg = frmMandelbrot4th;
+        break;
+    case 26:
+        g_alg = frmMandelbrot8th;
+        break;
+    case 27:
+        g_alg = frmBurningShip;
         break;
     default:
         g_alg = frmMandelbrot;

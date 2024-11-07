@@ -94,18 +94,13 @@ namespace CalcmasterFractal
         // ******************************************************************
         #region Public properties and methods
 
+        public const int NumberOfColors = 5000;
+        public const int MaxIterations = 1000;
+
         public enum ColorPalette
         {
-            RandomMono,
-            RandomCompliment,
-            RandomTriad,
-            RandomTetrad,
-            Random2,
-            Random3,
-            Monochrome,
-            GrayScale,
-            Yellows,
-            RedGreen
+            RandomMono, RandomCompliment, RandomTriad, RandomTetrad
+            //, Random2, Random3, Monochrome, GrayScale, Yellows, RedGreen
         }
 
         /// <summary>
@@ -372,6 +367,13 @@ namespace CalcmasterFractal
 
         // Our local copy of the iterations array
         private int[] m_iterations;
+        
+        // Iterations filter upper and lower boundaries
+        // If m_iterations[x] < m_filterStart, GetColor(int its) returns Color.Black
+        // If m_iterations[x] > m_filterEnd, GetColor(int its) returns Color.Black
+        private int m_filterStart = 0;
+        private int m_filterEnd = 1000;
+
 
         // holds the real fractal plane coordinates (unused, but can be updated from the DLL using UpdatePoints())
         private double[] m_re;
@@ -479,13 +481,58 @@ namespace CalcmasterFractal
             return halfCycle;
         }
 
+        #region *************** FILTER FUNCTIONS *****************
+        public void ResetFilterRange()
+        {
+            m_filterStart = 0;
+            m_filterEnd = MaxIterations;
+        }
+        public int SetFilterEndToCurrentMaxIts()
+        {
+            m_filterEnd = m_maxIts;
+            return m_maxIts;
+        }
+        public int GetFilterStart()
+        {
+            return m_filterStart;
+        }
+        public int IncFilterStart(int increment = 1)
+        {
+            m_filterStart += increment;
+            if (m_filterStart > m_filterEnd) m_filterStart = m_filterEnd - 1;
+            return m_filterStart;
+        }
+        public int DecFilterStart(int decrement = 1)
+        {
+            m_filterStart -= decrement;
+            if (m_filterStart < 0) m_filterStart = 0;
+            return m_filterStart;
+        }
+        public int GetFilterEnd()
+        {
+            return m_filterEnd;
+        }
+        public int IncFilterEnd(int increment = 1)
+        {
+            m_filterEnd += increment;
+            if (m_filterEnd > MaxIterations) m_filterEnd = MaxIterations;
+            return m_filterEnd;
+        }
+        public int DecFilterEnd(int decrement = 1)
+        {
+            m_filterEnd -= decrement;
+            if (m_filterEnd <= m_filterStart) m_filterEnd = m_filterStart + 1;
+            return m_filterEnd;
+        }
+        #endregion *************** FILTER FUNCTIONS *****************
+
         /// <summary>
         /// Recalculates 5000 colors in a cycle starting from m_startColor;
         /// </summary>
         public void UpdateRandomColors()
         {
             SuperColor sc = new SuperColor(m_startColor);
-            m_arrColors = new Color[5000];
+            m_arrColors = new Color[NumberOfColors];
             double incSat = sc.S / (double)halfCycle;
             double incVal = sc.V / (double)halfCycle;
             double incHue = 180;
@@ -616,7 +663,8 @@ namespace CalcmasterFractal
         /// <returns></returns>
         public Color GetColor(Int32 numIts)
         {
-            if (numIts < 2 || numIts >= m_maxIts) return Color.Black;
+            if (numIts == 0 || numIts == m_maxIts) return Color.Black;
+            if (numIts < m_filterStart || numIts > m_filterEnd) return Color.Black;
             return InverseToggle ? m_arrColors[m_maxIts - numIts] : m_arrColors[numIts];
         }
 

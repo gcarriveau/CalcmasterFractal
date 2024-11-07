@@ -53,7 +53,7 @@
             btnResetFractal = new DoubleBufferedLabel();
             btnResetFilter = new DoubleBufferedLabel();
             pnlMainFractal = new DoubleBufferedPanel();
-            lbFiFilterWidth = new Label();
+            lbFiFilterEnd = new Label();
             lbFiFilterStart = new Label();
             label13 = new Label();
             label12 = new Label();
@@ -80,6 +80,8 @@
             lbFiMainFractalZoom = new Label();
             label1 = new Label();
             label10 = new Label();
+            label18 = new Label();
+            label19 = new Label();
             contextMenuStrip1.SuspendLayout();
             infoPanel.SuspendLayout();
             SuspendLayout();
@@ -174,10 +176,13 @@
             exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             exitToolStripMenuItem.Size = new Size(233, 22);
             exitToolStripMenuItem.Text = "Exit";
+            exitToolStripMenuItem.Click += exitToolStripMenuItem_Click;
             // 
             // infoPanel
             // 
             infoPanel.BackColor = SystemColors.ControlDarkDark;
+            infoPanel.Controls.Add(label19);
+            infoPanel.Controls.Add(label18);
             infoPanel.Controls.Add(lbFiColorPalette);
             infoPanel.Controls.Add(label17);
             infoPanel.Controls.Add(lbFiJuliaCenter);
@@ -187,7 +192,7 @@
             infoPanel.Controls.Add(btnResetFractal);
             infoPanel.Controls.Add(btnResetFilter);
             infoPanel.Controls.Add(pnlMainFractal);
-            infoPanel.Controls.Add(lbFiFilterWidth);
+            infoPanel.Controls.Add(lbFiFilterEnd);
             infoPanel.Controls.Add(lbFiFilterStart);
             infoPanel.Controls.Add(label13);
             infoPanel.Controls.Add(label12);
@@ -253,9 +258,9 @@
             label16.AutoSize = true;
             label16.Location = new Point(252, 61);
             label16.Name = "label16";
-            label16.Size = new Size(138, 15);
+            label16.Size = new Size(67, 15);
             label16.TabIndex = 69;
-            label16.Text = "(+/- using mouse wheel)";
+            label16.Text = "(+/- wheel)";
             // 
             // lbFiHalfCycleValue
             // 
@@ -280,7 +285,7 @@
             btnResetFractal.BackColor = SystemColors.ButtonFace;
             btnResetFractal.BorderStyle = BorderStyle.Fixed3D;
             btnResetFractal.ForeColor = SystemColors.ControlText;
-            btnResetFractal.Location = new Point(314, 239);
+            btnResetFractal.Location = new Point(339, 34);
             btnResetFractal.Name = "btnResetFractal";
             btnResetFractal.Size = new Size(79, 23);
             btnResetFractal.TabIndex = 66;
@@ -293,12 +298,13 @@
             btnResetFilter.BackColor = SystemColors.ButtonFace;
             btnResetFilter.BorderStyle = BorderStyle.Fixed3D;
             btnResetFilter.ForeColor = SystemColors.ControlText;
-            btnResetFilter.Location = new Point(232, 239);
+            btnResetFilter.Location = new Point(339, 266);
             btnResetFilter.Name = "btnResetFilter";
-            btnResetFilter.Size = new Size(76, 23);
+            btnResetFilter.Size = new Size(79, 23);
             btnResetFilter.TabIndex = 2;
             btnResetFilter.Text = "reset filter";
             btnResetFilter.TextAlign = ContentAlignment.MiddleCenter;
+            btnResetFilter.Click += btnResetFilter_Click;
             // 
             // pnlMainFractal
             // 
@@ -311,14 +317,14 @@
             pnlMainFractal.TabIndex = 65;
             pnlMainFractal.Paint += pnlMainFractal_Paint;
             // 
-            // lbFiFilterWidth
+            // lbFiFilterEnd
             // 
-            lbFiFilterWidth.AutoSize = true;
-            lbFiFilterWidth.Location = new Point(142, 249);
-            lbFiFilterWidth.Name = "lbFiFilterWidth";
-            lbFiFilterWidth.Size = new Size(84, 15);
-            lbFiFilterWidth.TabIndex = 62;
-            lbFiFilterWidth.Text = "lbFiFilterWidth";
+            lbFiFilterEnd.AutoSize = true;
+            lbFiFilterEnd.Location = new Point(142, 249);
+            lbFiFilterEnd.Name = "lbFiFilterEnd";
+            lbFiFilterEnd.Size = new Size(72, 15);
+            lbFiFilterEnd.TabIndex = 62;
+            lbFiFilterEnd.Text = "lbFiFilterEnd";
             // 
             // lbFiFilterStart
             // 
@@ -332,11 +338,11 @@
             // label13
             // 
             label13.AutoSize = true;
-            label13.Location = new Point(18, 249);
+            label13.Location = new Point(29, 249);
             label13.Name = "label13";
-            label13.Size = new Size(118, 15);
+            label13.Size = new Size(106, 15);
             label13.TabIndex = 60;
-            label13.Text = "Iteration Filter Width:";
+            label13.Text = "Iteration Filter End:";
             // 
             // label12
             // 
@@ -554,6 +560,24 @@
             label10.TabIndex = 20;
             label10.Text = "Press the [i] key to hide/show this information display panel, [h] for help.";
             // 
+            // label18
+            // 
+            label18.AutoSize = true;
+            label18.Location = new Point(252, 234);
+            label18.Name = "label18";
+            label18.Size = new Size(117, 15);
+            label18.TabIndex = 72;
+            label18.Text = "(+/- [alt] shift wheel)";
+            // 
+            // label19
+            // 
+            label19.AutoSize = true;
+            label19.Location = new Point(252, 249);
+            label19.Name = "label19";
+            label19.Size = new Size(111, 15);
+            label19.TabIndex = 73;
+            label19.Text = "(+/- [alt] ctrl wheel)";
+            // 
             // FractalDisplayForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -594,7 +618,7 @@
         private ToolStripMenuItem halfCycleMenuItem;
         private ToolStripComboBox cbHalfCycleValue;
         private DoubleBufferedPanel infoPanel;
-        private Label lbFiFilterWidth;
+        private Label lbFiFilterEnd;
         private Label lbFiFilterStart;
         private Label label13;
         private Label label12;
@@ -630,5 +654,7 @@
         private Label label16;
         private Label label17;
         private Label lbFiColorPalette;
+        private Label label18;
+        private Label label19;
     }
 }

@@ -80,6 +80,10 @@ namespace CalcmasterFractal
 
 
         [DllImport(dllName: fracDll, CallingConvention = CallingConvention.Cdecl)]
+        public static extern void SetJuliaCenter(IntPtr generator, double jcX, double jcY);
+
+
+        [DllImport(dllName: fracDll, CallingConvention = CallingConvention.Cdecl)]
         public static extern void SetMode(IntPtr generator, int mode, int mouseX, int mouseY);
 
 

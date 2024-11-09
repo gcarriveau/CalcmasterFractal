@@ -232,7 +232,11 @@ namespace CalcmasterFractal
 
         }
 
-        
+        public void SetJuliaCenter(double juliaCenterX, double juliaCenterY)
+        {
+            FractalInterface.SetJuliaCenter(m_ptrFractalGenerator, juliaCenterX, juliaCenterY);
+        }
+
         public FractalState GetFractalState()
         {
             FractalState fs = Marshal.PtrToStructure<FractalState>(FractalInterface.GetState(m_ptrFractalGenerator));

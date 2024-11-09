@@ -1,0 +1,19 @@
+While viewing a Julia set or Carriveau set of a fractal, right click on the fractal and select Save as Sequence.
+
+This creates a folder containing a series of png files exported by the SpeedFractal program under the folder in which SpeedFractal is run.
+
+Obtain a Windows binary build of ffmpeg.exe from links found on ffmpeg.org.  https://www.gyan.dev/ffmpeg/builds/
+After unzipping the files of the build using 7-zip, place the contents of the /bin folder in a folder which is added to your PATH environment variable.
+
+Open the folder in a Powershell terminal.  Compile the PNG files into an avi movie file by issuing the following command:
+
+ffmpeg -framerate 10 -i 'image_1_%03d.png' out.avi
+
+For better quality .webm format (increasing crf decreases video size):
+ffmpeg -framerate = 10 -i 'image_%03d.png' -c:v libvpx-vp9 -crf 15 -b:v 0 out.webm
+
+A series of 72 png files makes a video of about 8Mb.
+
+Documentation:
+https://ffmpeg.org/ffmpeg-all.html#image2-1
+

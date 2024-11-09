@@ -44,6 +44,7 @@ namespace CalcmasterFractal
 
         // LauncherForm handle
         private LauncherForm? parent;
+        private FractalDisplayForm? myself;
 
         // dirtyIterations set to true when we come back to main
         // fractal mode 0 from a julia variety !0.
@@ -58,6 +59,9 @@ namespace CalcmasterFractal
         // Last mouse click x,y
         int lastClickX = 0;
         int lastClickY = 0;
+
+        // Videos
+        private bool cancelVideo = false;
 
         #endregion Private properties
 
@@ -85,6 +89,7 @@ namespace CalcmasterFractal
             // Palette half cycle value - initial value
             cbHalfCycleValue.SelectedIndex = 1; // 20
             cbHalfCycleValue.SelectedIndexChanged += cbHalfCycleValue_SelectedIndexChanged;
+            myself = this;
         }
 
         /// <summary>
@@ -117,7 +122,7 @@ namespace CalcmasterFractal
         #endregion Initialization - runs once
 
         // ***************************************
-        // ********** Functions ******************
+        // ********** FUNCTIONS ******************
         // ***************************************
 
         #region Functions
@@ -228,6 +233,96 @@ namespace CalcmasterFractal
         #endregion Functions
 
         // ***************************************
+        // ********** MAKE VIDEOS ****************
+        // ***************************************
+
+        #region Make Videos
+
+
+        // Make a 4 circle video
+        // Capture bitmaps of 4 circles, with centers at radius distance from
+        // current julia set constant P.
+        // (right up left down) from the julia center coords.
+        // A bitmap is calculated for every 1 degree around each circle.
+        // Radius should be 20 * inc at the current zoom
+        private void MakeVideo4Circles(bool preview)
+        {
+            // Not applicable to main fractal viewing mode
+            if (mode == 0) return;
+            //            await Task.Factory.StartNew(() =>
+            //            {
+
+            // Create a folder for the series
+            string foldername = $"{Environment.CurrentDirectory}\\{fractalFormula.name}_{DateTime.Now.ToString("yyyyMMdd_HHmmss")}";
+            if (!preview) Directory.CreateDirectory(foldername);
+
+            // Back up the current state of the julia set so we can return to it when done.
+            FractalState juliaBackup = gen.GetFractalState();
+            double radius = 5.0 * fractalStateBackup.inc;
+            Int32 fileNumber = 1;
+            Int32 totalFrames = 360 * 4;
+
+            // 4 Circles - centers at right, up, left, and down
+            for (int circleNumber = 0; circleNumber < 4; circleNumber++)
+            {
+                double circleCenterAngle = Math.PI * (double)circleNumber / 2.0;
+                double curAngle = circleCenterAngle + Math.PI;
+                double angleInc = 2 * Math.PI / 360.0;
+                double circleCenterX = Math.Cos(circleCenterAngle) * radius + juliaBackup.juliaCenterX;
+                double circleCenterY = Math.Sin(circleCenterAngle) * radius + juliaBackup.juliaCenterY;
+
+                // Generate bitmaps for the current circle
+                for (int angle = 0; angle < 360; angle++)
+                {
+                    if (cancelVideo)
+                    {
+                        // Video Cancelled, so reset the julia set back to where it was.
+                        gen.SetJuliaCenter(juliaBackup.juliaCenterX, juliaBackup.juliaCenterY);
+                        gen.CalculateMap();
+                        if (myself != null)
+                            myself.Invoke((Action)(() =>
+                            {
+                                UpdateBitmap();
+                            }));
+                        break;
+                    }
+                    double curJuliaCenterX = Math.Cos(curAngle) * radius + circleCenterX;
+                    double curJuliaCenterY = Math.Sin(curAngle) * radius + circleCenterY;
+
+                    // Calculate the iterations and refresh the image on the main thread:
+                    gen.SetJuliaCenter(curJuliaCenterX, curJuliaCenterY);
+                    int err = gen.CalculateMap();
+                    if (myself != null && err == 0)
+                        myself.Invoke((Action)(() =>
+                        {
+                            lbFiSequenceImageNo.Text = fileNumber.ToString();
+                            double percentComplete = 100 * fileNumber / totalFrames;
+                            lbFiSequencePercent.Text = $"{percentComplete}%";
+                            UpdateBitmap();
+                        }));
+
+                    // save the bitmap to disk
+                    string filename = $"image_{fileNumber.ToString().PadLeft(totalWidth: 5, paddingChar: '0')}.png";
+                    if (!preview && err == 0 && gen.LastBitmap != null) gen.LastBitmap.Save(filename: $"{foldername}\\{filename}");
+
+                    // get ready for another cycle
+                    fileNumber++;
+                    curAngle += angleInc;
+                }
+            }
+            //});
+            if (cancelVideo)
+            {
+                MessageBox.Show("Video Sequence Aborted.");
+                cancelVideo = false;
+            }
+            else
+                MessageBox.Show("Video Sequence Finished.");
+        }
+
+        #endregion Make Videos
+
+        // ***************************************
         // ********** KEYBOARD *******************
         // ***************************************
 
@@ -334,6 +429,12 @@ namespace CalcmasterFractal
             {
                 gen.SetFilterEndToCurrentMaxIts();
                 UpdateBitmap();
+            }
+
+            // C    Aborts video creation loop
+            if (e.KeyCode == Keys.C)
+            {
+                cancelVideo = true;
             }
         }
 
@@ -532,16 +633,16 @@ namespace CalcmasterFractal
             }
         }
 
-    #endregion Mouse Events
+        #endregion Mouse Events
 
-    // ***************************************
-    // ******* CONTEXT MENU EVENTS ***********
-    // ***************************************
+        // ***************************************
+        // ******* CONTEXT MENU EVENTS ***********
+        // ***************************************
 
-    #region Context menu events
+        #region Context menu events
 
-    // recalculate palette using a single color
-    private void palRandomMono_Click(object sender, EventArgs e)
+        // recalculate palette using a single color
+        private void palRandomMono_Click(object sender, EventArgs e)
         {
             UpdateRandomPalette(Fractal.ColorPalette.RandomMono);
         }
@@ -574,13 +675,6 @@ namespace CalcmasterFractal
             UpdateBitmap();
         }
 
-        // Reset the fractal to the original size and position as described in fractals.json parameters
-        private void btnResetFractal_Click(object sender, EventArgs e)
-        {
-            gen.SelectFractalFormula(fractalFormula.id);
-            UpdateBitmap(forceCalc: true);
-        }
-
         // Exit
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -589,10 +683,44 @@ namespace CalcmasterFractal
 
         #endregion Context menu events
 
+        // ***************************************
+        // ********** INFOPANEL EVENTS ***********
+        // ***************************************
+
+        #region InfoPanel Events
+
+        // Reset the fractal to the original size and position as described in fractals.json parameters
+        private void btnResetFractal_Click(object sender, EventArgs e)
+        {
+            gen.SelectFractalFormula(fractalFormula.id);
+            UpdateBitmap(forceCalc: true);
+        }
+
+        // Resets iteration filter boundaries back to no-filter
         private void btnResetFilter_Click(object sender, EventArgs e)
         {
             gen.ResetFilterRange();
             UpdateBitmap();
+        }
+
+        #endregion  InfoPanel Events
+
+        private async void fourCircleSeriesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (mode == 0) return;
+            await Task.Factory.StartNew(() =>
+            {
+                MakeVideo4Circles(preview: true);
+            });
+        }
+
+        private async void saveAs4CircleSeriesToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            if (mode == 0) return;
+            await Task.Factory.StartNew(() =>
+            {
+                MakeVideo4Circles(preview: false);
+            });
         }
     }
 }

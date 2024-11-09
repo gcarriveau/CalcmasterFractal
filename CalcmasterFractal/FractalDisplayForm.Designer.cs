@@ -38,12 +38,17 @@
             halfCycleMenuItem = new ToolStripMenuItem();
             cbHalfCycleValue = new ToolStripComboBox();
             generateNewRandomColorsToolStripMenuItem = new ToolStripMenuItem();
+            toolStripMenuItem2 = new ToolStripMenuItem();
+            fourCircleSeriesToolStripMenuItem = new ToolStripMenuItem();
+            toolStripMenuItem3 = new ToolStripMenuItem();
+            saveAs4CircleSeriesToolStripMenuItem1 = new ToolStripMenuItem();
             saveAsSpiralSeriesToolStripMenuItem = new ToolStripMenuItem();
             saveAsCIrcleSeriesToolStripMenuItem = new ToolStripMenuItem();
-            saveAs4CircleSeriesToolStripMenuItem = new ToolStripMenuItem();
             saveAsGoldenRatioToolStripMenuItem = new ToolStripMenuItem();
             exitToolStripMenuItem = new ToolStripMenuItem();
             infoPanel = new DoubleBufferedPanel();
+            label19 = new Label();
+            label18 = new Label();
             lbFiColorPalette = new Label();
             label17 = new Label();
             lbFiJuliaCenter = new Label();
@@ -80,17 +85,15 @@
             lbFiMainFractalZoom = new Label();
             label1 = new Label();
             label10 = new Label();
-            label18 = new Label();
-            label19 = new Label();
             contextMenuStrip1.SuspendLayout();
             infoPanel.SuspendLayout();
             SuspendLayout();
             // 
             // contextMenuStrip1
             // 
-            contextMenuStrip1.Items.AddRange(new ToolStripItem[] { toolStripMenuItem1, halfCycleMenuItem, generateNewRandomColorsToolStripMenuItem, saveAsSpiralSeriesToolStripMenuItem, saveAsCIrcleSeriesToolStripMenuItem, saveAs4CircleSeriesToolStripMenuItem, saveAsGoldenRatioToolStripMenuItem, exitToolStripMenuItem });
+            contextMenuStrip1.Items.AddRange(new ToolStripItem[] { toolStripMenuItem1, halfCycleMenuItem, generateNewRandomColorsToolStripMenuItem, toolStripMenuItem2, toolStripMenuItem3, saveAsSpiralSeriesToolStripMenuItem, saveAsCIrcleSeriesToolStripMenuItem, saveAsGoldenRatioToolStripMenuItem, exitToolStripMenuItem });
             contextMenuStrip1.Name = "contextMenuStrip1";
-            contextMenuStrip1.Size = new Size(234, 180);
+            contextMenuStrip1.Size = new Size(234, 202);
             // 
             // toolStripMenuItem1
             // 
@@ -147,6 +150,34 @@
             generateNewRandomColorsToolStripMenuItem.Size = new Size(233, 22);
             generateNewRandomColorsToolStripMenuItem.Text = "Generate New Random Colors";
             // 
+            // toolStripMenuItem2
+            // 
+            toolStripMenuItem2.DropDownItems.AddRange(new ToolStripItem[] { fourCircleSeriesToolStripMenuItem });
+            toolStripMenuItem2.Name = "toolStripMenuItem2";
+            toolStripMenuItem2.Size = new Size(233, 22);
+            toolStripMenuItem2.Text = "Preview Video Bitmaps";
+            // 
+            // fourCircleSeriesToolStripMenuItem
+            // 
+            fourCircleSeriesToolStripMenuItem.Name = "fourCircleSeriesToolStripMenuItem";
+            fourCircleSeriesToolStripMenuItem.Size = new Size(164, 22);
+            fourCircleSeriesToolStripMenuItem.Text = "Four Circle Series";
+            fourCircleSeriesToolStripMenuItem.Click += fourCircleSeriesToolStripMenuItem_Click;
+            // 
+            // toolStripMenuItem3
+            // 
+            toolStripMenuItem3.DropDownItems.AddRange(new ToolStripItem[] { saveAs4CircleSeriesToolStripMenuItem1 });
+            toolStripMenuItem3.Name = "toolStripMenuItem3";
+            toolStripMenuItem3.Size = new Size(233, 22);
+            toolStripMenuItem3.Text = "Export Video Bitmaps";
+            // 
+            // saveAs4CircleSeriesToolStripMenuItem1
+            // 
+            saveAs4CircleSeriesToolStripMenuItem1.Name = "saveAs4CircleSeriesToolStripMenuItem1";
+            saveAs4CircleSeriesToolStripMenuItem1.Size = new Size(201, 22);
+            saveAs4CircleSeriesToolStripMenuItem1.Text = "Export Four Circle Series";
+            saveAs4CircleSeriesToolStripMenuItem1.Click += saveAs4CircleSeriesToolStripMenuItem1_Click;
+            // 
             // saveAsSpiralSeriesToolStripMenuItem
             // 
             saveAsSpiralSeriesToolStripMenuItem.Name = "saveAsSpiralSeriesToolStripMenuItem";
@@ -158,12 +189,6 @@
             saveAsCIrcleSeriesToolStripMenuItem.Name = "saveAsCIrcleSeriesToolStripMenuItem";
             saveAsCIrcleSeriesToolStripMenuItem.Size = new Size(233, 22);
             saveAsCIrcleSeriesToolStripMenuItem.Text = "Save as CIrcle Series";
-            // 
-            // saveAs4CircleSeriesToolStripMenuItem
-            // 
-            saveAs4CircleSeriesToolStripMenuItem.Name = "saveAs4CircleSeriesToolStripMenuItem";
-            saveAs4CircleSeriesToolStripMenuItem.Size = new Size(233, 22);
-            saveAs4CircleSeriesToolStripMenuItem.Text = "Save as 4 Circle Series";
             // 
             // saveAsGoldenRatioToolStripMenuItem
             // 
@@ -225,6 +250,24 @@
             infoPanel.Size = new Size(422, 546);
             infoPanel.TabIndex = 1;
             infoPanel.Visible = false;
+            // 
+            // label19
+            // 
+            label19.AutoSize = true;
+            label19.Location = new Point(252, 249);
+            label19.Name = "label19";
+            label19.Size = new Size(111, 15);
+            label19.TabIndex = 73;
+            label19.Text = "(+/- [alt] ctrl wheel)";
+            // 
+            // label18
+            // 
+            label18.AutoSize = true;
+            label18.Location = new Point(252, 234);
+            label18.Name = "label18";
+            label18.Size = new Size(117, 15);
+            label18.TabIndex = 72;
+            label18.Text = "(+/- [alt] shift wheel)";
             // 
             // lbFiColorPalette
             // 
@@ -560,24 +603,6 @@
             label10.TabIndex = 20;
             label10.Text = "Press the [i] key to hide/show this information display panel, [h] for help.";
             // 
-            // label18
-            // 
-            label18.AutoSize = true;
-            label18.Location = new Point(252, 234);
-            label18.Name = "label18";
-            label18.Size = new Size(117, 15);
-            label18.TabIndex = 72;
-            label18.Text = "(+/- [alt] shift wheel)";
-            // 
-            // label19
-            // 
-            label19.AutoSize = true;
-            label19.Location = new Point(252, 249);
-            label19.Name = "label19";
-            label19.Size = new Size(111, 15);
-            label19.TabIndex = 73;
-            label19.Text = "(+/- [alt] ctrl wheel)";
-            // 
             // FractalDisplayForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -607,7 +632,6 @@
         private ToolStripMenuItem generateNewRandomColorsToolStripMenuItem;
         private ToolStripMenuItem saveAsSpiralSeriesToolStripMenuItem;
         private ToolStripMenuItem saveAsCIrcleSeriesToolStripMenuItem;
-        private ToolStripMenuItem saveAs4CircleSeriesToolStripMenuItem;
         private ToolStripMenuItem saveAsGoldenRatioToolStripMenuItem;
         private ToolStripMenuItem exitToolStripMenuItem;
         private ToolStripMenuItem toolStripMenuItem1;
@@ -656,5 +680,9 @@
         private Label lbFiColorPalette;
         private Label label18;
         private Label label19;
+        private ToolStripMenuItem toolStripMenuItem2;
+        private ToolStripMenuItem fourCircleSeriesToolStripMenuItem;
+        private ToolStripMenuItem toolStripMenuItem3;
+        private ToolStripMenuItem saveAs4CircleSeriesToolStripMenuItem1;
     }
 }

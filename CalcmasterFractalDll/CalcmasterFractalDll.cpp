@@ -79,6 +79,12 @@ void FractalGenerator::setDimensions(int height, int width)
     initializeVectors();
 }
 
+void FractalGenerator::setJuliaCenter(double jcX, double jcY)
+{
+    m_juliaCenterX = jcX;
+    m_juliaCenterY = jcY;
+}
+
 int FractalGenerator::getIterationsAtIndex(size_t index)
 {
     return m_iterations.at(index);

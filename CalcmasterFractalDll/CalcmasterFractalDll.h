@@ -80,6 +80,8 @@ public:
 	// Calculates m_iterations vector values for the a selected main fractal type
 	int calculateMap();
 
+	void setJuliaCenter(double jcX, double jcY);
+
 	// Updates the center to the point that was clicked on (converted to fractal plane)
 	// Divides m_radius by 1.5
 	// Recalculates m_inc, m_top, m_left
@@ -247,6 +249,11 @@ extern "C" _declspec(dllexport) void SelectFractalFormula(FractalGenerator* t, i
 extern "C" _declspec(dllexport) void SetDimensions(FractalGenerator* t, int height, int width)
 {
 	t->setDimensions(height, width);
+}
+
+extern "C" _declspec(dllexport) void SetJuliaCenter(FractalGenerator* t, double jcX, double jcY)
+{
+	t->setJuliaCenter(jcX, jcY);
 }
 
 extern "C" _declspec(dllexport) void SetMode(FractalGenerator* t, int mode, int mouseClickX = 0, int mouseClickY = 0)

@@ -295,7 +295,7 @@ __device__ thrust::complex<double> frmBurningShip(thrust::complex<double> z, thr
     // return Complex.Add(Complex.Pow(new Complex(Math.Abs(res.Real),-Math.Abs(res.Imaginary)) , 2.0), p);
     thrust::complex<double> temp{ cuda::std::abs(z.real()), -cuda::std::abs(z.imag())};
     temp *= temp;
-    temp *= z;
+    //temp *= z;
     return temp + p;
 }
 

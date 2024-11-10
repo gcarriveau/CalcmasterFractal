@@ -130,8 +130,9 @@ double* FractalGenerator::getImaginaries()
     return m_im.data();
 }
 
-int FractalGenerator::calculateMap()
+int FractalGenerator::calculateMap(int maxIterations)
 {
+    m_maxIts = maxIterations;
     // TheCalcmaster(double* host_re, double* host_im, int* host_its, double limit, int maxIts, int fractalID, size_t numElements, int mode = 0, double juliaCenterX = 0.0, double juliaCenterY = 0.0)
     m_lastError = TheCalcmaster(m_re.data(), m_im.data(), m_iterations.data(), m_limit, m_maxIts, m_id, m_vector_length, m_mode, m_juliaCenterX, m_juliaCenterY);
     return m_lastError;

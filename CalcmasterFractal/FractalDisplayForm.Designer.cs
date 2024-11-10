@@ -31,10 +31,14 @@
             components = new System.ComponentModel.Container();
             contextMenuStrip1 = new ContextMenuStrip(components);
             toolStripMenuItem1 = new ToolStripMenuItem();
+            grayscaleToolStripMenuItem = new ToolStripMenuItem();
             palRandomMono = new ToolStripMenuItem();
             palRandomCompliment = new ToolStripMenuItem();
             palRandomTriad = new ToolStripMenuItem();
             palRandomTetrad = new ToolStripMenuItem();
+            rainbowToolStripMenuItem = new ToolStripMenuItem();
+            toolStripMenuItem4 = new ToolStripMenuItem();
+            cbStartColor = new ToolStripComboBox();
             halfCycleMenuItem = new ToolStripMenuItem();
             cbHalfCycleValue = new ToolStripComboBox();
             generateNewRandomColorsToolStripMenuItem = new ToolStripMenuItem();
@@ -42,9 +46,6 @@
             fourCircleSeriesToolStripMenuItem = new ToolStripMenuItem();
             toolStripMenuItem3 = new ToolStripMenuItem();
             saveAs4CircleSeriesToolStripMenuItem1 = new ToolStripMenuItem();
-            saveAsSpiralSeriesToolStripMenuItem = new ToolStripMenuItem();
-            saveAsCIrcleSeriesToolStripMenuItem = new ToolStripMenuItem();
-            saveAsGoldenRatioToolStripMenuItem = new ToolStripMenuItem();
             exitToolStripMenuItem = new ToolStripMenuItem();
             infoPanel = new DoubleBufferedPanel();
             label19 = new Label();
@@ -91,16 +92,23 @@
             // 
             // contextMenuStrip1
             // 
-            contextMenuStrip1.Items.AddRange(new ToolStripItem[] { toolStripMenuItem1, halfCycleMenuItem, generateNewRandomColorsToolStripMenuItem, toolStripMenuItem2, toolStripMenuItem3, saveAsSpiralSeriesToolStripMenuItem, saveAsCIrcleSeriesToolStripMenuItem, saveAsGoldenRatioToolStripMenuItem, exitToolStripMenuItem });
+            contextMenuStrip1.Items.AddRange(new ToolStripItem[] { toolStripMenuItem1, toolStripMenuItem4, halfCycleMenuItem, generateNewRandomColorsToolStripMenuItem, toolStripMenuItem2, toolStripMenuItem3, exitToolStripMenuItem });
             contextMenuStrip1.Name = "contextMenuStrip1";
-            contextMenuStrip1.Size = new Size(234, 202);
+            contextMenuStrip1.Size = new Size(234, 180);
             // 
             // toolStripMenuItem1
             // 
-            toolStripMenuItem1.DropDownItems.AddRange(new ToolStripItem[] { palRandomMono, palRandomCompliment, palRandomTriad, palRandomTetrad });
+            toolStripMenuItem1.DropDownItems.AddRange(new ToolStripItem[] { grayscaleToolStripMenuItem, palRandomMono, palRandomCompliment, palRandomTriad, palRandomTetrad, rainbowToolStripMenuItem });
             toolStripMenuItem1.Name = "toolStripMenuItem1";
             toolStripMenuItem1.Size = new Size(233, 22);
             toolStripMenuItem1.Text = "Color Algorithm";
+            // 
+            // grayscaleToolStripMenuItem
+            // 
+            grayscaleToolStripMenuItem.Name = "grayscaleToolStripMenuItem";
+            grayscaleToolStripMenuItem.Size = new Size(146, 22);
+            grayscaleToolStripMenuItem.Text = "Grayscale";
+            grayscaleToolStripMenuItem.Click += palGrayscale_Click;
             // 
             // palRandomMono
             // 
@@ -129,6 +137,27 @@
             palRandomTetrad.Size = new Size(146, 22);
             palRandomTetrad.Text = "Tetrad";
             palRandomTetrad.Click += palRandomTetrad_Click;
+            // 
+            // rainbowToolStripMenuItem
+            // 
+            rainbowToolStripMenuItem.Name = "rainbowToolStripMenuItem";
+            rainbowToolStripMenuItem.Size = new Size(146, 22);
+            rainbowToolStripMenuItem.Text = "Rainbow";
+            rainbowToolStripMenuItem.Click += palRainbow_Click;
+            // 
+            // toolStripMenuItem4
+            // 
+            toolStripMenuItem4.DropDownItems.AddRange(new ToolStripItem[] { cbStartColor });
+            toolStripMenuItem4.Name = "toolStripMenuItem4";
+            toolStripMenuItem4.Size = new Size(233, 22);
+            toolStripMenuItem4.Text = "Starting Color";
+            // 
+            // cbStartColor
+            // 
+            cbStartColor.DropDownStyle = ComboBoxStyle.DropDownList;
+            cbStartColor.Name = "cbStartColor";
+            cbStartColor.Size = new Size(121, 23);
+            cbStartColor.SelectedIndexChanged += cbStartColor_SelectedIndexChanged;
             // 
             // halfCycleMenuItem
             // 
@@ -177,24 +206,6 @@
             saveAs4CircleSeriesToolStripMenuItem1.Size = new Size(201, 22);
             saveAs4CircleSeriesToolStripMenuItem1.Text = "Export Four Circle Series";
             saveAs4CircleSeriesToolStripMenuItem1.Click += saveAs4CircleSeriesToolStripMenuItem1_Click;
-            // 
-            // saveAsSpiralSeriesToolStripMenuItem
-            // 
-            saveAsSpiralSeriesToolStripMenuItem.Name = "saveAsSpiralSeriesToolStripMenuItem";
-            saveAsSpiralSeriesToolStripMenuItem.Size = new Size(233, 22);
-            saveAsSpiralSeriesToolStripMenuItem.Text = "Save as Spiral Series";
-            // 
-            // saveAsCIrcleSeriesToolStripMenuItem
-            // 
-            saveAsCIrcleSeriesToolStripMenuItem.Name = "saveAsCIrcleSeriesToolStripMenuItem";
-            saveAsCIrcleSeriesToolStripMenuItem.Size = new Size(233, 22);
-            saveAsCIrcleSeriesToolStripMenuItem.Text = "Save as CIrcle Series";
-            // 
-            // saveAsGoldenRatioToolStripMenuItem
-            // 
-            saveAsGoldenRatioToolStripMenuItem.Name = "saveAsGoldenRatioToolStripMenuItem";
-            saveAsGoldenRatioToolStripMenuItem.Size = new Size(233, 22);
-            saveAsGoldenRatioToolStripMenuItem.Text = "Save as Golden Ratio";
             // 
             // exitToolStripMenuItem
             // 
@@ -630,9 +641,6 @@
 
         private ContextMenuStrip contextMenuStrip1;
         private ToolStripMenuItem generateNewRandomColorsToolStripMenuItem;
-        private ToolStripMenuItem saveAsSpiralSeriesToolStripMenuItem;
-        private ToolStripMenuItem saveAsCIrcleSeriesToolStripMenuItem;
-        private ToolStripMenuItem saveAsGoldenRatioToolStripMenuItem;
         private ToolStripMenuItem exitToolStripMenuItem;
         private ToolStripMenuItem toolStripMenuItem1;
         private ToolStripMenuItem palRandomMono;
@@ -684,5 +692,9 @@
         private ToolStripMenuItem fourCircleSeriesToolStripMenuItem;
         private ToolStripMenuItem toolStripMenuItem3;
         private ToolStripMenuItem saveAs4CircleSeriesToolStripMenuItem1;
+        private ToolStripMenuItem grayscaleToolStripMenuItem;
+        private ToolStripMenuItem rainbowToolStripMenuItem;
+        private ToolStripMenuItem toolStripMenuItem4;
+        private ToolStripComboBox cbStartColor;
     }
 }

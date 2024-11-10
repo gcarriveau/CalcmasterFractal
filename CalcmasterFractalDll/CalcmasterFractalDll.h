@@ -78,7 +78,7 @@ public:
 	double* getImaginaries();
 
 	// Calculates m_iterations vector values for the a selected main fractal type
-	int calculateMap();
+	int calculateMap(int maxIterations);
 
 	void setJuliaCenter(double jcX, double jcY);
 
@@ -277,9 +277,9 @@ extern "C" _declspec(dllexport) int* GetIterations(FractalGenerator* t)
 	return t->getIterations();
 }
 
-extern "C" _declspec(dllexport) int CalculateMap(FractalGenerator* t)
+extern "C" _declspec(dllexport) int CalculateMap(FractalGenerator* t, int maxIterations)
 {
-	return t->calculateMap();
+	return t->calculateMap(maxIterations);
 }
 
 extern "C" _declspec(dllexport) int ZoomInAtPoint(FractalGenerator* t, int col, int row)

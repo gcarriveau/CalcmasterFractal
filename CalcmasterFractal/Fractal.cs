@@ -94,14 +94,27 @@ namespace CalcmasterFractal
         // ******************************************************************
         #region Public properties and methods
 
+        // m_arrColor length
         public const int NumberOfColors = 5000;
-        public const int MaxIterations = 1000;
+
+        // ITERATIONS LIMIT ACCORDING TO CURRENT ZOOM
+        // For every 1000x zoom, add 50 to MaxIterations.. zoom inc is 1.5x
+        public int Mode { get; private set; } = 0;
+        public const double ZoomFactor = 1.5;
+        public double CurZoom { get; set; } = 1.0;
+        public double CurZoomBackup { get; set; } = 1.0;
+        public const int MinIterationsBoundary = 250;
+        public const int MaxIterationsBoundary = 5000;
+        public int MaxIterations { get; set; } = MinIterationsBoundary;
+        public int MaxIterationsBackup { get; set; } = MaxIterationsBoundary;
+
 
         public enum ColorPalette
         {
-            RandomMono, RandomCompliment, RandomTriad, RandomTetrad
-            //, Random2, Random3, Monochrome, GrayScale, Yellows, RedGreen
+            RandomMono, RandomCompliment, RandomTriad, RandomTetrad, Rainbow, Grayscale
+            //, Random2, Random3, Monochrome, Yellows, RedGreen
         }
+        public List<int> G_hasItsList { get; private set; } = new List<int>();
 
         /// <summary>
         /// Gets or updates the color palette algorithm.
@@ -115,6 +128,11 @@ namespace CalcmasterFractal
         public ColorPalette GetPalette()
         {
             return m_palette;
+        }
+        public void SetStartColor(string colorName)
+        {
+            m_startColor = Color.FromName(colorName);
+            UpdateRandomColors();
         }
 
         /// <summary>
@@ -204,6 +222,13 @@ namespace CalcmasterFractal
             return m_iterations[row * m_width + col];
         }
 
+        // Histogram weighted value from 0.0 to 1.0
+        public float GetIterationsWeight(int numIts)
+        {
+            if (m_iterations_weights == null) return 0;
+            return m_iterations_weights[numIts];
+        }
+
         /// <summary>
         /// A simple test function for making the DLL add two numbers and return a result
         /// </summary>
@@ -228,8 +253,21 @@ namespace CalcmasterFractal
 
         public void SetMode(int mode, int mouseX, int mouseY)
         {
+            if (Mode == 0 && mode != 0)
+            {
+                Mode = mode;
+                CurZoomBackup = CurZoom;
+                MaxIterationsBackup = MaxIterations;
+                CurZoom = 1.0;
+                MaxIterations = MinIterationsBoundary;
+            }
+            else if (Mode != 0 && mode == 0)
+            {
+                Mode = mode;
+                CurZoom = CurZoomBackup;
+                MaxIterations = MaxIterationsBackup;
+            }
             FractalInterface.SetMode(m_ptrFractalGenerator, mode, mouseX, mouseY);
-
         }
 
         public void SetJuliaCenter(double juliaCenterX, double juliaCenterY)
@@ -249,7 +287,7 @@ namespace CalcmasterFractal
         /// <returns></returns>
         public int CalculateMap()
         {
-            int err = FractalInterface.CalculateMap(m_ptrFractalGenerator);
+            int err = FractalInterface.CalculateMap(m_ptrFractalGenerator, MaxIterations);
             if (err == 0)
             {
                 UpdateIterations();
@@ -298,6 +336,10 @@ namespace CalcmasterFractal
         /// <returns></returns>
         public int ZoomInAtPoint(int col, int row)
         {
+            CurZoom *= ZoomFactor;
+            MaxIterations = Convert.ToInt32(CurZoom / 6.0 + MinIterationsBoundary);
+            if (MaxIterations < MinIterationsBoundary) MaxIterations = MinIterationsBoundary;
+            if (MaxIterations > MaxIterationsBoundary) MaxIterations = MaxIterationsBoundary-1;
             int err = FractalInterface.ZoomInAtPoint(m_ptrFractalGenerator, col, row);
             if (err == 0) return CalculateMap();
             return err;
@@ -309,6 +351,10 @@ namespace CalcmasterFractal
         /// <returns></returns>
         public int ZoomOut()
         {
+            CurZoom /= ZoomFactor;
+            MaxIterations = Convert.ToInt32(CurZoom / 6.0 + MinIterationsBoundary);
+            if (MaxIterations < MinIterationsBoundary) MaxIterations = MinIterationsBoundary;
+            if (MaxIterations > MaxIterationsBoundary) MaxIterations = MaxIterationsBoundary-1;
             int err = FractalInterface.ZoomOut(m_ptrFractalGenerator);
             if (err == 0) return CalculateMap();
             return err;
@@ -371,6 +417,11 @@ namespace CalcmasterFractal
 
         // Our local copy of the iterations array
         private int[] m_iterations;
+        // Number of pixels having x number of iterations
+        private int[] m_iterations_counts;
+        private int m_iterations_counts_max = 1;
+        // Color weight given to the number of iterations
+        private float[] m_iterations_weights;
         
         // Iterations filter upper and lower boundaries
         // If m_iterations[x] < m_filterStart, GetColor(int its) returns Color.Black
@@ -398,18 +449,75 @@ namespace CalcmasterFractal
         {
             IntPtr ptr = FractalInterface.GetIterations(m_ptrFractalGenerator);
             Marshal.Copy(ptr, m_iterations, 0, m_height * m_width);
+            
+            // Analysis of the result:
             // Reset m_maxIts to the max number of iterations found in m_iterations
             // This makes sure that pixels with the highest number of iterations are black
             // and gives us pretty fine lines and borders at those points.
-            m_maxIts = 0;
-            foreach(int numIts in m_iterations)
-                if (m_maxIts < numIts) m_maxIts = numIts;
-            //UpdateRandomColors();
-            //if (m_maxIts > m_maxRandomColors)
-            //{
-            //    m_maxRandomColors = m_maxIts;
-            //    UpdateRandomColorList();
-            //}
+            m_maxIts = 0;  // maximum number of iterations reached in the run.
+            G_hasItsList = new List<int>();
+            foreach (int numIts in m_iterations)
+            {
+                //if (numIts > m_maxIts) m_maxIts = numIts;
+                m_maxIts = Math.Max(m_maxIts, numIts);
+                //if (!hasItsList.Contains(numIts)) hasItsList.Add(numIts);
+                //if (numIts != MaxIterations) m_iterations_counts[numIts]++;
+            }
+            // tag non-zero numbers of iterations
+            m_iterations_counts = new int[m_maxIts + 1];
+            foreach (int numIts in m_iterations)
+            {
+                m_iterations_counts[numIts] = 1;
+            }
+            for (int i = 0; i < m_iterations_counts.Length; i++)
+            {
+                if (m_iterations_counts[i] == 1) G_hasItsList.Add(i);
+            }
+            G_hasItsList.Sort();
+            if (m_palette == ColorPalette.Rainbow || m_palette == ColorPalette.Grayscale)
+                UpdateRandomColors();
+
+            /*
+            // slow
+            hasItsList.Sort();
+            int numElms = hasItsList.Count;
+            int w = 0;
+            double piOver2 = Math.PI / 2.0;
+            for (int i = 0; i < numElms; i++)
+            {
+
+                w = Convert.ToInt32(255.0 * Math.Sin(piOver2 * (double)i / (double)numElms));
+                m_arrColors[hasItsList[i]] = Color.FromArgb(w,w,w);
+            }
+            */
+
+                /*
+                // Histogram
+                // number of pixels having x number of iterations.. 1920 x 1080 = 2,073,600 pixels
+                m_iterations_counts = new int[m_maxIts + 1];
+                Array.Fill<int>(m_iterations_counts, 0); // <-- do we need to do this in C#?
+                m_iterations_weights = new float[m_maxIts + 1];
+                m_iterations_counts_max = 1;
+                foreach (int numIts in m_iterations)
+                    m_iterations_counts[numIts]++;
+                foreach (int numPix in m_iterations_counts)
+                    m_iterations_counts_max = Math.Max(m_iterations_counts_max, numPix);
+                for (int i = 0; i < MaxIterations; i++)
+                {
+                    m_iterations_weights[i] = (float)m_iterations_counts[i] / (float)m_iterations_counts_max;
+                    int c = 255 - Convert.ToInt32(255 * m_iterations_weights[i]);
+                    m_arrColors[i] = Color.FromArgb(c, c, c);
+                }
+                */
+
+                // Create an iteration statistics dictionary
+
+                //UpdateRandomColors();
+                //if (m_maxIts > m_maxRandomColors)
+                //{
+                //    m_maxRandomColors = m_maxIts;
+                //    UpdateRandomColorList();
+                //}
         }
 
         /// <summary>
@@ -535,7 +643,39 @@ namespace CalcmasterFractal
         /// </summary>
         public void UpdateRandomColors()
         {
-            SuperColor sc = new SuperColor(m_startColor);
+            SuperColor sc;
+
+            // Rainbow, Grayscale
+            if (m_palette == ColorPalette.Rainbow || m_palette == ColorPalette.Grayscale)
+            {
+                int numElms = G_hasItsList.Count;
+                int w = 0;
+                double piOver2 = Math.PI / 2.0;
+                sc = new SuperColor(m_startColor);
+                double startH = sc.H;
+                if (m_palette == ColorPalette.Rainbow)
+                {
+                    // Color based on Hue angle
+                    for (int i = 0; i < numElms; i++)
+                    {
+                        sc.H = startH + 360.0 * Math.Sin(piOver2 * (double)i / (double)numElms);
+                        m_arrColors[G_hasItsList[i]] = sc.Color;
+                    }
+                }
+                else
+                {
+                    // Grayscale
+                    for (int i = 0; i < numElms; i++)
+                    {
+                        w = Convert.ToInt32(255.0 * Math.Sin(piOver2 * (double)i / (double)numElms));
+                        m_arrColors[G_hasItsList[i]] = Color.FromArgb(w, w, w);
+                    }
+                }
+                return;
+            }
+
+            // RandomMono, RandomCompliment, RandomTriad, RandomTetrad
+            sc = new SuperColor(m_startColor);
             m_arrColors = new Color[NumberOfColors];
             double incSat = sc.S / (double)halfCycle;
             double incVal = sc.V / (double)halfCycle;
@@ -669,6 +809,9 @@ namespace CalcmasterFractal
         {
             if (numIts == 0 || numIts == m_maxIts) return Color.Black;
             if (numIts < m_filterStart || numIts > m_filterEnd) return Color.Black;
+            // Grayscale histogram..
+            //int weight = 255 - Convert.ToInt32(GetIterationsWeight(numIts) * 255);
+            //return Color.FromArgb(255, weight, weight, weight);
             return InverseToggle ? m_arrColors[m_maxIts - numIts] : m_arrColors[numIts];
         }
 

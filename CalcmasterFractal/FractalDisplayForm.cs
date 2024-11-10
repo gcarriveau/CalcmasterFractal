@@ -90,6 +90,8 @@ namespace CalcmasterFractal
             cbHalfCycleValue.SelectedIndex = 1; // 20
             cbHalfCycleValue.SelectedIndexChanged += cbHalfCycleValue_SelectedIndexChanged;
             myself = this;
+            for (int i = 28; i <= 167; i++)
+                cbStartColor.Items.Add(((KnownColor)i).ToString());
         }
 
         /// <summary>
@@ -323,7 +325,7 @@ namespace CalcmasterFractal
         #endregion Make Videos
 
         // ***************************************
-        // ********** KEYBOARD *******************
+        // ********** KEYBOARD EVENTS ************
         // ***************************************
 
         #region Keyboard events
@@ -641,6 +643,12 @@ namespace CalcmasterFractal
 
         #region Context menu events
 
+        // recalculate palette using sinusoidal grayscale
+        private void palGrayscale_Click(object sender, EventArgs e)
+        {
+            UpdateRandomPalette(Fractal.ColorPalette.Grayscale);
+        }
+
         // recalculate palette using a single color
         private void palRandomMono_Click(object sender, EventArgs e)
         {
@@ -665,6 +673,13 @@ namespace CalcmasterFractal
             UpdateRandomPalette(Fractal.ColorPalette.RandomTetrad);
         }
 
+        // recalculate palette using Hue angle starting at m_startColor
+        private void palRainbow_Click(object sender, EventArgs e)
+        {
+            UpdateRandomPalette(Fractal.ColorPalette.Rainbow);
+        }
+
+
         // Context menu selection of palette half cycle value
         private void cbHalfCycleValue_SelectedIndexChanged(object? sender, EventArgs e)
         {
@@ -679,6 +694,24 @@ namespace CalcmasterFractal
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private async void fourCircleSeriesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (mode == 0) return;
+            await Task.Factory.StartNew(() =>
+            {
+                MakeVideo4Circles(preview: true);
+            });
+        }
+
+        private async void saveAs4CircleSeriesToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            if (mode == 0) return;
+            await Task.Factory.StartNew(() =>
+            {
+                MakeVideo4Circles(preview: false);
+            });
         }
 
         #endregion Context menu events
@@ -705,22 +738,12 @@ namespace CalcmasterFractal
 
         #endregion  InfoPanel Events
 
-        private async void fourCircleSeriesToolStripMenuItem_Click(object sender, EventArgs e)
+        // Set the start color to a named color from the Starting Color pick list
+        private void cbStartColor_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (mode == 0) return;
-            await Task.Factory.StartNew(() =>
-            {
-                MakeVideo4Circles(preview: true);
-            });
-        }
-
-        private async void saveAs4CircleSeriesToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            if (mode == 0) return;
-            await Task.Factory.StartNew(() =>
-            {
-                MakeVideo4Circles(preview: false);
-            });
+            if (cbStartColor.SelectedIndex == -1) return;
+            gen.SetStartColor(cbStartColor.SelectedItem.ToString());
+            UpdateBitmap();
         }
     }
 }

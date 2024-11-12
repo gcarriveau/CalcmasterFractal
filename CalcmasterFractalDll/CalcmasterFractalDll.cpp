@@ -130,11 +130,11 @@ double* FractalGenerator::getImaginaries()
     return m_im.data();
 }
 
-int FractalGenerator::calculateMap(int maxIterations)
+int FractalGenerator::calculateMap(int maxIterations, int ismove)
 {
     m_maxIts = maxIterations;
     // TheCalcmaster(double* host_re, double* host_im, int* host_its, double limit, int maxIts, int fractalID, size_t numElements, int mode = 0, double juliaCenterX = 0.0, double juliaCenterY = 0.0)
-    m_lastError = TheCalcmaster(m_re.data(), m_im.data(), m_iterations.data(), m_limit, m_maxIts, m_id, m_vector_length, m_mode, m_juliaCenterX, m_juliaCenterY);
+    m_lastError = TheCalcmaster(m_re.data(), m_im.data(), m_iterations.data(), m_limit, m_maxIts, m_id, m_vector_length, m_mode, m_juliaCenterX, m_juliaCenterY, ismove);
     return m_lastError;
 }
 
@@ -162,25 +162,61 @@ int FractalGenerator::zoomOut()
 int FractalGenerator::move(int d)
 {
     if (m_lastError) return m_lastError;
-    double p2move = m_inc * 10.0;
+    int numPixels = 10;
+    double p2move = m_inc * static_cast<double>(numPixels);
+    // Temp vector filled with zeros for shifting the iterations UP DOWN LEFT or RIGHT
+    // we move by numPixels (i.e. UP DOWN rows or LEFT RIGHT columns)
+    std::vector<int> temp_iterations(m_vector_length);
     switch (d)
     {
     case Direction::UP:
+    {
+        // shift the iterations values to the right by 10 rows
+        size_t offset{ static_cast<size_t>(m_width * numPixels) };
+        for (size_t i{ 0 }; i < m_vector_length - offset; ++i)
+            temp_iterations[i + offset] = m_iterations[i];
+        m_iterations = temp_iterations;
+        // regenerate the points
         m_centerY += p2move;
         generatePoints();
         return m_lastError;
+    }
     case Direction::DOWN:
+    {
+        // shift the iterations values to the left by 10 rows
+        size_t offset{ static_cast<size_t>(m_width * numPixels) };
+        for (size_t i{ offset }; i < m_vector_length; ++i)
+            temp_iterations[i - offset] = m_iterations[i];
+        m_iterations = temp_iterations;
+        // regenerate the points
         m_centerY -= p2move;
         generatePoints();
         return m_lastError;
+    }
     case Direction::LEFT:
+    {
+        // move every row to the right by numPixels
+        for (size_t row{ 0 }; row < m_height; ++row)
+            for (size_t col{ 0 }; col < static_cast<size_t>(m_width - numPixels); ++col)
+                temp_iterations[m_width * row + col + numPixels] = m_iterations[m_width * row + col];
+        m_iterations = temp_iterations;
+        // regenerate the points
         m_centerX -= p2move;
         generatePoints();
         return m_lastError;
+    }
     case Direction::RIGHT:
+    {
+        // move every row to the left by numPixels
+        for (size_t row{ 0 }; row < m_height; ++row)
+            for (size_t col{ static_cast<size_t>(numPixels) }; col < m_width; ++col)
+                temp_iterations[m_width * row + col - numPixels] = m_iterations[m_width * row + col];
+        m_iterations = temp_iterations;
+        // regenerate the points
         m_centerX += p2move;
         generatePoints();
         return m_lastError;
+    }
     default:
         m_lastError = 9;
         return 9;

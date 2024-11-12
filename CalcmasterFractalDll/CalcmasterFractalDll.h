@@ -22,7 +22,7 @@ using nJson = nlohmann::json; // Thanks, Neil Lohmann (Also MIT) https://github.
 using namespace std::string_view_literals;
 
 // CUDA function to calculate main fractal images
-int TheCalcmaster(double* host_re, double* host_im, int* host_its, double limit, int fractalID, int maxIts, size_t numElements, int mode = 0, double juliaCenterX = 0.0, double juliaCenterY = 0.0);
+int TheCalcmaster(double* host_re, double* host_im, int* host_its, double limit, int fractalID, int maxIts, size_t numElements, int mode = 0, double juliaCenterX = 0.0, double juliaCenterY = 0.0, int ismove = 0);
 
 // Forward declaration of the class that is exported from the dll
 class FractalGenerator {
@@ -78,7 +78,7 @@ public:
 	double* getImaginaries();
 
 	// Calculates m_iterations vector values for the a selected main fractal type
-	int calculateMap(int maxIterations);
+	int calculateMap(int maxIterations, int ismove);
 
 	void setJuliaCenter(double jcX, double jcY);
 
@@ -277,9 +277,9 @@ extern "C" _declspec(dllexport) int* GetIterations(FractalGenerator* t)
 	return t->getIterations();
 }
 
-extern "C" _declspec(dllexport) int CalculateMap(FractalGenerator* t, int maxIterations)
+extern "C" _declspec(dllexport) int CalculateMap(FractalGenerator* t, int maxIterations, int ismove)
 {
-	return t->calculateMap(maxIterations);
+	return t->calculateMap(maxIterations, ismove);
 }
 
 extern "C" _declspec(dllexport) int ZoomInAtPoint(FractalGenerator* t, int col, int row)

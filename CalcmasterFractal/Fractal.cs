@@ -285,9 +285,9 @@ namespace CalcmasterFractal
         /// Calculates the iterations for the main fractal and updates LastBitmap
         /// </summary>
         /// <returns></returns>
-        public int CalculateMap()
+        public int CalculateMap(int ismove = 0)
         {
-            int err = FractalInterface.CalculateMap(m_ptrFractalGenerator, MaxIterations);
+            int err = FractalInterface.CalculateMap(m_ptrFractalGenerator, Math.Min(MaxIterations,m_filterEnd), ismove);
             if (err == 0)
             {
                 UpdateIterations();
@@ -363,7 +363,7 @@ namespace CalcmasterFractal
         public int Move(FractalInterface.Direction d)
         {
             int err = FractalInterface.Move(m_ptrFractalGenerator, ((int)d));
-            if (err == 0) return CalculateMap();
+            if (err == 0) return CalculateMap(ismove: 1);
             return err;
         }
 

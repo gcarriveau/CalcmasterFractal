@@ -33,6 +33,7 @@ __device__ double g_juliaCenterY;
 __device__ int    g_maxIts;
 __device__ double g_limit;
 __device__ int    g_N;
+__device__ int    g_ismove;
 typedef thrust::complex<double> (*frmptr)(thrust::complex<double>, thrust::complex<double>);
 __device__ frmptr g_alg;
 
@@ -299,13 +300,14 @@ __device__ thrust::complex<double> frmBurningShip(thrust::complex<double> z, thr
     return temp + p;
 }
 
-__global__ void setTheDeviceGlobals(double juliaCenterX, double juliaCenterY, int maxIts, double limit, int fractalFormulaID, int N)
+__global__ void setTheDeviceGlobals(double juliaCenterX, double juliaCenterY, int maxIts, double limit, int fractalFormulaID, int N, int ismove)
 {
     g_juliaCenterX = juliaCenterX;
     g_juliaCenterY = juliaCenterY;
     g_maxIts = maxIts;
     g_limit = limit;
     g_N = N;
+    g_ismove = ismove;
     switch (fractalFormulaID)
     {
     case 1:
@@ -404,6 +406,8 @@ __global__ void algMap(const double* __restrict__ realCoords, const double* __re
     // Boundary check
     if (tid < g_N)
     {
+        // if we're doing a move UP DOWN LEFT or RIGHT, skip the non-zero iterations
+        if (g_ismove == 1 && iterations[tid] != 0) return;
         thrust::complex<double> z{ 0.0,0.0 };
         const thrust::complex<double> p{ realCoords[tid], imagCoords[tid] };
         int i{ 0 };
@@ -426,6 +430,8 @@ __global__ void algJulia(const double* __restrict__ realCoords, const double* __
     // Boundary check
     if (tid < g_N)
     {
+        // if we're doing a move UP DOWN LEFT or RIGHT, skip the non-zero iterations
+        if (g_ismove == 1 && iterations[tid] != 0) return;
         thrust::complex<double> z{ realCoords[tid], imagCoords[tid] };
         const thrust::complex<double> p{ g_juliaCenterX, g_juliaCenterY };
         int i{ 0 };
@@ -449,6 +455,8 @@ __global__ void algTheCalcmasterTwist(const double* __restrict__ realCoords, con
     // Boundary check
     if (tid < g_N)
     {
+        // if we're doing a move UP DOWN LEFT or RIGHT, skip the non-zero iterations
+        if (g_ismove == 1 && iterations[tid] != 0) return;
         thrust::complex<double> z{ realCoords[tid], imagCoords[tid] };
         const thrust::complex<double> p{ g_juliaCenterX, g_juliaCenterY };
         thrust::complex<double> temp{ 0.0, 0.0 };
@@ -516,7 +524,7 @@ __global__ void algAirOnAJuliaString(const double* __restrict__ realCoords, cons
 }
 
 
-int TheCalcmaster(double* host_re, double* host_im, int* host_its, double limit, int maxIts, int fractalID, size_t numElements, int mode = 0, double juliaCenterX = 0.0, double juliaCenterY = 0.0)
+int TheCalcmaster(double* host_re, double* host_im, int* host_its, double limit, int maxIts, int fractalID, size_t numElements, int mode = 0, double juliaCenterX = 0.0, double juliaCenterY = 0.0, int ismove = 0)
 {
     // Error code to check return values for CUDA calls
     cudaError_t err = cudaSuccess;
@@ -541,12 +549,18 @@ int TheCalcmaster(double* host_re, double* host_im, int* host_its, double limit,
     // Copy imaginary coords to device
     err = cudaMemcpy(device_im, host_im, doubleVectorSize, cudaMemcpyHostToDevice);
     if (err != cudaSuccess) return 5;
+    // Copy the iterations to the device if we're doing a move
+    if (ismove == 1)
+    {
+        err = cudaMemcpy(device_its, host_its, intVectorSize, cudaMemcpyHostToDevice);
+        if (err != cudaSuccess) return 5;
+    }
     // Set up the thread blocks
     int threadsPerBlock{ 512 };
     int blocksPerGrid = (static_cast<int>(numElements) + threadsPerBlock - 1) / threadsPerBlock;
     // Global vars
     //setTheDeviceGlobals(double juliaCenterX, double juliaCenterY, int maxIts, double limit, int fractalFormulaID, int N)
-    setTheDeviceGlobals<<<1, 1>>>(juliaCenterX, juliaCenterY, maxIts, limit, fractalID, static_cast<int>(numElements));
+    setTheDeviceGlobals<<<1, 1>>>(juliaCenterX, juliaCenterY, maxIts, limit, fractalID, static_cast<int>(numElements), ismove);
     //RUN THE KERNEL (const double* __restrict__ realCoords, const double* __restrict__ imagCoords, int* __restrict__ iterations)
     switch (mode)
     {

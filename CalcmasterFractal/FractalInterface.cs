@@ -108,7 +108,7 @@ namespace CalcmasterFractal
 
 
         [DllImport(dllName: fracDll, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int CalculateMap(IntPtr generator, int maxIterations);
+        public static extern int CalculateMap(IntPtr generator, int maxIterations, int ismove);
 
 
         [DllImport(dllName: fracDll, CallingConvention = CallingConvention.Cdecl)]

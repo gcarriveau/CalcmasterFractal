@@ -60,7 +60,8 @@ namespace CalcmasterFractal
         int lastClickX = 0;
         int lastClickY = 0;
 
-        // Videos
+        // Video Bitmap Series Export
+        private double fourCircleRadius = 5.0;
         private bool cancelVideo = false;
 
         #endregion Private properties
@@ -123,11 +124,12 @@ namespace CalcmasterFractal
 
         #endregion Initialization - runs once
 
+
         // ***************************************
-        // ********** FUNCTIONS ******************
+        // ******** PRIVATE FUNCTIONS ************
         // ***************************************
 
-        #region Functions
+        #region Private Functions
 
         // update the values shown on the infoForm pannel
         private void UpdateInfoPanel()
@@ -137,6 +139,7 @@ namespace CalcmasterFractal
             lbFiColorPalette.Text = gen.GetPalette().ToString();
             lbFiFilterStart.Text = gen.GetFilterStart().ToString();
             lbFiFilterEnd.Text = gen.GetFilterEnd().ToString();
+            lbFiGhasItsListCount.Text = gen.G_hasItsList.Count.ToString();
             FractalState fs = gen.GetFractalState();
             switch (mode)
             {
@@ -232,7 +235,7 @@ namespace CalcmasterFractal
             UpdateBitmap();
         }
 
-        #endregion Functions
+        #endregion Private Functions
 
         // ***************************************
         // ********** MAKE VIDEOS ****************
@@ -260,7 +263,7 @@ namespace CalcmasterFractal
 
             // Back up the current state of the julia set so we can return to it when done.
             FractalState juliaBackup = gen.GetFractalState();
-            double radius = 5.0 * fractalStateBackup.inc;
+            double radius = fourCircleRadius * fractalStateBackup.inc;
             Int32 fileNumber = 1;
             Int32 totalFrames = 360 * 4;
 
@@ -437,6 +440,22 @@ namespace CalcmasterFractal
             if (e.KeyCode == Keys.C)
             {
                 cancelVideo = true;
+            }
+
+            //L     Opens the Limit adjustment panel
+            if (e.KeyCode == Keys.L)
+            {
+                // Manual adjustment of Escape Limit
+                tbLimit.Text = gen.GetLimit().ToString();
+                tbLimit.Enabled = true;
+                // 4 Circles (radius of each) for bitmap series export
+                tb4CircleRadius.Text = fourCircleRadius.ToString();
+                tb4CircleRadius.Enabled = true;
+                // Manual adjustment of MaxIterations
+                tbMaxIterations.Text = gen.MaxIterations.ToString();
+                tbMaxIterations.Enabled = true;
+                // now show the panel
+                limitPanel.Visible = true;
             }
         }
 
@@ -743,6 +762,38 @@ namespace CalcmasterFractal
         {
             if (cbStartColor.SelectedIndex == -1) return;
             gen.SetStartColor(cbStartColor.SelectedItem.ToString());
+            UpdateBitmap();
+        }
+
+        private void btnCloseLimitPanel_Click(object sender, EventArgs e)
+        {
+            tbLimit.Enabled = false;
+            tb4CircleRadius.Enabled = false;
+            tbMaxIterations.Enabled = false;
+            limitPanel.Visible = false;
+            this.Refresh();
+        }
+
+        private void btnSetLimit_Click(object sender, EventArgs e)
+        {
+            double limit = fractalFormula.limit;
+            bool ok = double.TryParse(tbLimit.Text, out limit);
+            if (ok) gen.SetLimit(limit);
+            UpdateBitmap(forceCalc: true);
+        }
+
+        private void btnSet4CircleRadius_Click(object sender, EventArgs e)
+        {
+            double radius = 5.0;
+            bool ok = double.TryParse(tb4CircleRadius.Text, out radius);
+            if (ok) fourCircleRadius = radius;
+        }
+
+        private void btnSetMaxIterations_Click(object sender, EventArgs e)
+        {
+            int its = gen.MaxIterations;
+            bool ok = int.TryParse(tbMaxIterations.Text, out its);
+            if (ok && its > 0 && its < 5000) gen.MaxIterations = its;
             UpdateBitmap();
         }
     }

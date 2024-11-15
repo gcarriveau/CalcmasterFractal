@@ -77,6 +77,11 @@ public:
 	// returns the address of the fractal plane's imaginary coordinates double array data, m_im.data()
 	double* getImaginaries();
 
+	// sets m_limit to a new value if >= 0.0
+	void setLimit(double limit);
+	// returns the current value of m_limit
+	double getLimit();
+
 	// Calculates m_iterations vector values for the a selected main fractal type
 	int calculateMap(int maxIterations, int ismove);
 
@@ -315,4 +320,13 @@ extern "C" _declspec(dllexport) double GetImaginaryAt(FractalGenerator* t, size_
 extern "C" _declspec(dllexport) double* GetImaginaries(FractalGenerator* t)
 {
 	return t->getImaginaries();
+}
+
+extern "C" _declspec(dllexport) void SetLimit(FractalGenerator* t, double limit)
+{
+	return t->setLimit(limit);
+}
+extern "C" _declspec(dllexport) double GetLimit(FractalGenerator* t)
+{
+	return t->getLimit();
 }

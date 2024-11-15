@@ -90,9 +90,9 @@ namespace CalcmasterFractal
         #endregion Constructor/Destructor
 
         // ******************************************************************
-        // Public properties and methods
+        // Public properties
         // ******************************************************************
-        #region Public properties and methods
+        #region Public properties
 
         // m_arrColor length
         public const int NumberOfColors = 5000;
@@ -107,14 +107,20 @@ namespace CalcmasterFractal
         public const int MaxIterationsBoundary = 5000;
         public int MaxIterations { get; set; } = MinIterationsBoundary;
         public int MaxIterationsBackup { get; set; } = MaxIterationsBoundary;
+        public List<int> G_hasItsList { get; private set; } = new List<int>();
 
+        #endregion Public properties
+
+        // ******************************************************************
+        // Public methods
+        // ******************************************************************
+        #region Public methods
 
         public enum ColorPalette
         {
             RandomMono, RandomCompliment, RandomTriad, RandomTetrad, Rainbow, Grayscale
             //, Random2, Random3, Monochrome, Yellows, RedGreen
         }
-        public List<int> G_hasItsList { get; private set; } = new List<int>();
 
         /// <summary>
         /// Gets or updates the color palette algorithm.
@@ -381,7 +387,24 @@ namespace CalcmasterFractal
             return count;
         }
 
-        #endregion Public properties and methods
+
+        /// <summary>
+        /// Gets the current escape limit for the fractal
+        /// </summary>
+        public void SetLimit(double limit)
+        {
+            FractalInterface.SetLimit(m_ptrFractalGenerator, limit);
+        }
+        /// <summary>
+        /// Gets the current escape limit for the fractal
+        /// </summary>
+        /// <returns></returns>
+        public double GetLimit()
+        {
+            return FractalInterface.GetLimit(m_ptrFractalGenerator);
+        }
+
+        #endregion Public methods
 
         // ******************************************************************
         // Private properties
@@ -427,7 +450,7 @@ namespace CalcmasterFractal
         // If m_iterations[x] < m_filterStart, GetColor(int its) returns Color.Black
         // If m_iterations[x] > m_filterEnd, GetColor(int its) returns Color.Black
         private int m_filterStart = 0;
-        private int m_filterEnd = 1000;
+        private int m_filterEnd = MaxIterationsBoundary;
 
 
         // holds the real fractal plane coordinates (unused, but can be updated from the DLL using UpdatePoints())
@@ -597,7 +620,7 @@ namespace CalcmasterFractal
         public void ResetFilterRange()
         {
             m_filterStart = 0;
-            m_filterEnd = MaxIterations;
+            m_filterEnd = MaxIterationsBoundary;
         }
         public int SetFilterEndToCurrentMaxIts()
         {

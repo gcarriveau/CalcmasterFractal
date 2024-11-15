@@ -48,6 +48,8 @@
             saveAs4CircleSeriesToolStripMenuItem1 = new ToolStripMenuItem();
             exitToolStripMenuItem = new ToolStripMenuItem();
             infoPanel = new DoubleBufferedPanel();
+            lbFiGhasItsListCount = new Label();
+            label21 = new Label();
             label19 = new Label();
             label18 = new Label();
             lbFiColorPalette = new Label();
@@ -86,15 +88,29 @@
             lbFiMainFractalZoom = new Label();
             label1 = new Label();
             label10 = new Label();
+            limitPanel = new DoubleBufferedPanel();
+            btnSetMaxIterations = new DoubleBufferedLabel();
+            label23 = new Label();
+            tbMaxIterations = new TextBox();
+            btnSet4CircleRadius = new DoubleBufferedLabel();
+            label22 = new Label();
+            tb4CircleRadius = new TextBox();
+            doubleBufferedPanel1 = new DoubleBufferedPanel();
+            btnCloseLimitPanel = new DoubleBufferedLabel();
+            label20 = new Label();
+            tbLimit = new TextBox();
+            btnSetLimit = new DoubleBufferedLabel();
             contextMenuStrip1.SuspendLayout();
             infoPanel.SuspendLayout();
+            limitPanel.SuspendLayout();
+            doubleBufferedPanel1.SuspendLayout();
             SuspendLayout();
             // 
             // contextMenuStrip1
             // 
             contextMenuStrip1.Items.AddRange(new ToolStripItem[] { toolStripMenuItem1, toolStripMenuItem4, halfCycleMenuItem, generateNewRandomColorsToolStripMenuItem, toolStripMenuItem2, toolStripMenuItem3, exitToolStripMenuItem });
             contextMenuStrip1.Name = "contextMenuStrip1";
-            contextMenuStrip1.Size = new Size(234, 180);
+            contextMenuStrip1.Size = new Size(234, 158);
             // 
             // toolStripMenuItem1
             // 
@@ -217,6 +233,8 @@
             // infoPanel
             // 
             infoPanel.BackColor = SystemColors.ControlDarkDark;
+            infoPanel.Controls.Add(lbFiGhasItsListCount);
+            infoPanel.Controls.Add(label21);
             infoPanel.Controls.Add(label19);
             infoPanel.Controls.Add(label18);
             infoPanel.Controls.Add(lbFiColorPalette);
@@ -262,10 +280,28 @@
             infoPanel.TabIndex = 1;
             infoPanel.Visible = false;
             // 
+            // lbFiGhasItsListCount
+            // 
+            lbFiGhasItsListCount.AutoSize = true;
+            lbFiGhasItsListCount.Location = new Point(142, 91);
+            lbFiGhasItsListCount.Name = "lbFiGhasItsListCount";
+            lbFiGhasItsListCount.Size = new Size(115, 15);
+            lbFiGhasItsListCount.TabIndex = 75;
+            lbFiGhasItsListCount.Text = "lbFiGhasItsListCount";
+            // 
+            // label21
+            // 
+            label21.AutoSize = true;
+            label21.Location = new Point(24, 91);
+            label21.Name = "label21";
+            label21.Size = new Size(111, 15);
+            label21.TabIndex = 74;
+            label21.Text = "Current # of Colors:";
+            // 
             // label19
             // 
             label19.AutoSize = true;
-            label19.Location = new Point(252, 249);
+            label19.Location = new Point(252, 263);
             label19.Name = "label19";
             label19.Size = new Size(111, 15);
             label19.TabIndex = 73;
@@ -274,7 +310,7 @@
             // label18
             // 
             label18.AutoSize = true;
-            label18.Location = new Point(252, 234);
+            label18.Location = new Point(252, 248);
             label18.Name = "label18";
             label18.Size = new Size(117, 15);
             label18.TabIndex = 72;
@@ -301,7 +337,7 @@
             // lbFiJuliaCenter
             // 
             lbFiJuliaCenter.AutoSize = true;
-            lbFiJuliaCenter.Location = new Point(141, 93);
+            lbFiJuliaCenter.Location = new Point(141, 107);
             lbFiJuliaCenter.Name = "lbFiJuliaCenter";
             lbFiJuliaCenter.Size = new Size(84, 15);
             lbFiJuliaCenter.TabIndex = 39;
@@ -352,7 +388,7 @@
             btnResetFilter.BackColor = SystemColors.ButtonFace;
             btnResetFilter.BorderStyle = BorderStyle.Fixed3D;
             btnResetFilter.ForeColor = SystemColors.ControlText;
-            btnResetFilter.Location = new Point(339, 266);
+            btnResetFilter.Location = new Point(339, 280);
             btnResetFilter.Name = "btnResetFilter";
             btnResetFilter.Size = new Size(79, 23);
             btnResetFilter.TabIndex = 2;
@@ -374,7 +410,7 @@
             // lbFiFilterEnd
             // 
             lbFiFilterEnd.AutoSize = true;
-            lbFiFilterEnd.Location = new Point(142, 249);
+            lbFiFilterEnd.Location = new Point(142, 263);
             lbFiFilterEnd.Name = "lbFiFilterEnd";
             lbFiFilterEnd.Size = new Size(72, 15);
             lbFiFilterEnd.TabIndex = 62;
@@ -383,7 +419,7 @@
             // lbFiFilterStart
             // 
             lbFiFilterStart.AutoSize = true;
-            lbFiFilterStart.Location = new Point(142, 234);
+            lbFiFilterStart.Location = new Point(142, 248);
             lbFiFilterStart.Name = "lbFiFilterStart";
             lbFiFilterStart.Size = new Size(76, 15);
             lbFiFilterStart.TabIndex = 61;
@@ -392,7 +428,7 @@
             // label13
             // 
             label13.AutoSize = true;
-            label13.Location = new Point(29, 249);
+            label13.Location = new Point(29, 263);
             label13.Name = "label13";
             label13.Size = new Size(106, 15);
             label13.TabIndex = 60;
@@ -401,7 +437,7 @@
             // label12
             // 
             label12.AutoSize = true;
-            label12.Location = new Point(26, 234);
+            label12.Location = new Point(26, 248);
             label12.Name = "label12";
             label12.Size = new Size(110, 15);
             label12.TabIndex = 59;
@@ -410,7 +446,7 @@
             // lbFiIncJulia
             // 
             lbFiIncJulia.AutoSize = true;
-            lbFiIncJulia.Location = new Point(141, 168);
+            lbFiIncJulia.Location = new Point(141, 182);
             lbFiIncJulia.Name = "lbFiIncJulia";
             lbFiIncJulia.Size = new Size(65, 15);
             lbFiIncJulia.TabIndex = 58;
@@ -419,7 +455,7 @@
             // label15
             // 
             label15.AutoSize = true;
-            label15.Location = new Point(21, 168);
+            label15.Location = new Point(21, 182);
             label15.Name = "label15";
             label15.Size = new Size(114, 15);
             label15.TabIndex = 57;
@@ -428,7 +464,7 @@
             // lbFiIncMain
             // 
             lbFiIncMain.AutoSize = true;
-            lbFiIncMain.Location = new Point(141, 153);
+            lbFiIncMain.Location = new Point(141, 167);
             lbFiIncMain.Name = "lbFiIncMain";
             lbFiIncMain.Size = new Size(69, 15);
             lbFiIncMain.TabIndex = 56;
@@ -437,7 +473,7 @@
             // label14
             // 
             label14.AutoSize = true;
-            label14.Location = new Point(17, 153);
+            label14.Location = new Point(17, 167);
             label14.Name = "label14";
             label14.Size = new Size(118, 15);
             label14.TabIndex = 55;
@@ -446,7 +482,7 @@
             // lbFiZoomRatioJuliaMain
             // 
             lbFiZoomRatioJuliaMain.AutoSize = true;
-            lbFiZoomRatioJuliaMain.Location = new Point(141, 138);
+            lbFiZoomRatioJuliaMain.Location = new Point(141, 152);
             lbFiZoomRatioJuliaMain.Name = "lbFiZoomRatioJuliaMain";
             lbFiZoomRatioJuliaMain.Size = new Size(135, 15);
             lbFiZoomRatioJuliaMain.TabIndex = 52;
@@ -455,7 +491,7 @@
             // label9
             // 
             label9.AutoSize = true;
-            label9.Location = new Point(-1, 138);
+            label9.Location = new Point(-1, 152);
             label9.Name = "label9";
             label9.Size = new Size(136, 15);
             label9.TabIndex = 51;
@@ -464,7 +500,7 @@
             // lbFiSequencePercent
             // 
             lbFiSequencePercent.AutoSize = true;
-            lbFiSequencePercent.Location = new Point(273, 216);
+            lbFiSequencePercent.Location = new Point(273, 230);
             lbFiSequencePercent.Name = "lbFiSequencePercent";
             lbFiSequencePercent.Size = new Size(117, 15);
             lbFiSequencePercent.TabIndex = 50;
@@ -473,7 +509,7 @@
             // lbFiMainViewCenter
             // 
             lbFiMainViewCenter.AutoSize = true;
-            lbFiMainViewCenter.Location = new Point(141, 183);
+            lbFiMainViewCenter.Location = new Point(141, 197);
             lbFiMainViewCenter.Name = "lbFiMainViewCenter";
             lbFiMainViewCenter.Size = new Size(113, 15);
             lbFiMainViewCenter.TabIndex = 49;
@@ -482,7 +518,7 @@
             // label8
             // 
             label8.AutoSize = true;
-            label8.Location = new Point(32, 183);
+            label8.Location = new Point(32, 197);
             label8.Name = "label8";
             label8.Size = new Size(103, 15);
             label8.TabIndex = 48;
@@ -491,7 +527,7 @@
             // lbFiJuliaViewCenter
             // 
             lbFiJuliaViewCenter.AutoSize = true;
-            lbFiJuliaViewCenter.Location = new Point(141, 198);
+            lbFiJuliaViewCenter.Location = new Point(141, 212);
             lbFiJuliaViewCenter.Name = "lbFiJuliaViewCenter";
             lbFiJuliaViewCenter.Size = new Size(109, 15);
             lbFiJuliaViewCenter.TabIndex = 47;
@@ -500,7 +536,7 @@
             // label7
             // 
             label7.AutoSize = true;
-            label7.Location = new Point(36, 198);
+            label7.Location = new Point(36, 212);
             label7.Name = "label7";
             label7.Size = new Size(99, 15);
             label7.TabIndex = 46;
@@ -545,7 +581,7 @@
             // lbFiSequenceImageNo
             // 
             lbFiSequenceImageNo.AutoSize = true;
-            lbFiSequenceImageNo.Location = new Point(141, 216);
+            lbFiSequenceImageNo.Location = new Point(141, 230);
             lbFiSequenceImageNo.Name = "lbFiSequenceImageNo";
             lbFiSequenceImageNo.Size = new Size(126, 15);
             lbFiSequenceImageNo.TabIndex = 41;
@@ -554,7 +590,7 @@
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(16, 216);
+            label4.Location = new Point(16, 230);
             label4.Name = "label4";
             label4.Size = new Size(119, 15);
             label4.TabIndex = 40;
@@ -563,7 +599,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(51, 93);
+            label3.Location = new Point(51, 107);
             label3.Name = "label3";
             label3.Size = new Size(84, 15);
             label3.TabIndex = 38;
@@ -572,7 +608,7 @@
             // lbFiJuliaZoom
             // 
             lbFiJuliaZoom.AutoSize = true;
-            lbFiJuliaZoom.Location = new Point(141, 123);
+            lbFiJuliaZoom.Location = new Point(141, 137);
             lbFiJuliaZoom.Name = "lbFiJuliaZoom";
             lbFiJuliaZoom.Size = new Size(81, 15);
             lbFiJuliaZoom.TabIndex = 37;
@@ -581,7 +617,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(67, 123);
+            label2.Location = new Point(67, 137);
             label2.Name = "label2";
             label2.Size = new Size(68, 15);
             label2.TabIndex = 36;
@@ -590,7 +626,7 @@
             // lbFiMainFractalZoom
             // 
             lbFiMainFractalZoom.AutoSize = true;
-            lbFiMainFractalZoom.Location = new Point(141, 108);
+            lbFiMainFractalZoom.Location = new Point(141, 122);
             lbFiMainFractalZoom.Name = "lbFiMainFractalZoom";
             lbFiMainFractalZoom.Size = new Size(120, 15);
             lbFiMainFractalZoom.TabIndex = 35;
@@ -599,7 +635,7 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(25, 108);
+            label1.Location = new Point(25, 122);
             label1.Name = "label1";
             label1.Size = new Size(110, 15);
             label1.TabIndex = 34;
@@ -610,16 +646,152 @@
             label10.AutoSize = true;
             label10.Location = new Point(3, 0);
             label10.Name = "label10";
-            label10.Size = new Size(390, 15);
+            label10.Size = new Size(325, 15);
             label10.TabIndex = 20;
-            label10.Text = "Press the [i] key to hide/show this information display panel, [h] for help.";
+            label10.Text = "Press the [i] key to hide/show this information display panel.";
+            // 
+            // limitPanel
+            // 
+            limitPanel.BackColor = SystemColors.ControlDarkDark;
+            limitPanel.BorderStyle = BorderStyle.FixedSingle;
+            limitPanel.Controls.Add(btnSetMaxIterations);
+            limitPanel.Controls.Add(label23);
+            limitPanel.Controls.Add(tbMaxIterations);
+            limitPanel.Controls.Add(btnSet4CircleRadius);
+            limitPanel.Controls.Add(label22);
+            limitPanel.Controls.Add(tb4CircleRadius);
+            limitPanel.Controls.Add(doubleBufferedPanel1);
+            limitPanel.Controls.Add(label20);
+            limitPanel.Controls.Add(tbLimit);
+            limitPanel.Controls.Add(btnSetLimit);
+            limitPanel.Location = new Point(440, 12);
+            limitPanel.Name = "limitPanel";
+            limitPanel.Size = new Size(227, 245);
+            limitPanel.TabIndex = 2;
+            limitPanel.Visible = false;
+            // 
+            // btnSetMaxIterations
+            // 
+            btnSetMaxIterations.BackColor = SystemColors.ButtonFace;
+            btnSetMaxIterations.BorderStyle = BorderStyle.Fixed3D;
+            btnSetMaxIterations.ForeColor = SystemColors.ControlText;
+            btnSetMaxIterations.Location = new Point(14, 188);
+            btnSetMaxIterations.Name = "btnSetMaxIterations";
+            btnSetMaxIterations.Size = new Size(203, 23);
+            btnSetMaxIterations.TabIndex = 9;
+            btnSetMaxIterations.Text = "Set Maximum Iterations";
+            btnSetMaxIterations.TextAlign = ContentAlignment.MiddleCenter;
+            btnSetMaxIterations.Click += btnSetMaxIterations_Click;
+            // 
+            // label23
+            // 
+            label23.AutoSize = true;
+            label23.ForeColor = SystemColors.Info;
+            label23.Location = new Point(3, 163);
+            label23.Name = "label23";
+            label23.Size = new Size(104, 15);
+            label23.TabIndex = 8;
+            label23.Text = "Set Max Iterations:";
+            // 
+            // tbMaxIterations
+            // 
+            tbMaxIterations.Enabled = false;
+            tbMaxIterations.Location = new Point(117, 160);
+            tbMaxIterations.Name = "tbMaxIterations";
+            tbMaxIterations.Size = new Size(100, 23);
+            tbMaxIterations.TabIndex = 7;
+            // 
+            // btnSet4CircleRadius
+            // 
+            btnSet4CircleRadius.BackColor = SystemColors.ButtonFace;
+            btnSet4CircleRadius.BorderStyle = BorderStyle.Fixed3D;
+            btnSet4CircleRadius.ForeColor = SystemColors.ControlText;
+            btnSet4CircleRadius.Location = new Point(14, 124);
+            btnSet4CircleRadius.Name = "btnSet4CircleRadius";
+            btnSet4CircleRadius.Size = new Size(203, 23);
+            btnSet4CircleRadius.TabIndex = 6;
+            btnSet4CircleRadius.Text = "Set 4 Circle Radius (for video)";
+            btnSet4CircleRadius.TextAlign = ContentAlignment.MiddleCenter;
+            btnSet4CircleRadius.Click += btnSet4CircleRadius_Click;
+            // 
+            // label22
+            // 
+            label22.AutoSize = true;
+            label22.ForeColor = SystemColors.Info;
+            label22.Location = new Point(20, 101);
+            label22.Name = "label22";
+            label22.Size = new Size(87, 15);
+            label22.TabIndex = 5;
+            label22.Text = "4 Circle Radius:";
+            // 
+            // tb4CircleRadius
+            // 
+            tb4CircleRadius.Enabled = false;
+            tb4CircleRadius.Location = new Point(117, 98);
+            tb4CircleRadius.Name = "tb4CircleRadius";
+            tb4CircleRadius.Size = new Size(100, 23);
+            tb4CircleRadius.TabIndex = 4;
+            // 
+            // doubleBufferedPanel1
+            // 
+            doubleBufferedPanel1.BackColor = SystemColors.ActiveCaption;
+            doubleBufferedPanel1.Controls.Add(btnCloseLimitPanel);
+            doubleBufferedPanel1.Location = new Point(-1, -1);
+            doubleBufferedPanel1.Name = "doubleBufferedPanel1";
+            doubleBufferedPanel1.Size = new Size(227, 23);
+            doubleBufferedPanel1.TabIndex = 3;
+            // 
+            // btnCloseLimitPanel
+            // 
+            btnCloseLimitPanel.BackColor = SystemColors.ButtonFace;
+            btnCloseLimitPanel.BorderStyle = BorderStyle.Fixed3D;
+            btnCloseLimitPanel.ForeColor = SystemColors.ControlText;
+            btnCloseLimitPanel.Location = new Point(204, 1);
+            btnCloseLimitPanel.Name = "btnCloseLimitPanel";
+            btnCloseLimitPanel.Size = new Size(22, 20);
+            btnCloseLimitPanel.TabIndex = 3;
+            btnCloseLimitPanel.Text = "X";
+            btnCloseLimitPanel.TextAlign = ContentAlignment.MiddleCenter;
+            btnCloseLimitPanel.Click += btnCloseLimitPanel_Click;
+            // 
+            // label20
+            // 
+            label20.AutoSize = true;
+            label20.ForeColor = SystemColors.Info;
+            label20.Location = new Point(12, 36);
+            label20.Name = "label20";
+            label20.Size = new Size(95, 15);
+            label20.TabIndex = 2;
+            label20.Text = "Set Escape Limit:";
+            // 
+            // tbLimit
+            // 
+            tbLimit.Enabled = false;
+            tbLimit.Location = new Point(117, 33);
+            tbLimit.Name = "tbLimit";
+            tbLimit.Size = new Size(100, 23);
+            tbLimit.TabIndex = 1;
+            // 
+            // btnSetLimit
+            // 
+            btnSetLimit.BackColor = SystemColors.ButtonFace;
+            btnSetLimit.BorderStyle = BorderStyle.Fixed3D;
+            btnSetLimit.ForeColor = SystemColors.ControlText;
+            btnSetLimit.Location = new Point(14, 59);
+            btnSetLimit.Name = "btnSetLimit";
+            btnSetLimit.Size = new Size(203, 23);
+            btnSetLimit.TabIndex = 0;
+            btnSetLimit.Text = "Set New Limit";
+            btnSetLimit.TextAlign = ContentAlignment.MiddleCenter;
+            btnSetLimit.Click += btnSetLimit_Click;
             // 
             // FractalDisplayForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(631, 681);
+            ClientSize = new Size(1244, 709);
             ContextMenuStrip = contextMenuStrip1;
+            Controls.Add(limitPanel);
             Controls.Add(infoPanel);
             DoubleBuffered = true;
             FormBorderStyle = FormBorderStyle.None;
@@ -634,6 +806,9 @@
             contextMenuStrip1.ResumeLayout(false);
             infoPanel.ResumeLayout(false);
             infoPanel.PerformLayout();
+            limitPanel.ResumeLayout(false);
+            limitPanel.PerformLayout();
+            doubleBufferedPanel1.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -696,5 +871,19 @@
         private ToolStripMenuItem rainbowToolStripMenuItem;
         private ToolStripMenuItem toolStripMenuItem4;
         private ToolStripComboBox cbStartColor;
+        private DoubleBufferedPanel limitPanel;
+        private DoubleBufferedLabel btnCloseLimitPanel;
+        private Label label20;
+        private TextBox tbLimit;
+        private DoubleBufferedLabel btnSetLimit;
+        private DoubleBufferedPanel doubleBufferedPanel1;
+        private Label label21;
+        private Label lbFiGhasItsListCount;
+        private DoubleBufferedLabel btnSetMaxIterations;
+        private Label label23;
+        private TextBox tbMaxIterations;
+        private DoubleBufferedLabel btnSet4CircleRadius;
+        private Label label22;
+        private TextBox tb4CircleRadius;
     }
 }

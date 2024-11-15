@@ -139,6 +139,13 @@ namespace CalcmasterFractal
         public static extern IntPtr GetImaginaries(IntPtr generator);
 
 
+        [DllImport(dllName: fracDll, CallingConvention = CallingConvention.Cdecl)]
+        public static extern double SetLimit(IntPtr generator, double limit);
+
+
+        [DllImport(dllName: fracDll, CallingConvention = CallingConvention.Cdecl)]
+        public static extern double GetLimit(IntPtr generator);
+
         /// <summary>
         /// Test function that adds two integers and returns an int result
         /// </summary>

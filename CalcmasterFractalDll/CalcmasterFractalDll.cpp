@@ -130,6 +130,16 @@ double* FractalGenerator::getImaginaries()
     return m_im.data();
 }
 
+void FractalGenerator::setLimit(double limit)
+{
+    if (limit <= 0.0) return;
+    m_limit = limit;
+}
+double FractalGenerator::getLimit()
+{
+    return m_limit;
+}
+
 int FractalGenerator::calculateMap(int maxIterations, int ismove)
 {
     m_maxIts = maxIterations;

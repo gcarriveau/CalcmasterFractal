@@ -429,6 +429,23 @@ namespace CalcmasterFractal
                 infoPanel.Visible = !infoPanel.Visible;
             }
 
+            // A    Antialiasing Algorithm
+            if (e.KeyCode == Keys.A)
+            {
+                switch (gen.CurAntiAliasAlg)
+                {
+                    case Fractal.AntiAliasAlg.NoModification:
+                        gen.CurAntiAliasAlg = Fractal.AntiAliasAlg.OneAway;
+                        break;
+                    case Fractal.AntiAliasAlg.OneAway:
+                        gen.CurAntiAliasAlg = Fractal.AntiAliasAlg.TwoAway;
+                        break;
+                    case Fractal.AntiAliasAlg.TwoAway:
+                        gen.CurAntiAliasAlg = Fractal.AntiAliasAlg.NoModification;
+                        break;
+                }
+            }
+
             // F    Sets filterEnd to whatever the current maximum number of iterations is for a pixel
             if (e.KeyCode == Keys.F)
             {

@@ -96,6 +96,8 @@ namespace CalcmasterFractal
 
         // m_arrColor length
         public const int NumberOfColors = 5000;
+        // Antialiasing algorithm
+        public AntiAliasAlg CurAntiAliasAlg = AntiAliasAlg.OneAway;
 
         // ITERATIONS LIMIT ACCORDING TO CURRENT ZOOM
         // For every 1000x zoom, add 50 to MaxIterations.. zoom inc is 1.5x
@@ -114,13 +116,15 @@ namespace CalcmasterFractal
         // ******************************************************************
         // Public methods
         // ******************************************************************
-        #region Public methods
+        #region Public methods and Enums
 
         public enum ColorPalette
         {
             RandomMono, RandomCompliment, RandomTriad, RandomTetrad, Rainbow, Grayscale
             //, Random2, Random3, Monochrome, Yellows, RedGreen
         }
+
+        public enum AntiAliasAlg { NoModification, OneAway, TwoAway }
 
         /// <summary>
         /// Gets or updates the color palette algorithm.
@@ -479,19 +483,102 @@ namespace CalcmasterFractal
             // and gives us pretty fine lines and borders at those points.
             m_maxIts = 0;  // maximum number of iterations reached in the run.
             G_hasItsList = new List<int>();
-            foreach (int numIts in m_iterations)
+            int thirdrow = m_width * 2;
+            int thirdtolast = m_iterations.Length - thirdrow;
+            int pos = 0;
+            int avg = 0;
+            int halfWay = m_iterations.Length / 2;
+            // counts tags non-zero numbers of iterations
+            m_iterations_counts = new int[10000];
+            switch (CurAntiAliasAlg)
             {
-                //if (numIts > m_maxIts) m_maxIts = numIts;
-                m_maxIts = Math.Max(m_maxIts, numIts);
-                //if (!hasItsList.Contains(numIts)) hasItsList.Add(numIts);
-                //if (numIts != MaxIterations) m_iterations_counts[numIts]++;
+                case AntiAliasAlg.OneAway:
+                    for (int i = 0; i < halfWay; i++)
+                    {
+                        // antialias technique
+                        if (i > thirdrow && i < thirdtolast)
+                        {
+                            avg = m_iterations[i - 1] + m_iterations[i] + m_iterations[i + 1];
+                            pos = i - m_width;
+                            avg += m_iterations[pos];
+                            pos = i + m_width;
+                            avg += m_iterations[pos];
+                            m_iterations[i] = avg / 5;
+                        }
+                        m_maxIts = Math.Max(m_maxIts, m_iterations[i]);
+                        m_iterations_counts[m_iterations[i]] = 1;
+                    }
+                    for (int i = m_iterations.Length - 1; i > halfWay; i--)
+                    {
+                        // antialias technique
+                        if (i > thirdrow && i < thirdtolast)
+                        {
+                            avg = m_iterations[i - 1] + m_iterations[i] + m_iterations[i + 1];
+                            pos = i - m_width;
+                            avg += m_iterations[pos];
+                            pos = i + m_width;
+                            avg += m_iterations[pos];
+                            m_iterations[i] = avg / 5;
+                        }
+                        m_maxIts = Math.Max(m_maxIts, m_iterations[i]);
+                        m_iterations_counts[m_iterations[i]] = 1;
+                    }
+                    break;
+                case AntiAliasAlg.TwoAway:
+                    for (int i = 0; i < halfWay; i++)
+                    {
+                        // antialias technique
+                        if (i > thirdrow && i < thirdtolast)
+                        {
+                            avg = m_iterations[i - 2] + m_iterations[i - 1] + m_iterations[i] + m_iterations[i + 1] + m_iterations[i + 2];
+                            pos = i - m_width;
+                            avg += m_iterations[pos - 1] + m_iterations[pos] + m_iterations[pos + 1];
+                            pos -= - m_width;
+                            avg += m_iterations[pos];
+                            pos = i + m_width;
+                            avg += m_iterations[pos - 1] + m_iterations[pos] + m_iterations[pos + 1];
+                            pos += m_width;
+                            avg += m_iterations[pos];
+                            m_iterations[i] = avg / 13;
+                        }
+                        m_maxIts = Math.Max(m_maxIts, m_iterations[i]);
+                        m_iterations_counts[m_iterations[i]] = 1;
+                    }
+                    for (int i = m_iterations.Length - 1; i > halfWay; i--)
+                    {
+                        // antialias technique
+                        if (i > thirdrow && i < thirdtolast)
+                        {
+                            avg = m_iterations[i - 2] + m_iterations[i - 1] + m_iterations[i] + m_iterations[i + 1] + m_iterations[i + 2];
+                            pos = i - m_width;
+                            avg += m_iterations[pos - 1] + m_iterations[pos] + m_iterations[pos + 1];
+                            pos -= -m_width;
+                            avg += m_iterations[pos];
+                            pos = i + m_width;
+                            avg += m_iterations[pos - 1] + m_iterations[pos] + m_iterations[pos + 1];
+                            pos += m_width;
+                            avg += m_iterations[pos];
+                            m_iterations[i] = avg / 13;
+                        }
+                        m_maxIts = Math.Max(m_maxIts, m_iterations[i]);
+                        m_iterations_counts[m_iterations[i]] = 1;
+                    }
+                    break;
+                default:
+                    for (int i = 0; i < m_iterations.Length; i++)
+                    {
+                        m_maxIts = Math.Max(m_maxIts, m_iterations[i]);
+                        m_iterations_counts[m_iterations[i]] = 1;
+                    }
+                    break;
             }
-            // tag non-zero numbers of iterations
-            m_iterations_counts = new int[m_maxIts + 1];
+            /*
             foreach (int numIts in m_iterations)
             {
+                m_maxIts = Math.Max(m_maxIts, numIts);
                 m_iterations_counts[numIts] = 1;
             }
+            */
             for (int i = 0; i < m_iterations_counts.Length; i++)
             {
                 if (m_iterations_counts[i] == 1) G_hasItsList.Add(i);

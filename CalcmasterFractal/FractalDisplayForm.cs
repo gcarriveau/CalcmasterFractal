@@ -243,6 +243,64 @@ namespace CalcmasterFractal
 
         #region Make Videos
 
+        // Make a Circle video
+        // Capture bitmaps of julia sets with centers located on
+        // the edge of a circle with radius "fourCircleRadius".
+        private void MakeVideoCircle(bool preview)
+        {
+            // Not applicable to main fractal viewing mode
+            if (mode == 0) return;
+            // Create a folder for the series
+            string foldername = $"{Environment.CurrentDirectory}\\{fractalFormula.name}_{DateTime.Now.ToString("yyyyMMdd_HHmmss")}";
+            if (!preview) Directory.CreateDirectory(foldername);
+
+            // Back up the current state of the julia set so we can return to it when done.
+            FractalState juliaBackup = gen.GetFractalState();
+            double radius = fourCircleRadius * fractalStateBackup.inc;
+            Int32 totalFrames = 360 * 4;
+            double angleInc = 2 * Math.PI / totalFrames;
+            // Loop de loop
+            for (int i = 0; i < totalFrames; i++)
+            {
+                if (cancelVideo)
+                {
+                    // Video Cancelled, so reset the julia set back to where it was.
+                    gen.SetJuliaCenter(juliaBackup.juliaCenterX, juliaBackup.juliaCenterY);
+                    gen.CalculateMap();
+                    if (myself != null)
+                        myself.Invoke((Action)(() =>
+                        {
+                            UpdateBitmap();
+                        }));
+                    break;
+                }
+                double curJuliaCenterX = Math.Cos(i * angleInc) * radius + juliaBackup.juliaCenterX;
+                double curJuliaCenterY = Math.Sin(i * angleInc) * radius + juliaBackup.juliaCenterY;
+                // Calculate the iterations and refresh the image on the main thread:
+                gen.SetJuliaCenter(curJuliaCenterX, curJuliaCenterY);
+                int err = gen.CalculateMap();
+                if (myself != null && err == 0)
+                    myself.Invoke((Action)(() =>
+                    {
+                        lbFiSequenceImageNo.Text = i.ToString();
+                        double percentComplete = 100 * i / totalFrames;
+                        lbFiSequencePercent.Text = $"{percentComplete}%";
+                        UpdateBitmap();
+                    }));
+
+                // save the bitmap to disk
+                string filename = $"image_{i.ToString().PadLeft(totalWidth: 5, paddingChar: '0')}.png";
+                if (!preview && err == 0 && gen.LastBitmap != null) gen.LastBitmap.Save(filename: $"{foldername}\\{filename}");
+            }
+            if (cancelVideo)
+            {
+                MessageBox.Show("Video Sequence Aborted.");
+                cancelVideo = false;
+            }
+            else
+                MessageBox.Show("Video Sequence Finished.");
+        }
+
 
         // Make a 4 circle video
         // Capture bitmaps of 4 circles, with centers at radius distance from
@@ -750,6 +808,26 @@ namespace CalcmasterFractal
             });
         }
 
+        private async void menuCircleSeriesPreview_Click(object sender, EventArgs e)
+        {
+            if (mode == 0) return;
+            await Task.Factory.StartNew(() =>
+            {
+                MakeVideoCircle(preview: true);
+            });
+        }
+
+        private async void menuCircleSeriesExport_Click(object sender, EventArgs e)
+        {
+            if (mode == 0) return;
+            await Task.Factory.StartNew(() =>
+            {
+                MakeVideoCircle(preview: false);
+            });
+        }
+
+
+
         #endregion Context menu events
 
         // ***************************************
@@ -813,5 +891,6 @@ namespace CalcmasterFractal
             if (ok && its > 0 && its < 5000) gen.MaxIterations = its;
             UpdateBitmap();
         }
+
     }
 }

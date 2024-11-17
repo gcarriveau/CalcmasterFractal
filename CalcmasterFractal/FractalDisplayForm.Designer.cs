@@ -100,6 +100,8 @@
             label20 = new Label();
             tbLimit = new TextBox();
             btnSetLimit = new DoubleBufferedLabel();
+            menuCircleSeriesPreview = new ToolStripMenuItem();
+            menuCircleSeriesExport = new ToolStripMenuItem();
             contextMenuStrip1.SuspendLayout();
             infoPanel.SuspendLayout();
             limitPanel.SuspendLayout();
@@ -110,7 +112,7 @@
             // 
             contextMenuStrip1.Items.AddRange(new ToolStripItem[] { toolStripMenuItem1, toolStripMenuItem4, halfCycleMenuItem, generateNewRandomColorsToolStripMenuItem, toolStripMenuItem2, toolStripMenuItem3, exitToolStripMenuItem });
             contextMenuStrip1.Name = "contextMenuStrip1";
-            contextMenuStrip1.Size = new Size(234, 158);
+            contextMenuStrip1.Size = new Size(234, 180);
             // 
             // toolStripMenuItem1
             // 
@@ -197,7 +199,7 @@
             // 
             // toolStripMenuItem2
             // 
-            toolStripMenuItem2.DropDownItems.AddRange(new ToolStripItem[] { fourCircleSeriesToolStripMenuItem });
+            toolStripMenuItem2.DropDownItems.AddRange(new ToolStripItem[] { fourCircleSeriesToolStripMenuItem, menuCircleSeriesPreview });
             toolStripMenuItem2.Name = "toolStripMenuItem2";
             toolStripMenuItem2.Size = new Size(233, 22);
             toolStripMenuItem2.Text = "Preview Video Bitmaps";
@@ -205,13 +207,13 @@
             // fourCircleSeriesToolStripMenuItem
             // 
             fourCircleSeriesToolStripMenuItem.Name = "fourCircleSeriesToolStripMenuItem";
-            fourCircleSeriesToolStripMenuItem.Size = new Size(164, 22);
+            fourCircleSeriesToolStripMenuItem.Size = new Size(180, 22);
             fourCircleSeriesToolStripMenuItem.Text = "Four Circle Series";
             fourCircleSeriesToolStripMenuItem.Click += fourCircleSeriesToolStripMenuItem_Click;
             // 
             // toolStripMenuItem3
             // 
-            toolStripMenuItem3.DropDownItems.AddRange(new ToolStripItem[] { saveAs4CircleSeriesToolStripMenuItem1 });
+            toolStripMenuItem3.DropDownItems.AddRange(new ToolStripItem[] { saveAs4CircleSeriesToolStripMenuItem1, menuCircleSeriesExport });
             toolStripMenuItem3.Name = "toolStripMenuItem3";
             toolStripMenuItem3.Size = new Size(233, 22);
             toolStripMenuItem3.Text = "Export Video Bitmaps";
@@ -785,6 +787,20 @@
             btnSetLimit.TextAlign = ContentAlignment.MiddleCenter;
             btnSetLimit.Click += btnSetLimit_Click;
             // 
+            // menuCircleSeriesPreview
+            // 
+            menuCircleSeriesPreview.Name = "menuCircleSeriesPreview";
+            menuCircleSeriesPreview.Size = new Size(180, 22);
+            menuCircleSeriesPreview.Text = "Circle Series";
+            menuCircleSeriesPreview.Click += menuCircleSeriesPreview_Click;
+            // 
+            // menuCircleSeriesExport
+            // 
+            menuCircleSeriesExport.Name = "menuCircleSeriesExport";
+            menuCircleSeriesExport.Size = new Size(201, 22);
+            menuCircleSeriesExport.Text = "Export Circle Series";
+            menuCircleSeriesExport.Click += menuCircleSeriesExport_Click;
+            // 
             // FractalDisplayForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -885,5 +901,7 @@
         private DoubleBufferedLabel btnSet4CircleRadius;
         private Label label22;
         private TextBox tb4CircleRadius;
+        private ToolStripMenuItem menuCircleSeriesPreview;
+        private ToolStripMenuItem menuCircleSeriesExport;
     }
 }

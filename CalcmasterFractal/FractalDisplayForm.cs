@@ -57,12 +57,13 @@ namespace CalcmasterFractal
         // FractalDisplayForm client area height and width
         private Rectangle bounds;
         // Last mouse click x,y
-        int lastClickX = 0;
-        int lastClickY = 0;
+        //int lastClickX = 0;
+        //int lastClickY = 0;
 
         // Video Bitmap Series Export
         private double fourCircleRadius = 5.0;
         private bool cancelVideo = false;
+        private bool sequenceRunning = false;
 
         #endregion Private properties
 
@@ -250,6 +251,7 @@ namespace CalcmasterFractal
         {
             // Not applicable to main fractal viewing mode
             if (mode == 0) return;
+            sequenceRunning = true;
             // Create a folder for the series
             string foldername = $"{Environment.CurrentDirectory}\\{fractalFormula.name}_{DateTime.Now.ToString("yyyyMMdd_HHmmss")}";
             if (!preview) Directory.CreateDirectory(foldername);
@@ -292,13 +294,16 @@ namespace CalcmasterFractal
                 string filename = $"image_{i.ToString().PadLeft(totalWidth: 5, paddingChar: '0')}.png";
                 if (!preview && err == 0 && gen.LastBitmap != null) gen.LastBitmap.Save(filename: $"{foldername}\\{filename}");
             }
+            sequenceRunning = false;
             if (cancelVideo)
             {
                 MessageBox.Show("Video Sequence Aborted.");
                 cancelVideo = false;
             }
             else
+            {
                 MessageBox.Show("Video Sequence Finished.");
+            }
         }
 
 
@@ -312,8 +317,7 @@ namespace CalcmasterFractal
         {
             // Not applicable to main fractal viewing mode
             if (mode == 0) return;
-            //            await Task.Factory.StartNew(() =>
-            //            {
+            sequenceRunning = true;
 
             // Create a folder for the series
             string foldername = $"{Environment.CurrentDirectory}\\{fractalFormula.name}_{DateTime.Now.ToString("yyyyMMdd_HHmmss")}";
@@ -373,14 +377,16 @@ namespace CalcmasterFractal
                     curAngle += angleInc;
                 }
             }
-            //});
+            sequenceRunning = false;
             if (cancelVideo)
             {
                 MessageBox.Show("Video Sequence Aborted.");
                 cancelVideo = false;
             }
             else
+            {
                 MessageBox.Show("Video Sequence Finished.");
+            }
         }
 
         #endregion Make Videos
@@ -453,6 +459,14 @@ namespace CalcmasterFractal
                 UpdateBitmap();
             }
 
+            // +    Zoo In
+            if (e.KeyCode == Keys.Add)
+            {
+                e.Handled = true;
+                err = gen.ZoomInAtPoint(bounds.Width / 2, bounds.Height / 2);
+                UpdateBitmap();
+            }
+
             // Arw  Move
             if (e.KeyCode == Keys.Up || e.KeyCode == Keys.Down || e.KeyCode == Keys.Left || e.KeyCode == Keys.Right)
             {
@@ -501,6 +515,10 @@ namespace CalcmasterFractal
                     case Fractal.AntiAliasAlg.TwoAway:
                         gen.CurAntiAliasAlg = Fractal.AntiAliasAlg.NoModification;
                         break;
+                }
+                if (!sequenceRunning)
+                {
+                    UpdateBitmap(forceCalc: true);
                 }
             }
 
@@ -606,8 +624,8 @@ namespace CalcmasterFractal
         /// <param name="e">e.X and e.Y hold the coordinates of the pixel that was clicked upon</param>
         private void FractalDisplayForm_MouseClick(object sender, MouseEventArgs e)
         {
-            lastClickX = e.X;
-            lastClickY = e.Y;
+            //lastClickX = e.X;
+            //lastClickY = e.Y;
 
             int err = 0;
             if (mode == 0 && Control.ModifierKeys == Keys.Shift)
@@ -741,6 +759,12 @@ namespace CalcmasterFractal
         private void palGrayscale_Click(object sender, EventArgs e)
         {
             UpdateRandomPalette(Fractal.ColorPalette.Grayscale);
+        }
+
+        // like grayscale, but allows picking a start color
+        private void palMonoDistributed_Click(object sender, EventArgs e)
+        {
+            UpdateRandomPalette(Fractal.ColorPalette.MonoDistributed);
         }
 
         // recalculate palette using a single color
@@ -886,11 +910,17 @@ namespace CalcmasterFractal
 
         private void btnSetMaxIterations_Click(object sender, EventArgs e)
         {
+            gen.MaxIterationsLocked = true;
             int its = gen.MaxIterations;
             bool ok = int.TryParse(tbMaxIterations.Text, out its);
             if (ok && its > 0 && its < 5000) gen.MaxIterations = its;
-            UpdateBitmap();
+            UpdateBitmap(forceCalc: true);
         }
 
+        private void btnUnlockMaxIterations_Click(object sender, EventArgs e)
+        {
+            gen.MaxIterationsLocked = false;
+            int err = gen.ResetToAutoMaxIterations();
+        }
     }
 }

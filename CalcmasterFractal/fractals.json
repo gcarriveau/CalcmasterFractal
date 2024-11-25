@@ -81,6 +81,15 @@
     "kernel": "frmCosPow2AbsRI"
   },
   {
+    "id": 28,
+    "name": "SinAbsRI",
+    "centerX": 0.0,
+    "centerY": 0.0,
+    "radius": 5.0,
+    "limit": 4.0,
+    "kernel": "frmSinAbsRI"
+  },
+  {
     "id": 9,
     "name": "Experiment1",
     "centerX": -0.5,
@@ -250,5 +259,51 @@
     "radius": 2.0,
     "limit": 2.0,
     "kernel": "frmBurningShip"
+  },
+  {
+    "id": 29,
+    "name": "Experient2",
+    "centerX": 0.0,
+    "centerY": 0.0,
+    "radius": 2.0,
+    "limit": 2.0,
+    "kernel": "frmExperiment2"
+  },
+  {
+    "id": 30,
+    "name": "Experient3",
+    "centerX": 0.0,
+    "centerY": 0.0,
+    "radius": 2.0,
+    "limit": 2.0,
+    "kernel": "frmExperiment3"
+  },
+  {
+    "id": 31,
+    "name": "Experient4",
+    "centerX": 0.0,
+    "centerY": 0.0,
+    "radius": 1.2,
+    "limit": 100.0,
+    "kernel": "frmExperiment4"
+  },
+  {
+    "id": 31,
+    "name": "Experient5",
+    "centerX": 0.0,
+    "centerY": 0.0,
+    "radius": 1.2,
+    "limit": 100.0,
+    "kernel": "frmExperiment5"
+  },
+  {
+    "id": 32,
+    "name": "Experient6",
+    "centerX": 0.0,
+    "centerY": 0.0,
+    "radius": 2,
+    "limit": 10.0,
+    "kernel": "frmExperiment6"
   }
+
 ]

@@ -32,6 +32,7 @@
             contextMenuStrip1 = new ContextMenuStrip(components);
             toolStripMenuItem1 = new ToolStripMenuItem();
             grayscaleToolStripMenuItem = new ToolStripMenuItem();
+            palMonoDistributed = new ToolStripMenuItem();
             palRandomMono = new ToolStripMenuItem();
             palRandomCompliment = new ToolStripMenuItem();
             palRandomTriad = new ToolStripMenuItem();
@@ -44,8 +45,10 @@
             generateNewRandomColorsToolStripMenuItem = new ToolStripMenuItem();
             toolStripMenuItem2 = new ToolStripMenuItem();
             fourCircleSeriesToolStripMenuItem = new ToolStripMenuItem();
+            menuCircleSeriesPreview = new ToolStripMenuItem();
             toolStripMenuItem3 = new ToolStripMenuItem();
             saveAs4CircleSeriesToolStripMenuItem1 = new ToolStripMenuItem();
+            menuCircleSeriesExport = new ToolStripMenuItem();
             exitToolStripMenuItem = new ToolStripMenuItem();
             infoPanel = new DoubleBufferedPanel();
             lbFiGhasItsListCount = new Label();
@@ -100,8 +103,7 @@
             label20 = new Label();
             tbLimit = new TextBox();
             btnSetLimit = new DoubleBufferedLabel();
-            menuCircleSeriesPreview = new ToolStripMenuItem();
-            menuCircleSeriesExport = new ToolStripMenuItem();
+            btnUnlockMaxIterations = new DoubleBufferedLabel();
             contextMenuStrip1.SuspendLayout();
             infoPanel.SuspendLayout();
             limitPanel.SuspendLayout();
@@ -112,11 +114,11 @@
             // 
             contextMenuStrip1.Items.AddRange(new ToolStripItem[] { toolStripMenuItem1, toolStripMenuItem4, halfCycleMenuItem, generateNewRandomColorsToolStripMenuItem, toolStripMenuItem2, toolStripMenuItem3, exitToolStripMenuItem });
             contextMenuStrip1.Name = "contextMenuStrip1";
-            contextMenuStrip1.Size = new Size(234, 180);
+            contextMenuStrip1.Size = new Size(234, 158);
             // 
             // toolStripMenuItem1
             // 
-            toolStripMenuItem1.DropDownItems.AddRange(new ToolStripItem[] { grayscaleToolStripMenuItem, palRandomMono, palRandomCompliment, palRandomTriad, palRandomTetrad, rainbowToolStripMenuItem });
+            toolStripMenuItem1.DropDownItems.AddRange(new ToolStripItem[] { grayscaleToolStripMenuItem, palMonoDistributed, palRandomMono, palRandomCompliment, palRandomTriad, palRandomTetrad, rainbowToolStripMenuItem });
             toolStripMenuItem1.Name = "toolStripMenuItem1";
             toolStripMenuItem1.Size = new Size(233, 22);
             toolStripMenuItem1.Text = "Color Algorithm";
@@ -124,42 +126,49 @@
             // grayscaleToolStripMenuItem
             // 
             grayscaleToolStripMenuItem.Name = "grayscaleToolStripMenuItem";
-            grayscaleToolStripMenuItem.Size = new Size(146, 22);
+            grayscaleToolStripMenuItem.Size = new Size(164, 22);
             grayscaleToolStripMenuItem.Text = "Grayscale";
             grayscaleToolStripMenuItem.Click += palGrayscale_Click;
+            // 
+            // palMonoDistributed
+            // 
+            palMonoDistributed.Name = "palMonoDistributed";
+            palMonoDistributed.Size = new Size(164, 22);
+            palMonoDistributed.Text = "MonoDistributed";
+            palMonoDistributed.Click += palMonoDistributed_Click;
             // 
             // palRandomMono
             // 
             palRandomMono.Name = "palRandomMono";
-            palRandomMono.Size = new Size(146, 22);
+            palRandomMono.Size = new Size(164, 22);
             palRandomMono.Text = "Monocolor";
             palRandomMono.Click += palRandomMono_Click;
             // 
             // palRandomCompliment
             // 
             palRandomCompliment.Name = "palRandomCompliment";
-            palRandomCompliment.Size = new Size(146, 22);
+            palRandomCompliment.Size = new Size(164, 22);
             palRandomCompliment.Text = "Compliments";
             palRandomCompliment.Click += palRandomCompliment_Click;
             // 
             // palRandomTriad
             // 
             palRandomTriad.Name = "palRandomTriad";
-            palRandomTriad.Size = new Size(146, 22);
+            palRandomTriad.Size = new Size(164, 22);
             palRandomTriad.Text = "Triad";
             palRandomTriad.Click += palRandomTriad_Click;
             // 
             // palRandomTetrad
             // 
             palRandomTetrad.Name = "palRandomTetrad";
-            palRandomTetrad.Size = new Size(146, 22);
+            palRandomTetrad.Size = new Size(164, 22);
             palRandomTetrad.Text = "Tetrad";
             palRandomTetrad.Click += palRandomTetrad_Click;
             // 
             // rainbowToolStripMenuItem
             // 
             rainbowToolStripMenuItem.Name = "rainbowToolStripMenuItem";
-            rainbowToolStripMenuItem.Size = new Size(146, 22);
+            rainbowToolStripMenuItem.Size = new Size(164, 22);
             rainbowToolStripMenuItem.Text = "Rainbow";
             rainbowToolStripMenuItem.Click += palRainbow_Click;
             // 
@@ -207,9 +216,16 @@
             // fourCircleSeriesToolStripMenuItem
             // 
             fourCircleSeriesToolStripMenuItem.Name = "fourCircleSeriesToolStripMenuItem";
-            fourCircleSeriesToolStripMenuItem.Size = new Size(180, 22);
+            fourCircleSeriesToolStripMenuItem.Size = new Size(164, 22);
             fourCircleSeriesToolStripMenuItem.Text = "Four Circle Series";
             fourCircleSeriesToolStripMenuItem.Click += fourCircleSeriesToolStripMenuItem_Click;
+            // 
+            // menuCircleSeriesPreview
+            // 
+            menuCircleSeriesPreview.Name = "menuCircleSeriesPreview";
+            menuCircleSeriesPreview.Size = new Size(164, 22);
+            menuCircleSeriesPreview.Text = "Circle Series";
+            menuCircleSeriesPreview.Click += menuCircleSeriesPreview_Click;
             // 
             // toolStripMenuItem3
             // 
@@ -224,6 +240,13 @@
             saveAs4CircleSeriesToolStripMenuItem1.Size = new Size(201, 22);
             saveAs4CircleSeriesToolStripMenuItem1.Text = "Export Four Circle Series";
             saveAs4CircleSeriesToolStripMenuItem1.Click += saveAs4CircleSeriesToolStripMenuItem1_Click;
+            // 
+            // menuCircleSeriesExport
+            // 
+            menuCircleSeriesExport.Name = "menuCircleSeriesExport";
+            menuCircleSeriesExport.Size = new Size(201, 22);
+            menuCircleSeriesExport.Text = "Export Circle Series";
+            menuCircleSeriesExport.Click += menuCircleSeriesExport_Click;
             // 
             // exitToolStripMenuItem
             // 
@@ -656,6 +679,7 @@
             // 
             limitPanel.BackColor = SystemColors.ControlDarkDark;
             limitPanel.BorderStyle = BorderStyle.FixedSingle;
+            limitPanel.Controls.Add(btnUnlockMaxIterations);
             limitPanel.Controls.Add(btnSetMaxIterations);
             limitPanel.Controls.Add(label23);
             limitPanel.Controls.Add(tbMaxIterations);
@@ -677,11 +701,11 @@
             btnSetMaxIterations.BackColor = SystemColors.ButtonFace;
             btnSetMaxIterations.BorderStyle = BorderStyle.Fixed3D;
             btnSetMaxIterations.ForeColor = SystemColors.ControlText;
-            btnSetMaxIterations.Location = new Point(14, 188);
+            btnSetMaxIterations.Location = new Point(12, 188);
             btnSetMaxIterations.Name = "btnSetMaxIterations";
-            btnSetMaxIterations.Size = new Size(203, 23);
+            btnSetMaxIterations.Size = new Size(93, 23);
             btnSetMaxIterations.TabIndex = 9;
-            btnSetMaxIterations.Text = "Set Maximum Iterations";
+            btnSetMaxIterations.Text = "Set and Lock";
             btnSetMaxIterations.TextAlign = ContentAlignment.MiddleCenter;
             btnSetMaxIterations.Click += btnSetMaxIterations_Click;
             // 
@@ -689,11 +713,11 @@
             // 
             label23.AutoSize = true;
             label23.ForeColor = SystemColors.Info;
-            label23.Location = new Point(3, 163);
+            label23.Location = new Point(20, 163);
             label23.Name = "label23";
-            label23.Size = new Size(104, 15);
+            label23.Size = new Size(85, 15);
             label23.TabIndex = 8;
-            label23.Text = "Set Max Iterations:";
+            label23.Text = "Max Iterations:";
             // 
             // tbMaxIterations
             // 
@@ -787,19 +811,18 @@
             btnSetLimit.TextAlign = ContentAlignment.MiddleCenter;
             btnSetLimit.Click += btnSetLimit_Click;
             // 
-            // menuCircleSeriesPreview
+            // btnUnlockMaxIterations
             // 
-            menuCircleSeriesPreview.Name = "menuCircleSeriesPreview";
-            menuCircleSeriesPreview.Size = new Size(180, 22);
-            menuCircleSeriesPreview.Text = "Circle Series";
-            menuCircleSeriesPreview.Click += menuCircleSeriesPreview_Click;
-            // 
-            // menuCircleSeriesExport
-            // 
-            menuCircleSeriesExport.Name = "menuCircleSeriesExport";
-            menuCircleSeriesExport.Size = new Size(201, 22);
-            menuCircleSeriesExport.Text = "Export Circle Series";
-            menuCircleSeriesExport.Click += menuCircleSeriesExport_Click;
+            btnUnlockMaxIterations.BackColor = SystemColors.ButtonFace;
+            btnUnlockMaxIterations.BorderStyle = BorderStyle.Fixed3D;
+            btnUnlockMaxIterations.ForeColor = SystemColors.ControlText;
+            btnUnlockMaxIterations.Location = new Point(124, 188);
+            btnUnlockMaxIterations.Name = "btnUnlockMaxIterations";
+            btnUnlockMaxIterations.Size = new Size(93, 23);
+            btnUnlockMaxIterations.TabIndex = 10;
+            btnUnlockMaxIterations.Text = "Auomatic";
+            btnUnlockMaxIterations.TextAlign = ContentAlignment.MiddleCenter;
+            btnUnlockMaxIterations.Click += btnUnlockMaxIterations_Click;
             // 
             // FractalDisplayForm
             // 
@@ -903,5 +926,7 @@
         private TextBox tb4CircleRadius;
         private ToolStripMenuItem menuCircleSeriesPreview;
         private ToolStripMenuItem menuCircleSeriesExport;
+        private ToolStripMenuItem palMonoDistributed;
+        private DoubleBufferedLabel btnUnlockMaxIterations;
     }
 }

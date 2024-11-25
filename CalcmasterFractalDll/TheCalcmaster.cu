@@ -100,6 +100,13 @@ __device__ thrust::complex<double> frmCosPow2AbsRI(thrust::complex<double> z, th
     temp = thrust::cos(temp) * temp;
     return temp * temp + p;
 }
+// Fractal 28: SinAbsRI
+__device__ thrust::complex<double> frmSinAbsRI(thrust::complex<double> z, thrust::complex<double> p)
+{
+    thrust::complex<double> temp{ abs(z.real()), -abs(z.imag()) };
+    temp = thrust::sin(temp) * temp * temp;
+    return temp + p;
+}
 // Fractal 9: Experiment number 1 ((1 - z^3) / 6) / ((1 - z - z^2) / 2)^2 + p
 __device__ thrust::complex<double> frmExperiment1(thrust::complex<double> z, thrust::complex<double> p)
 {
@@ -299,6 +306,47 @@ __device__ thrust::complex<double> frmBurningShip(thrust::complex<double> z, thr
     //temp *= z;
     return temp + p;
 }
+// Fracta 29: Experiment2
+__device__ thrust::complex<double> frmExperiment2(thrust::complex<double> z, thrust::complex<double> p)
+{
+    // return Complex.Add(Complex.Pow(new Complex(Math.Abs(res.Real),-Math.Abs(res.Imaginary)) , 2.0), p);
+    thrust::complex<double> temp{ cuda::std::abs(z.real()), z.imag()};
+    temp = temp + thrust::pow(z,2);
+    //temp *= z;
+    return temp + p;
+}
+// Fracta 30: Experiment3
+__device__ thrust::complex<double> frmExperiment3(thrust::complex<double> z, thrust::complex<double> p)
+{
+    // return Complex.Add(Complex.Pow(new Complex(Math.Abs(res.Real),-Math.Abs(res.Imaginary)) , 2.0), p);
+    thrust::complex<double> temp{ cuda::std::abs(z.real()), z.imag() };
+    temp = temp + thrust::pow(z, 2) + thrust::pow(z, 3) / 1.8;
+    //temp *= z;
+    return temp + p;
+}
+// Fracta 31: Experiment4
+__device__ thrust::complex<double> frmExperiment4(thrust::complex<double> z, thrust::complex<double> p)
+{
+    // return Complex.Add(Complex.Pow(new Complex(Math.Abs(res.Real),-Math.Abs(res.Imaginary)) , 2.0), p);
+    thrust::complex<double> temp{ thrust::pow(z,1.333333333) };
+    //temp *= z;
+    return temp + thrust::cos(p);
+}
+// Fracta 32: Experiment5
+__device__ thrust::complex<double> frmExperiment5(thrust::complex<double> z, thrust::complex<double> p)
+{
+    // return Complex.Add(Complex.Pow(new Complex(Math.Abs(res.Real),-Math.Abs(res.Imaginary)) , 2.0), p);
+    thrust::complex<double> temp{ thrust::pow(z,1.666666666) };
+    //temp *= z;
+    return temp + thrust::sin(z + p);
+}
+// Fractal 33: Experiment 6
+__device__ thrust::complex<double> frmExperiment6(thrust::complex<double> z, thrust::complex<double> p)
+{
+    return thrust::pow(z,3) - z + p;
+}
+
+
 
 __global__ void setTheDeviceGlobals(double juliaCenterX, double juliaCenterY, int maxIts, double limit, int fractalFormulaID, int N, int ismove)
 {
@@ -391,6 +439,24 @@ __global__ void setTheDeviceGlobals(double juliaCenterX, double juliaCenterY, in
         break;
     case 27:
         g_alg = frmBurningShip;
+        break;
+    case 28:
+        g_alg = frmSinAbsRI;
+        break;
+    case 29:
+        g_alg = frmExperiment2;
+        break;
+    case 30:
+        g_alg = frmExperiment3;
+        break;
+    case 31:
+        g_alg = frmExperiment4;
+        break;
+    case 32:
+        g_alg = frmExperiment5;
+        break;
+    case 33:
+        g_alg = frmExperiment6;
         break;
     default:
         g_alg = frmMandelbrot;

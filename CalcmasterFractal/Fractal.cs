@@ -97,7 +97,7 @@ namespace CalcmasterFractal
         // m_arrColor length
         public const int NumberOfColors = 5000;
         // Antialiasing algorithm
-        public AntiAliasAlg CurAntiAliasAlg = AntiAliasAlg.OneAway;
+        public AntiAliasAlg CurAntiAliasAlg = AntiAliasAlg.NoModification;
 
         // ITERATIONS LIMIT ACCORDING TO CURRENT ZOOM
         // For every 1000x zoom, add 50 to MaxIterations.. zoom inc is 1.5x
@@ -108,6 +108,7 @@ namespace CalcmasterFractal
         public const int MinIterationsBoundary = 250;
         public const int MaxIterationsBoundary = 5000;
         public int MaxIterations { get; set; } = MinIterationsBoundary;
+        public bool MaxIterationsLocked { get; set; } = false;
         public int MaxIterationsBackup { get; set; } = MaxIterationsBoundary;
         public List<int> G_hasItsList { get; private set; } = new List<int>();
 
@@ -120,7 +121,7 @@ namespace CalcmasterFractal
 
         public enum ColorPalette
         {
-            RandomMono, RandomCompliment, RandomTriad, RandomTetrad, Rainbow, Grayscale
+            RandomMono, RandomCompliment, RandomTriad, RandomTetrad, Rainbow, MonoDistributed, Grayscale
             //, Random2, Random3, Monochrome, Yellows, RedGreen
         }
 
@@ -347,7 +348,8 @@ namespace CalcmasterFractal
         public int ZoomInAtPoint(int col, int row)
         {
             CurZoom *= ZoomFactor;
-            MaxIterations = Convert.ToInt32(CurZoom / 6.0 + MinIterationsBoundary);
+            // Test of user set MaxIterations manually so something higher, and keep it
+            MaxIterations = MaxIterationsLocked ? MaxIterations : Convert.ToInt32(CurZoom / 6.0 + MinIterationsBoundary);
             if (MaxIterations < MinIterationsBoundary) MaxIterations = MinIterationsBoundary;
             if (MaxIterations > MaxIterationsBoundary) MaxIterations = MaxIterationsBoundary-1;
             int err = FractalInterface.ZoomInAtPoint(m_ptrFractalGenerator, col, row);
@@ -362,9 +364,19 @@ namespace CalcmasterFractal
         public int ZoomOut()
         {
             CurZoom /= ZoomFactor;
-            MaxIterations = Convert.ToInt32(CurZoom / 6.0 + MinIterationsBoundary);
+            MaxIterations = MaxIterationsLocked ? MaxIterations: Convert.ToInt32(CurZoom / 6.0 + MinIterationsBoundary);
             if (MaxIterations < MinIterationsBoundary) MaxIterations = MinIterationsBoundary;
             if (MaxIterations > MaxIterationsBoundary) MaxIterations = MaxIterationsBoundary-1;
+            int err = FractalInterface.ZoomOut(m_ptrFractalGenerator);
+            if (err == 0) return CalculateMap();
+            return err;
+        }
+
+        public int ResetToAutoMaxIterations()
+        {
+            MaxIterations = Convert.ToInt32(CurZoom / 6.0 + MinIterationsBoundary);
+            if (MaxIterations < MinIterationsBoundary) MaxIterations = MinIterationsBoundary;
+            if (MaxIterations > MaxIterationsBoundary) MaxIterations = MaxIterationsBoundary - 1;
             int err = FractalInterface.ZoomOut(m_ptrFractalGenerator);
             if (err == 0) return CalculateMap();
             return err;
@@ -584,7 +596,7 @@ namespace CalcmasterFractal
                 if (m_iterations_counts[i] == 1) G_hasItsList.Add(i);
             }
             G_hasItsList.Sort();
-            if (m_palette == ColorPalette.Rainbow || m_palette == ColorPalette.Grayscale)
+            if (m_palette == ColorPalette.Rainbow || m_palette == ColorPalette.Grayscale || m_palette == ColorPalette.MonoDistributed)
                 UpdateRandomColors();
 
             /*
@@ -662,6 +674,9 @@ namespace CalcmasterFractal
 
         public void ResetStartEndColors()
         {
+            // let's pick one from the list  28 to 167 converted to KnownColor
+            m_startColor = Color.FromKnownColor((KnownColor)r.Next(28, 167));
+            return;
             SuperColor sc = new SuperColor();
             sc.V = 0.9d;
             sc.S = 1.0d;
@@ -754,32 +769,41 @@ namespace CalcmasterFractal
         public void UpdateRandomColors()
         {
             SuperColor sc;
-
             // Rainbow, Grayscale
-            if (m_palette == ColorPalette.Rainbow || m_palette == ColorPalette.Grayscale)
+            if (m_palette == ColorPalette.Rainbow || m_palette == ColorPalette.MonoDistributed || m_palette == ColorPalette.Grayscale)
             {
                 int numElms = G_hasItsList.Count;
                 int w = 0;
                 double piOver2 = Math.PI / 2.0;
                 sc = new SuperColor(m_startColor);
                 double startH = sc.H;
-                if (m_palette == ColorPalette.Rainbow)
+                double startV = sc.V;
+                switch (m_palette)
                 {
-                    // Color based on Hue angle
-                    for (int i = 0; i < numElms; i++)
-                    {
-                        sc.H = startH + 360.0 * Math.Sin(piOver2 * (double)i / (double)numElms);
-                        m_arrColors[G_hasItsList[i]] = sc.Color;
-                    }
-                }
-                else
-                {
-                    // Grayscale
-                    for (int i = 0; i < numElms; i++)
-                    {
-                        w = Convert.ToInt32(255.0 * Math.Sin(piOver2 * (double)i / (double)numElms));
-                        m_arrColors[G_hasItsList[i]] = Color.FromArgb(w, w, w);
-                    }
+                    case ColorPalette.Rainbow:
+                        // Color based on Hue angle
+                        for (int i = 0; i < numElms; i++)
+                        {
+                            sc.H = startH + 360.0 * Math.Sin(piOver2 * (double)i / (double)numElms);
+                            m_arrColors[G_hasItsList[i]] = sc.Color;
+                        }
+                        break;
+                    case ColorPalette.MonoDistributed:
+                        // Value down to up
+                        for (int i = 0; i < numElms; i++)
+                        {
+                            sc.V = 1 - Math.Sin(Math.PI * (double)i / (double)numElms);
+                            m_arrColors[G_hasItsList[i]] = sc.Color;
+                        }
+                        break;
+                    case ColorPalette.Grayscale:
+                        // Grayscale
+                        for (int i = 0; i < numElms; i++)
+                        {
+                            w = Convert.ToInt32(255.0 * Math.Sin(piOver2 * (double)i / (double)numElms));
+                            m_arrColors[G_hasItsList[i]] = Color.FromArgb(w, w, w);
+                        }
+                        break;
                 }
                 return;
             }

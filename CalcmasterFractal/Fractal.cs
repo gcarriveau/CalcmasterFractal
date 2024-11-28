@@ -792,7 +792,8 @@ namespace CalcmasterFractal
                         // Value down to up
                         for (int i = 0; i < numElms; i++)
                         {
-                            sc.V = 1 - Math.Sin(Math.PI * (double)i / (double)numElms);
+                            //sc.V = 1 - Math.Sin(Math.PI * (double)i / (double)numElms);
+                            sc.V = Math.Sin(Math.PI * (double)i / (double)numElms);
                             m_arrColors[G_hasItsList[i]] = sc.Color;
                         }
                         break;

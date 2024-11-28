@@ -288,7 +288,7 @@
     "kernel": "frmExperiment4"
   },
   {
-    "id": 31,
+    "id": 32,
     "name": "Experient5",
     "centerX": 0.0,
     "centerY": 0.0,
@@ -297,13 +297,76 @@
     "kernel": "frmExperiment5"
   },
   {
-    "id": 32,
+    "id": 33,
     "name": "Experient6",
     "centerX": 0.0,
     "centerY": 0.0,
     "radius": 2,
     "limit": 10.0,
     "kernel": "frmExperiment6"
+  },
+  {
+    "id": 34,
+    "name": "CelticMandelbrot",
+    "centerX": 0.0,
+    "centerY": 0.0,
+    "radius": 2,
+    "limit": 4.0,
+    "kernel": "frmCelticMandelbrot"
+  },
+  {
+    "id": 35,
+    "name": "CelticMandelbar",
+    "centerX": 0.0,
+    "centerY": 0.0,
+    "radius": 2,
+    "limit": 4.0,
+    "kernel": "frmCelticMandelbar"
+  },
+  {
+    "id": 36,
+    "name": "CelticPerpenicular",
+    "centerX": 0.0,
+    "centerY": 0.0,
+    "radius": 2,
+    "limit": 4.0,
+    "kernel": "frmCelticPerpendicular"
+  },
+  {
+    "id": 37,
+    "name": "CelticHeart",
+    "centerX": 0.0,
+    "centerY": 0.0,
+    "radius": 2,
+    "limit": 4.0,
+    "kernel": "frmCelticHeart"
+  },
+  {
+    "id": 38,
+    "name": "Buffalo",
+    "centerX": 0.0,
+    "centerY": 0.0,
+    "radius": 2,
+    "limit": 4.0,
+    "kernel": "frmBuffalo"
+  },
+  {
+    "id": 39,
+    "name": "BuffaloPerpendicular",
+    "centerX": 0.0,
+    "centerY": 0.0,
+    "radius": 2,
+    "limit": 4.0,
+    "kernel": "frmBuffaloPerpendicular"
+  },
+  {
+    "id": 40,
+    "name": "MandelbrotPerpendicular",
+    "centerX": 0.0,
+    "centerY": 0.0,
+    "radius": 2,
+    "limit": 4.0,
+    "kernel": "frmMandelbrotPerpendicular"
   }
 
 ]

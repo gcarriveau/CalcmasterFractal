@@ -345,7 +345,69 @@ __device__ thrust::complex<double> frmExperiment6(thrust::complex<double> z, thr
 {
     return thrust::pow(z,3) - z + p;
 }
-
+// Fractal 34: CelticMandelbrot
+__device__ thrust::complex<double> frmCelticMandelbrot(thrust::complex<double> z, thrust::complex<double> p)
+{
+    double zisqr = z.imag() * z.imag();
+    double zrsqr = z.real() * z.real();
+    double zi = z.real() * z.imag() * 2.0 + p.imag();
+    double zr = cuda::std::abs(zrsqr - zisqr) + p.real();
+    return thrust::complex<double>{zr, zi};
+}
+// Fractal 35: CelticMandelbar
+__device__ thrust::complex<double> frmCelticMandelbar(thrust::complex<double> z, thrust::complex<double> p)
+{
+    double zisqr = z.imag() * z.imag();
+    double zrsqr = z.real() * z.real();
+    double zi = z.real() * z.imag() * -2.0 + p.imag();
+    double zr = cuda::std::abs(zrsqr - zisqr) + p.real();
+    return thrust::complex<double>{zr, zi};
+}
+// Fractal 36: CelticPerpendicular
+__device__ thrust::complex<double> frmCelticPerpendicular(thrust::complex<double> z, thrust::complex<double> p)
+{
+    double zisqr = z.imag() * z.imag();
+    double zrsqr = z.real() * z.real();
+    double zi = cuda::std::abs(z.real()) * z.imag() * -2.0 + p.imag();
+    double zr = cuda::std::abs(zrsqr - zisqr) + p.real();
+    return thrust::complex<double>{zr, zi};
+}
+// Fractal 37: CelticHeart
+__device__ thrust::complex<double> frmCelticHeart(thrust::complex<double> z, thrust::complex<double> p)
+{
+    double zisqr = z.imag() * z.imag();
+    double zrsqr = z.real() * z.real();
+    double zi = cuda::std::abs(z.real()) * z.imag() * 2.0 + p.imag();
+    double zr = cuda::std::abs(zrsqr - zisqr) + p.real();
+    return thrust::complex<double>{zr, zi};
+}
+// Fractal 38: Buffalo
+__device__ thrust::complex<double> frmBuffalo(thrust::complex<double> z, thrust::complex<double> p)
+{
+    double zisqr = z.imag() * z.imag();
+    double zrsqr = z.real() * z.real();
+    double zi = cuda::std::abs(z.real() * z.imag()) * 2.0 + p.imag();
+    double zr = cuda::std::abs(zrsqr - zisqr) + p.real();
+    return thrust::complex<double>{zr, zi};
+}
+// Fractal 39: BuffaloPerpendicular
+__device__ thrust::complex<double> frmBuffaloPerpendicular(thrust::complex<double> z, thrust::complex<double> p)
+{
+    double zisqr = z.imag() * z.imag();
+    double zrsqr = z.real() * z.real();
+    double zi = z.real() * cuda::std::abs(z.imag()) * 2.0 + p.imag();
+    double zr = cuda::std::abs(zrsqr - zisqr) + p.real();
+    return thrust::complex<double>{zr, zi};
+}
+// Fractal 40: MandelbrotPerpendicular
+__device__ thrust::complex<double> frmMandelbrotPerpendicular(thrust::complex<double> z, thrust::complex<double> p)
+{
+    double zisqr = z.imag() * z.imag();
+    double zrsqr = z.real() * z.real();
+    double zi = cuda::std::abs(z.real()) * z.imag() * -2.0 + p.imag();
+    double zr = zrsqr - zisqr + p.real();
+    return thrust::complex<double>{zr, zi};
+}
 
 
 __global__ void setTheDeviceGlobals(double juliaCenterX, double juliaCenterY, int maxIts, double limit, int fractalFormulaID, int N, int ismove)
@@ -457,6 +519,27 @@ __global__ void setTheDeviceGlobals(double juliaCenterX, double juliaCenterY, in
         break;
     case 33:
         g_alg = frmExperiment6;
+        break;
+    case 34:
+        g_alg = frmCelticMandelbrot;
+        break;
+    case 35:
+        g_alg = frmCelticMandelbar;
+        break;
+    case 36:
+        g_alg = frmCelticPerpendicular;
+        break;
+    case 37:
+        g_alg = frmCelticHeart;
+        break;
+    case 38:
+        g_alg = frmBuffalo;
+        break;
+    case 39:
+        g_alg = frmBuffaloPerpendicular;
+        break;
+    case 40:
+        g_alg = frmMandelbrotPerpendicular;
         break;
     default:
         g_alg = frmMandelbrot;

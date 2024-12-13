@@ -7,13 +7,22 @@ After unzipping the files of the build using 7-zip, place the contents of the /b
 
 Open the folder in a Powershell terminal.  Compile the PNG files into an avi movie file by issuing the following command:
 
-ffmpeg -framerate 10 -i 'image_1_%03d.png' out.avi
+ffmpeg -framerate 10 -i 'image_1_%05d.png' out.avi
 
 For better quality .webm format (increasing crf decreases video size):
-ffmpeg -framerate = 10 -i 'image_%03d.png' -c:v libvpx-vp9 -crf 15 -b:v 0 out.webm
+ffmpeg -framerate = 10 -i 'image_%05d.png' -c:v libvpx-vp9 -crf 15 -b:v 0 out.webm (or out.avi)
 
 A series of 72 png files makes a video of about 8Mb.
 
 Documentation:
 https://ffmpeg.org/ffmpeg-all.html#image2-1
+
+
+
+
+
+
+
+
+
 

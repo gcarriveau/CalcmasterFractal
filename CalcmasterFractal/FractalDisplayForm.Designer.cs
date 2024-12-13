@@ -92,6 +92,7 @@
             label1 = new Label();
             label10 = new Label();
             limitPanel = new DoubleBufferedPanel();
+            btnUnlockMaxIterations = new DoubleBufferedLabel();
             btnSetMaxIterations = new DoubleBufferedLabel();
             label23 = new Label();
             tbMaxIterations = new TextBox();
@@ -103,11 +104,16 @@
             label20 = new Label();
             tbLimit = new TextBox();
             btnSetLimit = new DoubleBufferedLabel();
-            btnUnlockMaxIterations = new DoubleBufferedLabel();
+            pnlSeqAbortNotification = new DoubleBufferedPanel();
+            doubleBufferedPanel3 = new DoubleBufferedPanel();
+            btnCloseSeqAbortNotification = new DoubleBufferedLabel();
+            lblMessage = new Label();
             contextMenuStrip1.SuspendLayout();
             infoPanel.SuspendLayout();
             limitPanel.SuspendLayout();
             doubleBufferedPanel1.SuspendLayout();
+            pnlSeqAbortNotification.SuspendLayout();
+            doubleBufferedPanel3.SuspendLayout();
             SuspendLayout();
             // 
             // contextMenuStrip1
@@ -237,14 +243,14 @@
             // saveAs4CircleSeriesToolStripMenuItem1
             // 
             saveAs4CircleSeriesToolStripMenuItem1.Name = "saveAs4CircleSeriesToolStripMenuItem1";
-            saveAs4CircleSeriesToolStripMenuItem1.Size = new Size(201, 22);
+            saveAs4CircleSeriesToolStripMenuItem1.Size = new Size(200, 22);
             saveAs4CircleSeriesToolStripMenuItem1.Text = "Export Four Circle Series";
             saveAs4CircleSeriesToolStripMenuItem1.Click += saveAs4CircleSeriesToolStripMenuItem1_Click;
             // 
             // menuCircleSeriesExport
             // 
             menuCircleSeriesExport.Name = "menuCircleSeriesExport";
-            menuCircleSeriesExport.Size = new Size(201, 22);
+            menuCircleSeriesExport.Size = new Size(200, 22);
             menuCircleSeriesExport.Text = "Export Circle Series";
             menuCircleSeriesExport.Click += menuCircleSeriesExport_Click;
             // 
@@ -482,7 +488,7 @@
             label15.AutoSize = true;
             label15.Location = new Point(21, 182);
             label15.Name = "label15";
-            label15.Size = new Size(114, 15);
+            label15.Size = new Size(113, 15);
             label15.TabIndex = 57;
             label15.Text = "Between Pixels Julia:";
             // 
@@ -500,7 +506,7 @@
             label14.AutoSize = true;
             label14.Location = new Point(17, 167);
             label14.Name = "label14";
-            label14.Size = new Size(118, 15);
+            label14.Size = new Size(117, 15);
             label14.TabIndex = 55;
             label14.Text = "Between Pixels Main:";
             // 
@@ -696,6 +702,19 @@
             limitPanel.TabIndex = 2;
             limitPanel.Visible = false;
             // 
+            // btnUnlockMaxIterations
+            // 
+            btnUnlockMaxIterations.BackColor = SystemColors.ButtonFace;
+            btnUnlockMaxIterations.BorderStyle = BorderStyle.Fixed3D;
+            btnUnlockMaxIterations.ForeColor = SystemColors.ControlText;
+            btnUnlockMaxIterations.Location = new Point(124, 188);
+            btnUnlockMaxIterations.Name = "btnUnlockMaxIterations";
+            btnUnlockMaxIterations.Size = new Size(93, 23);
+            btnUnlockMaxIterations.TabIndex = 10;
+            btnUnlockMaxIterations.Text = "Auomatic";
+            btnUnlockMaxIterations.TextAlign = ContentAlignment.MiddleCenter;
+            btnUnlockMaxIterations.Click += btnUnlockMaxIterations_Click;
+            // 
             // btnSetMaxIterations
             // 
             btnSetMaxIterations.BackColor = SystemColors.ButtonFace;
@@ -715,7 +734,7 @@
             label23.ForeColor = SystemColors.Info;
             label23.Location = new Point(20, 163);
             label23.Name = "label23";
-            label23.Size = new Size(85, 15);
+            label23.Size = new Size(84, 15);
             label23.TabIndex = 8;
             label23.Text = "Max Iterations:";
             // 
@@ -811,18 +830,49 @@
             btnSetLimit.TextAlign = ContentAlignment.MiddleCenter;
             btnSetLimit.Click += btnSetLimit_Click;
             // 
-            // btnUnlockMaxIterations
+            // pnlSeqAbortNotification
             // 
-            btnUnlockMaxIterations.BackColor = SystemColors.ButtonFace;
-            btnUnlockMaxIterations.BorderStyle = BorderStyle.Fixed3D;
-            btnUnlockMaxIterations.ForeColor = SystemColors.ControlText;
-            btnUnlockMaxIterations.Location = new Point(124, 188);
-            btnUnlockMaxIterations.Name = "btnUnlockMaxIterations";
-            btnUnlockMaxIterations.Size = new Size(93, 23);
-            btnUnlockMaxIterations.TabIndex = 10;
-            btnUnlockMaxIterations.Text = "Auomatic";
-            btnUnlockMaxIterations.TextAlign = ContentAlignment.MiddleCenter;
-            btnUnlockMaxIterations.Click += btnUnlockMaxIterations_Click;
+            pnlSeqAbortNotification.BackColor = SystemColors.ControlDarkDark;
+            pnlSeqAbortNotification.BorderStyle = BorderStyle.FixedSingle;
+            pnlSeqAbortNotification.Controls.Add(doubleBufferedPanel3);
+            pnlSeqAbortNotification.Controls.Add(lblMessage);
+            pnlSeqAbortNotification.Location = new Point(673, 12);
+            pnlSeqAbortNotification.Name = "pnlSeqAbortNotification";
+            pnlSeqAbortNotification.Size = new Size(200, 100);
+            pnlSeqAbortNotification.TabIndex = 3;
+            pnlSeqAbortNotification.Visible = false;
+            // 
+            // doubleBufferedPanel3
+            // 
+            doubleBufferedPanel3.BackColor = SystemColors.ActiveCaption;
+            doubleBufferedPanel3.Controls.Add(btnCloseSeqAbortNotification);
+            doubleBufferedPanel3.Location = new Point(-1, -1);
+            doubleBufferedPanel3.Name = "doubleBufferedPanel3";
+            doubleBufferedPanel3.Size = new Size(200, 23);
+            doubleBufferedPanel3.TabIndex = 44;
+            // 
+            // btnCloseSeqAbortNotification
+            // 
+            btnCloseSeqAbortNotification.BackColor = SystemColors.ButtonFace;
+            btnCloseSeqAbortNotification.BorderStyle = BorderStyle.Fixed3D;
+            btnCloseSeqAbortNotification.ForeColor = SystemColors.ControlText;
+            btnCloseSeqAbortNotification.Location = new Point(177, 1);
+            btnCloseSeqAbortNotification.Name = "btnCloseSeqAbortNotification";
+            btnCloseSeqAbortNotification.Size = new Size(22, 20);
+            btnCloseSeqAbortNotification.TabIndex = 3;
+            btnCloseSeqAbortNotification.Text = "X";
+            btnCloseSeqAbortNotification.TextAlign = ContentAlignment.MiddleCenter;
+            btnCloseSeqAbortNotification.Click += btnCloseSeqAbortNotification_Click;
+            // 
+            // lblMessage
+            // 
+            lblMessage.ForeColor = SystemColors.HighlightText;
+            lblMessage.Location = new Point(3, 60);
+            lblMessage.Name = "lblMessage";
+            lblMessage.Size = new Size(194, 16);
+            lblMessage.TabIndex = 43;
+            lblMessage.Text = "Sequence Aborted";
+            lblMessage.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // FractalDisplayForm
             // 
@@ -830,6 +880,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1244, 709);
             ContextMenuStrip = contextMenuStrip1;
+            Controls.Add(pnlSeqAbortNotification);
             Controls.Add(limitPanel);
             Controls.Add(infoPanel);
             DoubleBuffered = true;
@@ -848,6 +899,8 @@
             limitPanel.ResumeLayout(false);
             limitPanel.PerformLayout();
             doubleBufferedPanel1.ResumeLayout(false);
+            pnlSeqAbortNotification.ResumeLayout(false);
+            doubleBufferedPanel3.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -928,5 +981,9 @@
         private ToolStripMenuItem menuCircleSeriesExport;
         private ToolStripMenuItem palMonoDistributed;
         private DoubleBufferedLabel btnUnlockMaxIterations;
+        private DoubleBufferedPanel pnlSeqAbortNotification;
+        private DoubleBufferedPanel doubleBufferedPanel3;
+        private DoubleBufferedLabel btnCloseSeqAbortNotification;
+        private Label lblMessage;
     }
 }

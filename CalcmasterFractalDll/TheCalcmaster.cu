@@ -409,6 +409,162 @@ __device__ thrust::complex<double> frmMandelbrotPerpendicular(thrust::complex<do
     return thrust::complex<double>{zr, zi};
 }
 
+// ******** Lifesmith.com formulas *************
+// https://www.lifesmith.com/formulas.html
+// Fractal 41: Lifesmith3
+__device__ thrust::complex<double> frmLifesmith3(thrust::complex<double> z, thrust::complex<double> p)
+{
+    thrust::complex<double> temp{ z * z + p };
+    return temp / (z - p);
+}
+// Fractal 42: Lifesmith4
+__device__ thrust::complex<double> frmLifesmith4(thrust::complex<double> z, thrust::complex<double> p)
+{
+    return z * z - z + p;
+}
+// Fractal 43: Lifesmith5
+__device__ thrust::complex<double> frmLifesmith5(thrust::complex<double> z, thrust::complex<double> p)
+{
+    return (z * z * z) - (z * z) + z + p;
+}
+// Fractal 44: Lifesmith6Mod
+__device__ thrust::complex<double> frmLifesmith6Mod(thrust::complex<double> z, thrust::complex<double> p)
+{
+    return (1.0 + p) * z - p * z * z + p;
+}
+// Fractal 45: Lifesmith7Mod
+__device__ thrust::complex<double> frmLifesmith7Mod(thrust::complex<double> z, thrust::complex<double> p)
+{
+    // added + p on top
+    return ((z * z * z) + p) / (1.0 + (z * z * p));
+}
+// Fractal 46: Lifesmith8
+__device__ thrust::complex<double> frmLifesmith8(thrust::complex<double> z, thrust::complex<double> p)
+{
+    return (z - 1) * (z + 0.5) * (z * z - 1) + p;
+}
+// Fractal 47: Lifesmith9
+__device__ thrust::complex<double> frmLifesmith9(thrust::complex<double> z, thrust::complex<double> p)
+{
+    return (z * z + 1 + p )/(z * z - 1 - p);
+}
+// Fractal 48: Lifesmith10
+__device__ thrust::complex<double> frmLifesmith10(thrust::complex<double> z, thrust::complex<double> p)
+{
+    return thrust::pow(z,1.5) + p;
+}
+// Fractal 49: Lifesmith11
+__device__ thrust::complex<double> frmLifesmith11(thrust::complex<double> z, thrust::complex<double> p)
+{
+    return thrust::exp(z) - p;
+}
+
+// Fractal 50: Lifesmith12
+__device__ thrust::complex<double> frmLifesmith12(thrust::complex<double> z, thrust::complex<double> p)
+{
+    return z - 1 + thrust::exp(-z) * p;
+}
+// Fractal 51: Lifesmith13
+__device__ thrust::complex<double> frmLifesmith13(thrust::complex<double> z, thrust::complex<double> p)
+{
+    return z * p - 1 + thrust::exp(-z) * p;
+}
+// Fractal 52: Lifesmith14Mod
+__device__ thrust::complex<double> frmLifesmith14Mod(thrust::complex<double> z, thrust::complex<double> p)
+{
+    return (thrust::pow(z,5) * 4 + p) / ((5 * thrust::pow(z,4)) + p);
+}
+// Fractal 53: Lifesmith15Mod
+__device__ thrust::complex<double> frmLifesmith15Mod(thrust::complex<double> z, thrust::complex<double> p)
+{
+    return (thrust::pow(z,7) * 6 + (p / 3)) / (thrust::pow(z + p,6) * 7);
+}
+// Fractal 54: Lifesmith16
+__device__ thrust::complex<double> frmLifesmith16(thrust::complex<double> z, thrust::complex<double> p)
+{
+    return z * z * thrust::exp(-z) + p;
+}
+// Fractal 55: Lifesmith17
+__device__ thrust::complex<double> frmLifesmith17(thrust::complex<double> z, thrust::complex<double> p)
+{
+    return z * z * thrust::pow(thrust::exp(z),-2) + p;
+}
+// Fractal 56: Lifesmith18
+__device__ thrust::complex<double> frmLifesmith18(thrust::complex<double> z, thrust::complex<double> p)
+{
+    return z * thrust::exp(-z) + p;
+}
+// Fractal 57: Lifesmith19
+__device__ thrust::complex<double> frmLifesmith19(thrust::complex<double> z, thrust::complex<double> p)
+{
+    return p * thrust::exp(-z) + z * z;
+}
+// Fractal 58: Lifesmith20
+__device__ thrust::complex<double> frmLifesmith20(thrust::complex<double> z, thrust::complex<double> p)
+{
+    return z * z * z + z + p;
+}
+// Fractal 59: Lifesmith21
+__device__ thrust::complex<double> frmLifesmith21(thrust::complex<double> z, thrust::complex<double> p)
+{
+    return z * z * z * z + z + p;
+}
+// Fractal 60: Lifesmith22
+__device__ thrust::complex<double> frmLifesmith22(thrust::complex<double> z, thrust::complex<double> p)
+{
+    return z * z * z * z + z * z * p + p;
+}
+// Fractal 61: Lifesmith23
+__device__ thrust::complex<double> frmLifesmith23(thrust::complex<double> z, thrust::complex<double> p)
+{
+    return z * z * cos(z.real()) + z * p * cos(z.imag()) + p;
+}
+// Fractal 62: Lifesmith24Mod
+__device__ thrust::complex<double> frmLifesmith24Mod(thrust::complex<double> z, thrust::complex<double> p)
+{
+    return z.real() == 0.0 && z.imag() == 0.0 ? p : thrust::pow(2.0, z) * p * z * z;
+}
+// Fractal 63: Lifesmith25
+__device__ thrust::complex<double> frmLifesmith25(thrust::complex<double> z, thrust::complex<double> p)
+{
+    return thrust::pow(z,5.0) - thrust::pow(z,3.0) + z + p;
+}
+// Fractal 64: Lifesmith26
+__device__ thrust::complex<double> frmLifesmith26(thrust::complex<double> z, thrust::complex<double> p)
+{
+    return thrust::pow((z * z + p),2.0) + z + p;
+}
+// Fractal 65: Lifesmith27
+__device__ thrust::complex<double> frmLifesmith27(thrust::complex<double> z, thrust::complex<double> p)
+{
+    return thrust::pow(z + thrust::sin(z), 2.0) + p;
+}
+// Fractal 66: Lifesmith28
+__device__ thrust::complex<double> frmLifesmith28(thrust::complex<double> z, thrust::complex<double> p)
+{
+    return p * thrust::exp(z);
+}
+// Fractal 67: Lifesmith29
+__device__ thrust::complex<double> frmLifesmith29(thrust::complex<double> z, thrust::complex<double> p)
+{
+    return z * z + p * p * p;
+}
+// Fractal 68: Lifesmith30
+__device__ thrust::complex<double> frmLifesmith30(thrust::complex<double> z, thrust::complex<double> p)
+{
+    return p * thrust::exp(z * p);
+}
+// Fractal 69: Lifesmith31
+__device__ thrust::complex<double> frmLifesmith31(thrust::complex<double> z, thrust::complex<double> p)
+{
+    return z * z * cos(z.real()) + p * z * sin(z.imag()) + p;
+}
+// Fractal 70: Lifesmith32
+__device__ thrust::complex<double> frmLifesmith32(thrust::complex<double> z, thrust::complex<double> p)
+{
+    return z.real() == 0.0 && z.imag() == 0.0 ? p : p * z * z + z * p * p;
+}
+
 
 __global__ void setTheDeviceGlobals(double juliaCenterX, double juliaCenterY, int maxIts, double limit, int fractalFormulaID, int N, int ismove)
 {
@@ -540,6 +696,96 @@ __global__ void setTheDeviceGlobals(double juliaCenterX, double juliaCenterY, in
         break;
     case 40:
         g_alg = frmMandelbrotPerpendicular;
+        break;
+    case 41:
+        g_alg = frmLifesmith3;
+        break;
+    case 42:
+        g_alg = frmLifesmith4;
+        break;
+    case 43:
+        g_alg = frmLifesmith5;
+        break;
+    case 44:
+        g_alg = frmLifesmith6Mod;
+        break;
+    case 45:
+        g_alg = frmLifesmith7Mod;
+        break;
+    case 46:
+        g_alg = frmLifesmith8;
+        break;
+    case 47:
+        g_alg = frmLifesmith9;
+        break;
+    case 48:
+        g_alg = frmLifesmith10;
+        break;
+    case 49:
+        g_alg = frmLifesmith11;
+        break;
+    case 50:
+        g_alg = frmLifesmith12;
+        break;
+    case 51:
+        g_alg = frmLifesmith13;
+        break;
+    case 52:
+        g_alg = frmLifesmith14Mod;
+        break;
+    case 53:
+        g_alg = frmLifesmith15Mod;
+        break;
+    case 54:
+        g_alg = frmLifesmith16;
+        break;
+    case 55:
+        g_alg = frmLifesmith17;
+        break;
+    case 56:
+        g_alg = frmLifesmith18;
+        break;
+    case 57:
+        g_alg = frmLifesmith19;
+        break;
+    case 58:
+        g_alg = frmLifesmith20;
+        break;
+    case 59:
+        g_alg = frmLifesmith21;
+        break;
+    case 60:
+        g_alg = frmLifesmith22;
+        break;
+    case 61:
+        g_alg = frmLifesmith23;
+        break;
+    case 62:
+        g_alg = frmLifesmith24Mod;
+        break;
+    case 63:
+        g_alg = frmLifesmith25;
+        break;
+    case 64:
+        g_alg = frmLifesmith26;
+        break;
+    case 65:
+        g_alg = frmLifesmith27;
+        break;
+    case 66:
+        g_alg = frmLifesmith28;
+        break;
+    case 67:
+        g_alg = frmLifesmith29;
+        break;
+    case 68:
+        g_alg = frmLifesmith30;
+        break;
+    case 69:
+        g_alg = frmLifesmith31;
+        break;
+    case 70:
+        g_alg = frmLifesmith32;
         break;
     default:
         g_alg = frmMandelbrot;

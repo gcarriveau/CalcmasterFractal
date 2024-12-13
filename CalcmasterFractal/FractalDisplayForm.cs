@@ -297,12 +297,26 @@ namespace CalcmasterFractal
             sequenceRunning = false;
             if (cancelVideo)
             {
-                MessageBox.Show("Video Sequence Aborted.");
+                //MessageBox.Show("Video Sequence Aborted.");
+                // After Windows 11 2024 Update, Messagebox is not shown topmost.
+                if (myself != null)
+                    myself.Invoke((Action)(() =>
+                    {
+                        lblMessage.Text = "Video Sequence Aborted.";
+                        pnlSeqAbortNotification.Visible = true;
+                    }));
                 cancelVideo = false;
             }
             else
             {
-                MessageBox.Show("Video Sequence Finished.");
+                //MessageBox.Show("Video Sequence Finished.");
+                // After Windows 11 2024 Update, Messagebox is not shown topmost.
+                if (myself != null)
+                    myself.Invoke((Action)(() =>
+                    {
+                        lblMessage.Text = "Video Sequence Aborted.";
+                        pnlSeqAbortNotification.Visible = true;
+                    }));
             }
         }
 
@@ -380,12 +394,27 @@ namespace CalcmasterFractal
             sequenceRunning = false;
             if (cancelVideo)
             {
-                MessageBox.Show("Video Sequence Aborted.");
+                //MessageBox.Show("Video Sequence Aborted.");
+                // After Windows 11 2024 Update, Messagebox is not shown topmost.
+                if (myself != null)
+                    myself.Invoke((Action)(() =>
+                    {
+                        lblMessage.Text = "Video Sequence Aborted.";
+                        pnlSeqAbortNotification.Visible = true;
+                    }));
                 cancelVideo = false;
             }
             else
             {
-                MessageBox.Show("Video Sequence Finished.");
+                //MessageBox.Show("Video Sequence Finished.");
+                // After Windows 11 2024 Update, Messagebox is not shown topmost.
+                if (myself != null)
+                    myself.Invoke((Action)(() =>
+                    {
+                        lblMessage.Text = "Video Sequence Finished.";
+                        pnlSeqAbortNotification.Visible = true;
+                    }));
+
             }
         }
 
@@ -921,6 +950,11 @@ namespace CalcmasterFractal
         {
             gen.MaxIterationsLocked = false;
             int err = gen.ResetToAutoMaxIterations();
+        }
+
+        private void btnCloseSeqAbortNotification_Click(object sender, EventArgs e)
+        {
+            pnlSeqAbortNotification.Visible = false;
         }
     }
 }

@@ -637,5 +637,104 @@
     "radius": 2,
     "limit": 4.0,
     "kernel": "frmLifesmith32"
+  },
+  {
+    "id": 71,
+    "name": "Lifesmith33",
+    "centerX": 0.0,
+    "centerY": 0.0,
+    "radius": 2,
+    "limit": 4.0,
+    "kernel": "frmLifesmith33"
+  },
+  {
+    "id": 72,
+    "name": "Lifesmith34",
+    "centerX": 0.0,
+    "centerY": 0.0,
+    "radius": 4,
+    "limit": 2.0,
+    "kernel": "frmLifesmith34"
+  },
+  {
+    "id": 73,
+    "name": "Lifesmith35",
+    "centerX": 0.0,
+    "centerY": 0.0,
+    "radius": 2,
+    "limit": 4.0,
+    "kernel": "frmLifesmith35"
+  },
+  {
+    "id": 74,
+    "name": "Lifesmith36",
+    "centerX": 0.0,
+    "centerY": 0.0,
+    "radius": 4,
+    "limit": 2.0,
+    "kernel": "frmLifesmith36"
+  },
+  {
+    "id": 75,
+    "name": "Lifesmith37",
+    "centerX": 0.0,
+    "centerY": 0.0,
+    "radius": 4,
+    "limit": 2.0,
+    "kernel": "frmLifesmith37"
+  },
+  {
+    "id": 76,
+    "name": "Lifesmith38",
+    "centerX": 0.0,
+    "centerY": 0.0,
+    "radius": 4,
+    "limit": 2.0,
+    "kernel": "frmLifesmith38"
+  },
+  {
+    "id": 77,
+    "name": "Lifesmith39",
+    "centerX": 0.0,
+    "centerY": 0.0,
+    "radius": 4,
+    "limit": 2.0,
+    "kernel": "frmLifesmith39"
+  },
+  {
+    "id": 78,
+    "name": "Lifesmith40",
+    "centerX": 0.0,
+    "centerY": 0.0,
+    "radius": 4.0,
+    "limit": 2.0,
+    "kernel": "frmLifesmith40"
+  },
+  {
+    "id": 79,
+    "name": "Lifesmith41",
+    "centerX": 0.0,
+    "centerY": 0.0,
+    "radius": 4.0,
+    "limit": 2.0,
+    "kernel": "frmLifesmith41"
+  },
+  {
+    "id": 80,
+    "name": "NovaStar",
+    "centerX": 0.0,
+    "centerY": 0.0,
+    "radius": 4.0,
+    "limit": 2.0,
+    "kernel": "frmNovaStar"
+  },
+  {
+    "id": 81,
+    "name": "Newton",
+    "centerX": 0.0,
+    "centerY": 0.0,
+    "radius": 4.0,
+    "limit": 2.4,
+    "kernel": "frmNewton"
   }
 ]

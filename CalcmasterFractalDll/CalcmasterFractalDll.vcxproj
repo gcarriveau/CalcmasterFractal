@@ -167,6 +167,9 @@
       <CodeGeneration>compute_75,sm_75</CodeGeneration>
       <Include>
       </Include>
+      <AdditionalCompilerOptions>
+      </AdditionalCompilerOptions>
+      <GenerateRelocatableDeviceCode>false</GenerateRelocatableDeviceCode>
     </CudaCompile>
   </ItemDefinitionGroup>
   <ItemGroup>

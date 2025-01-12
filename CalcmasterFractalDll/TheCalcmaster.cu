@@ -23,11 +23,12 @@
 #include <device_launch_parameters.h>	// not required.. I use it for getting rid of Intellisense squigglies under blockIdx, blockDim, threadIdx in Visual Studio 2022
 #include <thrust/complex.h>             // numerics for double precision complex numbers
 
+
 // Global device constants
 __device__ __constant__ double g_e{ 2.718281828459045 }; // euler's number
 
 // Global device variables
-__device__ const int g_colorsInPalette{ 1000 };
+//__device__ const int g_colorsInPalette{ 1000 };
 __device__ double g_juliaCenterX;
 __device__ double g_juliaCenterY;
 __device__ int    g_maxIts;
@@ -564,6 +565,65 @@ __device__ thrust::complex<double> frmLifesmith32(thrust::complex<double> z, thr
 {
     return z.real() == 0.0 && z.imag() == 0.0 ? p : p * z * z + z * p * p;
 }
+// Fractal 71: Lifesmith33
+__device__ thrust::complex<double> frmLifesmith33(thrust::complex<double> z, thrust::complex<double> p)
+{
+    return thrust::exp(thrust::cos(p * z));
+}
+// Fractal 72: Lifesmith34 - j0 is the regular Bessel function order 0
+__device__ thrust::complex<double> frmLifesmith34(thrust::complex<double> z, thrust::complex<double> p)
+{
+    return pow(1.0 + j0(z.real()),2.0) + pow(j0(z.imag()) + p, 2.0);
+}
+// Fractal 73: Lifesmith35
+__device__ thrust::complex<double> frmLifesmith35(thrust::complex<double> z, thrust::complex<double> p)
+{
+    return (thrust::sin(z) + thrust::cos(z)) * p;
+}
+// Fractal 74: Lifesmith36
+__device__ thrust::complex<double> frmLifesmith36(thrust::complex<double> z, thrust::complex<double> p)
+{
+    return z.real() == 0.0 && z.imag() == 0.0 ? p : thrust::pow(z, -0.5) + p;
+}
+// Fractal 75: Lifesmith37
+__device__ thrust::complex<double> frmLifesmith37(thrust::complex<double> z, thrust::complex<double> p)
+{
+    return (1 - z) * z * p;
+}
+// Fractal 76: Lifesmith38
+__device__ thrust::complex<double> frmLifesmith38(thrust::complex<double> z, thrust::complex<double> p)
+{
+    return z.real() == 0.0 && z.imag() == 0.0 ? p : thrust::pow(p, 2.0) * z * (1 - z);
+}
+// Fractal 77: Lifesmith39
+__device__ thrust::complex<double> frmLifesmith39(thrust::complex<double> z, thrust::complex<double> p)
+{
+    return thrust::pow((z * z + p), 2.0)/(z - p);
+}
+// Fractal 78: Lifesmith40
+__device__ thrust::complex<double> frmLifesmith40(thrust::complex<double> z, thrust::complex<double> p)
+{
+    return z.real() == 0.0 && z.imag() == 0.0 ? p : thrust::pow((z + thrust::sin(z)),2.0) + thrust::pow(z,-0.5) + p;
+}
+// Fractal 79: Lifesmith41
+__device__ thrust::complex<double> frmLifesmith41(thrust::complex<double> z, thrust::complex<double> p)
+{
+    return (thrust::sin(z) + thrust::cos(z)) * p * (z * z * z + z + p);
+}
+// Fractal 80: NovaStar
+__device__ thrust::complex<double> frmNovaStar(thrust::complex<double> z, thrust::complex<double> p)
+{
+    if (z.real() == 0.0 && z.imag() == 0.0) return p * 0.04;
+    double temp = thrust::abs(z);
+    return (temp * temp + 1.0) / (z * z + p);
+}
+// Fractal 81: Newton-Raphson Z^3
+// https://graphicmaths.com/fractals/escape-time-fractals/newton-fractal/
+__device__ thrust::complex<double> frmNewton(thrust::complex<double> z, thrust::complex<double> p)
+{
+    if (z.real() == 0.0 && z.imag() == 0.0) return thrust::complex<double>{1.0,0.0};
+    return z - (thrust::pow(z, 3.0) - 1) / (3.0 * z * z) + p;
+}
 
 
 __global__ void setTheDeviceGlobals(double juliaCenterX, double juliaCenterY, int maxIts, double limit, int fractalFormulaID, int N, int ismove)
@@ -786,6 +846,39 @@ __global__ void setTheDeviceGlobals(double juliaCenterX, double juliaCenterY, in
         break;
     case 70:
         g_alg = frmLifesmith32;
+        break;
+    case 71:
+        g_alg = frmLifesmith33;
+        break;
+    case 72:
+        g_alg = frmLifesmith34; // Bessel j0
+        break;
+    case 73:
+        g_alg = frmLifesmith35;
+        break;
+    case 74:
+        g_alg = frmLifesmith36;
+        break;
+    case 75:
+        g_alg = frmLifesmith37;
+        break;
+    case 76:
+        g_alg = frmLifesmith38;
+        break;
+    case 77:
+        g_alg = frmLifesmith39;
+        break;
+    case 78:
+        g_alg = frmLifesmith40;
+        break;
+    case 79:
+        g_alg = frmLifesmith41;
+        break;
+    case 80:
+        g_alg = frmNovaStar;
+        break;
+    case 81:
+        g_alg = frmNewton;
         break;
     default:
         g_alg = frmMandelbrot;

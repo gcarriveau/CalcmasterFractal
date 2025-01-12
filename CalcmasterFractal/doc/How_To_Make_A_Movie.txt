@@ -17,8 +17,14 @@ A series of 72 png files makes a video of about 8Mb.
 Documentation:
 https://ffmpeg.org/ffmpeg-all.html#image2-1
 
+... off topic ...
+People are symetrical on the outside, but not on the inside...
+Organ Variations:
+Algunas variantes anatomicas serían :
+vías biliares: https://www.lecturio.com/es/concepts/vesicula-y-vias-biliares/
+note: to read, requires blocking javascript.
 
-
+hipoplasia en el polígono de Willis, dextrocardio, chilaiditis, apéndice cecal en lado izquierdo.....
 
 
 
